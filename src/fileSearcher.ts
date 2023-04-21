@@ -1,5 +1,8 @@
-export const fileSearch = (contents, tokens = []) => {
-  const result = [];
+export const fileSearch = (
+  contents: string,
+  tokens: string[] = []
+): Record<string, string>[] => {
+  const result: Record<string, string>[] = [];
 
   const lines = contents.toString().split("\n");
   lines.forEach((line) => {
