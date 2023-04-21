@@ -1,7 +1,8 @@
 import fs from "fs";
-import PDFParser from "pdf2json";
-import { eachSeries } from "async";
+import pdfParser from "pdf-parse";
 import { fileSearch } from "./fileSearcher";
+
+const tokens = ["HCT", "HGB"];
 
 interface FileResults {
   file: string;
@@ -10,39 +11,37 @@ interface FileResults {
 
 const finds: FileResults[] = [];
 
-const processData = (pdfData: string) => {
-  const tokens = ["HCT", "HGB"];
+async function extractPDFText(dataBuffer: Buffer) {
+  try {
+    const { text } = await pdfParser(dataBuffer);
 
-  return fileSearch(pdfData, tokens);
-};
-
-function readOneFile(path: string, cbError: (s: string | null) => void) {
-  const pdfParser = new PDFParser();
-
-  pdfParser.on("pdfParser_dataError", (errData: string) => {
-    cbError(errData);
-  });
-  pdfParser.on("pdfParser_dataReady", () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const result = processData(pdfParser.getRawTextContent());
-    finds.push({ file: path, result });
-    cbError(null);
-  });
-
-  pdfParser.loadPDF(path);
+    return fileSearch(text, tokens);
+  } catch (error) {
+    console.log("error:", error);
+    return [];
+  }
 }
 
-const pdfsFolder = "./pdfs";
-const files = fs.readdirSync(pdfsFolder);
+async function managePDFs() {
+  const pdfsFolder = "./pdfs";
+  const files = fs.readdirSync(pdfsFolder);
 
-eachSeries(
-  files.map((f) => `${pdfsFolder}/${f}`),
-  readOneFile,
-  (err: unknown) => {
-    if (err) {
-      console.log(err);
-    }
-    console.info("Results:", finds);
+  for (const file of files) {
+    const path = `${pdfsFolder}/${file}`;
+
+    const dataBuffer = fs.readFileSync(path);
+
+    const result = await extractPDFText(dataBuffer);
+    finds.push({ file: path, result });
   }
-);
+  console.info("Results:", finds);
+}
+
+(async () => {
+  try {
+    await managePDFs();
+  } catch (e) {
+    // Deal with the fact the chain failed
+  }
+  // `text` is not available here
+})();

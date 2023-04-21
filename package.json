@@ -13,14 +13,14 @@
   },
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "async": "^3.2.4",
-    "pdf2json": "^3.0.3"
+    "pdf-parse": "^1.1.1"
   },
   "devDependencies": {
     "@types/async": "^3.2.19",
     "@types/node": "^18.15.13",
+    "@types/pdf-parse": "^1.1.1",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "eslint": "^8.38.0",
