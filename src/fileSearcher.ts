@@ -1,7 +1,7 @@
 export const fileSearch = (contents, tokens = []) => {
   const result = [];
 
-  let lines = contents.toString().split("\n");
+  const lines = contents.toString().split("\n");
   lines.forEach((line) => {
     tokens.forEach((token) => {
       const regEx = new RegExp(token, "i");
