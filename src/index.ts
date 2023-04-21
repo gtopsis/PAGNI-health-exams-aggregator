@@ -2,22 +2,23 @@ import fs from "fs";
 import pdfParser from "pdf-parse";
 import { fileSearch } from "./fileSearcher";
 
-const tokens = ["HCT", "HGB"];
+const tokens = ["WBC", "Ne", "Ly", "Mo", "Eos", "Bas", "HCT", "HGB"];
 
 interface FileResults {
   file: string;
   result: Record<string, string>[];
 }
 
-const finds: FileResults[] = [];
-
-async function extractPDFText(dataBuffer: Buffer) {
+async function extractPDFText(
+  dataBuffer: Buffer
+): Promise<FileResults["result"]> {
   try {
     const { text } = await pdfParser(dataBuffer);
 
     return fileSearch(text, tokens);
   } catch (error) {
     console.log("error:", error);
+
     return [];
   }
 }
@@ -25,6 +26,7 @@ async function extractPDFText(dataBuffer: Buffer) {
 async function managePDFs() {
   const pdfsFolder = "./pdfs";
   const files = fs.readdirSync(pdfsFolder);
+  const results = [];
 
   for (const file of files) {
     const path = `${pdfsFolder}/${file}`;
@@ -32,14 +34,16 @@ async function managePDFs() {
     const dataBuffer = fs.readFileSync(path);
 
     const result = await extractPDFText(dataBuffer);
-    finds.push({ file: path, result });
+    results.push({ file: path, result });
   }
-  console.info("Results:", finds);
+
+  return results;
 }
 
 (async () => {
   try {
-    await managePDFs();
+    const results = await managePDFs();
+    console.info("Results:", JSON.stringify(results, null, 4));
   } catch (e) {
     // Deal with the fact the chain failed
   }
