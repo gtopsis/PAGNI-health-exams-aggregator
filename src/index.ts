@@ -1,8 +1,8 @@
 import fs from "fs";
 import pdfParser from "pdf-parse";
-import { FileResults, searchText } from "./fileSearcher";
+import { FileResults, searchText } from "./textSearcher";
 
-async function extractPDFText(
+async function extractHealthTermsFromPDFText(
   dataBuffer: Buffer
 ): Promise<FileResults["result"]> {
   try {
@@ -22,12 +22,12 @@ async function managePDFs() {
   const results: FileResults[] = [];
 
   for (const file of files) {
-    const path = `${pdfsFolder}/${file}`;
+    const filePath = `${pdfsFolder}/${file}`;
 
-    const dataBuffer = fs.readFileSync(path);
+    const dataBuffer = fs.readFileSync(filePath);
 
-    const result = await extractPDFText(dataBuffer);
-    results.push({ file: path, result });
+    const result = await extractHealthTermsFromPDFText(dataBuffer);
+    results.push({ file, result });
   }
 
   return results;

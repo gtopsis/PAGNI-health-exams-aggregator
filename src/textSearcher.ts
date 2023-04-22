@@ -18,11 +18,11 @@ const healthTerms = [
   "PDW Εύρος κατανομής",
 ] as const;
 
-type TokensType = (typeof healthTerms)[number];
+type HealthTermsType = (typeof healthTerms)[number];
 
 export interface FileResults {
   file: string;
-  result: Map<TokensType, number>;
+  result: Map<HealthTermsType, number>;
 }
 
 export const searchText = (contents: string): FileResults["result"] => {
@@ -37,13 +37,13 @@ export const searchText = (contents: string): FileResults["result"] => {
     const indexWhenHealthTermStarts = match.search(/[^(\d|,)]/);
 
     const healthTerm = match.substring(indexWhenHealthTermStarts).trim();
-    const value = match
-      .substring(0, indexWhenHealthTermStarts)
-      .replace(",", ".");
+    const value = Number(
+      match.substring(0, indexWhenHealthTermStarts).replace(",", ".")
+    );
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    result.set(healthTerm, Number(value));
+    result.set(healthTerm, value);
   });
 
   // const lines = contents.split("\n");
