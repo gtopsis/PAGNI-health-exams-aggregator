@@ -25,7 +25,7 @@ export interface FileResults {
   result: Map<TokensType, string>;
 }
 
-export const textSearch = (contents: string): FileResults["result"] => {
+export const searchText = (contents: string): FileResults["result"] => {
   const result: FileResults["result"] = new Map();
 
   const lines = contents.toString().split("\n");
