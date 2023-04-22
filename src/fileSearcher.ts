@@ -5,8 +5,17 @@ const healthMetrics = [
   "Mo",
   "Eos",
   "Bas",
-  "HCT",
+  "RBC",
   "HGB",
+  "HCT",
+  "MCV",
+  "MCH",
+  "MCHC",
+  "RDW",
+  "PLT",
+  "MPV",
+  "PCT",
+  "PDW",
 ] as const;
 
 type TokensType = (typeof healthMetrics)[number];
@@ -16,16 +25,17 @@ export interface FileResults {
   result: Map<TokensType, string>;
 }
 
-export const fileSearch = (contents: string): FileResults["result"] => {
+export const textSearch = (contents: string): FileResults["result"] => {
   const result: FileResults["result"] = new Map();
 
   const lines = contents.toString().split("\n");
   lines.forEach((line) => {
     healthMetrics.forEach((token) => {
-      const regEx = new RegExp(token, "i");
+      const regEx = new RegExp(".*[0-9].*" + token + " ", "i");
 
       if (line && line.search(regEx) >= 0) {
-        const [value] = line.split(regEx);
+        console.log(line);
+        const [value] = line.split(token);
 
         result.set(token, value);
       }

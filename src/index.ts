@@ -1,6 +1,6 @@
 import fs from "fs";
 import pdfParser from "pdf-parse";
-import { FileResults, fileSearch } from "./fileSearcher";
+import { FileResults, textSearch } from "./fileSearcher";
 
 async function extractPDFText(
   dataBuffer: Buffer
@@ -8,7 +8,7 @@ async function extractPDFText(
   try {
     const { text } = await pdfParser(dataBuffer);
 
-    return fileSearch(text);
+    return textSearch(text);
   } catch (error) {
     console.error("Error: ", error);
 
