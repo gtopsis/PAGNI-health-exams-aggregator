@@ -1,4 +1,4 @@
-const healthMetrics = [
+const healthTerms = [
   "WBC  Λευκά αιμοσφ.",
   "Ne Ουδετερόφιλα",
   "Ly Λεμφοκύτταρα",
@@ -18,29 +18,36 @@ const healthMetrics = [
   "PDW Εύρος κατανομής",
 ] as const;
 
-type TokensType = (typeof healthMetrics)[number];
+type TokensType = (typeof healthTerms)[number];
 
 export interface FileResults {
   file: string;
-  result: Map<TokensType, string>;
+  result: Map<TokensType, number>;
 }
 
 export const searchText = (contents: string): FileResults["result"] => {
   const result: FileResults["result"] = new Map();
 
-  const lines = contents.toString().split("\n");
-  lines.forEach((line) => {
-    healthMetrics.forEach((token) => {
-      const regEx = new RegExp("[0-9].*" + token, "i");
+  const unionOfMetrics = healthTerms.join("|");
+  const regex = new RegExp(`[0-9].*(${unionOfMetrics})`, "g");
+  const matches = contents.match(regex);
 
-      if (line && line.search(regEx) >= 0) {
-        console.log(line);
-        const [value] = line.split(token);
+  matches?.forEach((match) => {
+    // this regex based on the format of the above one
+    const indexWhenHealthTermStarts = match.search(/[^(\d|,)]/);
 
-        result.set(token, value.trim());
-      }
-    });
+    const healthTerm = match.substring(indexWhenHealthTermStarts).trim();
+    const value = match
+      .substring(0, indexWhenHealthTermStarts)
+      .replace(",", ".");
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    result.set(healthTerm, Number(value));
   });
+
+  // const lines = contents.split("\n");
+  // console.debug(lines)
 
   return result;
 };
