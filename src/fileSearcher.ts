@@ -37,7 +37,7 @@ export const searchText = (contents: string): FileResults["result"] => {
         console.log(line);
         const [value] = line.split(token);
 
-        result.set(token, value);
+        result.set(token, value.trim());
       }
     });
   });
