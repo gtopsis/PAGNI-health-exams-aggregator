@@ -1,4 +1,4 @@
-const healthTerms = [
+export const healthTerms = [
   "WBC  Λευκά αιμοσφ.",
   "Ne Ουδετερόφιλα",
   "Ly Λεμφοκύτταρα",
@@ -18,15 +18,10 @@ const healthTerms = [
   "PDW Εύρος κατανομής",
 ] as const;
 
-type HealthTermsType = (typeof healthTerms)[number];
+export type HealthTermsType = (typeof healthTerms)[number];
 
-export interface FileResults {
-  file: string;
-  result: Map<HealthTermsType, number>;
-}
-
-export const searchText = (contents: string): FileResults["result"] => {
-  const result: FileResults["result"] = new Map();
+export const searchText = (contents: string): Map<HealthTermsType, number> => {
+  const result: Map<HealthTermsType, number> = new Map();
 
   const unionOfMetrics = healthTerms.join("|");
   const regex = new RegExp(`[0-9].*(${unionOfMetrics})`, "g");

@@ -1,11 +1,15 @@
 import fs from "fs";
 import pdfParser from "pdf-parse";
-import { FileResults, searchText } from "./textSearcher";
+import { HealthTermsType, healthTerms, searchText } from "./textSearcher";
+
+type HealthTermValueInFile = { file: string; healthTermValue: number };
+type FilesResults = Map<HealthTermsType, HealthTermValueInFile[]>;
 
 async function extractHealthTermsFromPDFText(
-  dataBuffer: Buffer
-): Promise<FileResults["result"]> {
+  filePath: string
+): Promise<Map<HealthTermsType, number>> {
   try {
+    const dataBuffer = fs.readFileSync(filePath);
     const { text } = await pdfParser(dataBuffer);
 
     return searchText(text);
@@ -19,39 +23,23 @@ async function extractHealthTermsFromPDFText(
 async function managePDFs() {
   const pdfsFolder = "./pdfs";
   const files = fs.readdirSync(pdfsFolder);
-  const results: FileResults[] = [];
+  const results: FilesResults = new Map(healthTerms.map((term) => [term, []]));
 
   for (const file of files) {
     const filePath = `${pdfsFolder}/${file}`;
 
-    const dataBuffer = fs.readFileSync(filePath);
+    const healthTermsFromFile = await extractHealthTermsFromPDFText(filePath);
 
-    const result = await extractHealthTermsFromPDFText(dataBuffer);
-    results.push({ file, result });
+    healthTermsFromFile.forEach((value, key) =>
+      results.set(key, [
+        ...(results.get(key) || []),
+        { file, healthTermValue: value },
+      ])
+    );
   }
 
   return results;
 }
-
-(async () => {
-  try {
-    const results = await managePDFs();
-    console.info(
-      "Results:",
-      JSON.stringify(
-        results.map((r) => ({
-          file: r.file,
-          result: objectPrintFormatter(r.result),
-        })),
-        null,
-        4
-      )
-    );
-  } catch (e) {
-    // Deal with the fact the chain failed
-  }
-  // `text` is not available here
-})();
 
 const objectPrintFormatter = (toPrint: unknown) => {
   if (toPrint instanceof Set || toPrint instanceof Map) {
@@ -61,3 +49,13 @@ const objectPrintFormatter = (toPrint: unknown) => {
   }
   return toPrint;
 };
+
+(async () => {
+  try {
+    const results = await managePDFs();
+    console.info("Results:", JSON.stringify(objectPrintFormatter(results)));
+  } catch (e) {
+    // Deal with the fact the chain failed
+  }
+  // `text` is not available here
+})();
