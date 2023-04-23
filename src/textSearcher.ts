@@ -20,12 +20,12 @@ export const healthTerms = [
 
 export type HealthTermsType = (typeof healthTerms)[number];
 
-export const searchText = (contents: string): Map<HealthTermsType, number> => {
+export const searchText = (text: string): Map<HealthTermsType, number> => {
   const result: Map<HealthTermsType, number> = new Map();
 
   const unionOfMetrics = healthTerms.join("|");
   const regex = new RegExp(`[0-9].*(${unionOfMetrics})`, "g");
-  const matches = contents.match(regex);
+  const matches = text.match(regex);
 
   matches?.forEach((match) => {
     // this regex based on the format of the above one
@@ -36,9 +36,8 @@ export const searchText = (contents: string): Map<HealthTermsType, number> => {
       match.substring(0, indexWhenHealthTermStarts).replace(",", ".")
     );
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    result.set(healthTerm, value);
+    // safe typecast case regex match ensures
+    result.set(healthTerm as HealthTermsType, value);
   });
 
   // const lines = contents.split("\n");

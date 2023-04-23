@@ -5,7 +5,7 @@ import { HealthTermsType, healthTerms, searchText } from "./textSearcher";
 type HealthTermValueInFile = { file: string; healthTermValue: number };
 type FilesResults = Map<HealthTermsType, HealthTermValueInFile[]>;
 
-async function extractHealthTermsFromPDFText(
+async function extractHealthDataFromPDF(
   filePath: string
 ): Promise<Map<HealthTermsType, number>> {
   try {
@@ -16,29 +16,36 @@ async function extractHealthTermsFromPDFText(
   } catch (error) {
     console.error("Error: ", error);
 
-    return new Map();
+    return new Map<HealthTermsType, number>();
   }
 }
 
-async function managePDFs() {
-  const pdfsFolder = "./pdfs";
-  const files = fs.readdirSync(pdfsFolder);
-  const results: FilesResults = new Map(healthTerms.map((term) => [term, []]));
+async function extractHealthDataFromPDFs() {
+  const pdfsDir = "./pdfs";
+  const filenames = fs.readdirSync(pdfsDir);
+  const healthDataOfAllFiles: FilesResults = new Map(
+    healthTerms.map((term) => [term, []])
+  );
 
-  for (const file of files) {
-    const filePath = `${pdfsFolder}/${file}`;
+  for (const filename of filenames) {
+    const filePath = `${pdfsDir}/${filename}`;
 
-    const healthTermsFromFile = await extractHealthTermsFromPDFText(filePath);
+    const healthTermsFromFile = await extractHealthDataFromPDF(filePath);
 
-    healthTermsFromFile.forEach((value, key) =>
-      results.set(key, [
-        ...(results.get(key) || []),
-        { file, healthTermValue: value },
-      ])
-    );
+    healthTermsFromFile.forEach((value, healthTerm) => {
+      const existingValuesOfHealthTerm =
+        healthDataOfAllFiles.get(healthTerm) || [];
+
+      existingValuesOfHealthTerm.push({
+        file: filename,
+        healthTermValue: value,
+      });
+
+      healthDataOfAllFiles.set(healthTerm, existingValuesOfHealthTerm);
+    });
   }
 
-  return results;
+  return healthDataOfAllFiles;
 }
 
 const objectPrintFormatter = (toPrint: unknown) => {
@@ -52,10 +59,9 @@ const objectPrintFormatter = (toPrint: unknown) => {
 
 (async () => {
   try {
-    const results = await managePDFs();
-    console.info("Results:", JSON.stringify(objectPrintFormatter(results)));
-  } catch (e) {
-    // Deal with the fact the chain failed
+    const healthData = await extractHealthDataFromPDFs();
+    console.info("Results:", JSON.stringify(objectPrintFormatter(healthData)));
+  } catch (error) {
+    console.error(error);
   }
-  // `text` is not available here
 })();
