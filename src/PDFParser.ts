@@ -22,11 +22,11 @@ export async function extractHealthDataFromPDF(
 
 export async function extractHealthDataFromPDFs() {
   const pdfsDir = "./pdfs";
-  const filenames = fs.readdirSync(pdfsDir);
   const healthDataOfAllFiles: FilesResults = new Map(
     healthTerms.map((term) => [term, []])
   );
 
+  const filenames = fs.readdirSync(pdfsDir);
   for (const filename of filenames) {
     const filePath = `${pdfsDir}/${filename}`;
 

@@ -12,7 +12,7 @@ describe("Search text", () => {
   it("will not return info for HCT when the text contains an incomplete version of health term for HCT", () => {
     const result = searchText(`
       12,9AAA Αιμοσφαιρίνη  14-18g/dl
-      40,6HCT Αιματο 52%
+      40,6HCT ΑιματοΧΧΧΧ 52%
       25,1MCHC Μέση πυκνότητα
     `);
 
