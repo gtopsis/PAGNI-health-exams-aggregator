@@ -21,6 +21,7 @@ export const healthTerms = [
 export type HealthTermsType = (typeof healthTerms)[number];
 
 export const searchText = (text: string): Map<HealthTermsType, number> => {
+  console.log("🚀 ~ file: textSearcher.ts:24 ~ searchText ~ text:", text);
   const result: Map<HealthTermsType, number> = new Map();
 
   const unionOfMetrics = healthTerms.join("|");
@@ -39,9 +40,6 @@ export const searchText = (text: string): Map<HealthTermsType, number> => {
     // safe typecast case regex match ensures
     result.set(healthTerm as HealthTermsType, value);
   });
-
-  // const lines = contents.split("\n");
-  // console.debug(lines)
 
   return result;
 };

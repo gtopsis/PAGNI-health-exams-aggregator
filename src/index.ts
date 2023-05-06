@@ -1,4 +1,4 @@
-import { extractHealthDataFromPDFs } from "./PDFParser";
+import { extractHealthDataFromPDFs } from "./PDFHealthDataExtractor";
 
 const objectPrintFormatter = (toPrint: unknown) => {
   if (toPrint instanceof Set || toPrint instanceof Map) {

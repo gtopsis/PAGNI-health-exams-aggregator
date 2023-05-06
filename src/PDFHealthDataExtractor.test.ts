@@ -1,9 +1,9 @@
+import { readdirSync } from "fs";
+import pdfParser from "pdf-parse";
 import {
   extractHealthDataFromPDF,
   extractHealthDataFromPDFs,
-} from "./PDFParser";
-import pdfParser from "pdf-parse";
-import { readdirSync } from "fs";
+} from "./PDFHealthDataExtractor";
 
 jest.mock("fs", () => {
   return {
