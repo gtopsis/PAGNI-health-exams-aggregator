@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const healthTerms = [
   "WBC  Λευκά αιμοσφ.",
   "Ne Ουδετερόφιλα",
@@ -25,8 +27,9 @@ function getHealthExamDateFromText(text: string) {
   const regex = new RegExp(dateRegex, "g");
 
   const match = text.match(regex);
+  const date = match?.[0].replace("Ημ/νία παραλαβής:", "");
 
-  return match?.[0].replace("Ημ/νία παραλαβής:", "");
+  return dayjs(date).isValid() ? date : undefined;
 }
 
 export const searchText = (

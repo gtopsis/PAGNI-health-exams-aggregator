@@ -51,10 +51,7 @@ export async function extractHealthDataFromPDFs() {
       const existingValuesOfHealthTerm =
         healthDataOfAllFiles.get(healthTerm) || [];
 
-      existingValuesOfHealthTerm.push({
-        fileId,
-        healthTermValue,
-      });
+      existingValuesOfHealthTerm.push({ fileId, healthTermValue });
 
       healthDataOfAllFiles.set(healthTerm, existingValuesOfHealthTerm);
     });

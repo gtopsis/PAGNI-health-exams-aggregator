@@ -9,10 +9,22 @@ describe("Search text", () => {
     expect(result.size).toEqual(0);
   });
 
-  it("will not return info the date of a health exam when the text contains info for health data but not the date of receipt of the examination", () => {
+  it("will not return info of the health exam's date when the text contains info for health data but not the date of receipt of the examination", () => {
     const { date, result } = searchText(`
       40,6HCT Αιματοκρίτης 40-52%
       12,9AAA AAAAAAAA  1-8g/dl
+    `);
+
+    expect(date).toEqual("");
+    expect(result instanceof Map).toBeTruthy();
+    expect(result.size).toEqual(1);
+    expect(result.get("HCT Αιματοκρίτης")).toEqual(40.6);
+  });
+
+  it("will not return info of the health exam's date when the text contains invalid date", () => {
+    const { date, result } = searchText(`
+      Ημ/νία παραλαβής:05/04/
+      40,6HCT Αιματοκρίτης 40-52%
     `);
 
     expect(date).toEqual("");
