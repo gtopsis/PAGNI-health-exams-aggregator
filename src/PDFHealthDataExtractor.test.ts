@@ -18,8 +18,9 @@ describe("Extract health data of a single file", () => {
   it("will return no data when the file content is empty", async () => {
     (pdfParser as jest.Mock).mockResolvedValueOnce({ text: "" });
 
-    const result = await extractHealthDataFromPDF("test_filename");
+    const { date, result } = await extractHealthDataFromPDF("test_filename");
 
+    expect(date).toEqual("");
     expect(result).not.toEqual(undefined);
     expect(result instanceof Map).toBeTruthy();
     expect(result.size).toEqual(0);
@@ -33,8 +34,9 @@ describe("Extract health data of a single file", () => {
     `,
     });
 
-    const result = await extractHealthDataFromPDF("test_filename");
+    const { date, result } = await extractHealthDataFromPDF("test_filename");
 
+    expect(date).toEqual("");
     expect(result).not.toEqual(undefined);
     expect(result instanceof Map).toBeTruthy();
     expect(result.size).toEqual(0);
@@ -51,8 +53,9 @@ describe("Extract health data of a single file", () => {
     `,
     });
 
-    const result = await extractHealthDataFromPDF("test_filename");
+    const { date, result } = await extractHealthDataFromPDF("test_filename");
 
+    expect(date).toEqual("");
     expect(result instanceof Map).toBeTruthy();
     expect(result.size).toEqual(1);
     expect(result.get("HCT Αιματοκρίτης")).toEqual(11.3);
@@ -68,8 +71,9 @@ describe("Extract health data of a single file", () => {
     `,
     });
 
-    const result = await extractHealthDataFromPDF("test_filename");
+    const { date, result } = await extractHealthDataFromPDF("test_filename");
 
+    expect(date).toEqual("");
     expect(result).not.toEqual(undefined);
     expect(result instanceof Map).toBeTruthy();
     expect(result.size).toEqual(1);
@@ -85,19 +89,26 @@ describe("Extract health data of multiple files", () => {
     });
     (pdfParser as jest.Mock).mockResolvedValueOnce({
       text: `
+        Ημ/νία παραλαβής:05/04/2023
         12,9AAA Αιμοσφαιρίνη  14-18g/dl
         40,6HCT Αιματοκρίτης 40-52%
     `,
     });
 
-    const result = await extractHealthDataFromPDFs();
+    const { filesData, healthDataOfAllFiles } =
+      await extractHealthDataFromPDFs();
 
-    expect(result).not.toEqual(undefined);
-    expect(result instanceof Map).toBeTruthy();
-    expect(result.size).toEqual(17);
-    expect(result.get("HCT Αιματοκρίτης")).toHaveLength(1);
-    expect(result.get("HCT Αιματοκρίτης")?.[0]).toEqual({
-      file: "file2",
+    expect(filesData).not.toEqual(undefined);
+    expect(filesData).toEqual([
+      { fileId: 0, filename: "file1", date: "" },
+      { fileId: 1, filename: "file2", date: "05/04/2023" },
+    ]);
+    expect(healthDataOfAllFiles).not.toEqual(undefined);
+    expect(healthDataOfAllFiles instanceof Map).toBeTruthy();
+    expect(healthDataOfAllFiles.size).toEqual(17);
+    expect(healthDataOfAllFiles.get("HCT Αιματοκρίτης")).toHaveLength(1);
+    expect(healthDataOfAllFiles.get("HCT Αιματοκρίτης")?.[0]).toEqual({
+      fileId: 1,
       healthTermValue: 40.6,
     });
   });
@@ -106,6 +117,7 @@ describe("Extract health data of multiple files", () => {
     (readdirSync as jest.Mock).mockReturnValueOnce(["file1", "file2"]);
     (pdfParser as jest.Mock).mockResolvedValueOnce({
       text: `
+      Ημ/νία παραλαβής:11/05/2023
       12,9AAA Αιμοσφαιρίνη  14-18g/dl
       49,1HCT Αιματοκρίτης 52%
       25,9MCHC Μέση πυκνότητα
@@ -113,30 +125,37 @@ describe("Extract health data of multiple files", () => {
     });
     (pdfParser as jest.Mock).mockResolvedValueOnce({
       text: `
+        Ημ/νία παραλαβής:05/04/2023
         12,9AAA Αιμοσφαιρίνη  14-18g/dl
         40,6HCT Αιματοκρίτης 40-52%
     `,
     });
 
-    const result = await extractHealthDataFromPDFs();
+    const { filesData, healthDataOfAllFiles } =
+      await extractHealthDataFromPDFs();
 
-    expect(result).not.toEqual(undefined);
-    expect(result instanceof Map).toBeTruthy();
-    expect(result.size).toEqual(17);
-    expect(result.get("HCT Αιματοκρίτης")).toHaveLength(2);
-    expect(result.get("HCT Αιματοκρίτης")).toEqual([
+    expect(filesData).not.toEqual(undefined);
+    expect(filesData).toEqual([
+      { fileId: 0, filename: "file1", date: "11/05/2023" },
+      { fileId: 1, filename: "file2", date: "05/04/2023" },
+    ]);
+    expect(healthDataOfAllFiles).not.toEqual(undefined);
+    expect(healthDataOfAllFiles instanceof Map).toBeTruthy();
+    expect(healthDataOfAllFiles.size).toEqual(17);
+    expect(healthDataOfAllFiles.get("HCT Αιματοκρίτης")).toHaveLength(2);
+    expect(healthDataOfAllFiles.get("HCT Αιματοκρίτης")).toEqual([
       {
-        file: "file1",
+        fileId: 0,
         healthTermValue: 49.1,
       },
       {
-        file: "file2",
+        fileId: 1,
         healthTermValue: 40.6,
       },
     ]);
-    expect(result.get("MCHC Μέση πυκνότητα")).toHaveLength(1);
-    expect(result.get("MCHC Μέση πυκνότητα")?.[0]).toEqual({
-      file: "file1",
+    expect(healthDataOfAllFiles.get("MCHC Μέση πυκνότητα")).toHaveLength(1);
+    expect(healthDataOfAllFiles.get("MCHC Μέση πυκνότητα")?.[0]).toEqual({
+      fileId: 0,
       healthTermValue: 25.9,
     });
   });

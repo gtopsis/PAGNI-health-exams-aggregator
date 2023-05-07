@@ -20,9 +20,21 @@ export const healthTerms = [
 
 export type HealthTermsType = (typeof healthTerms)[number];
 
-export const searchText = (text: string): Map<HealthTermsType, number> => {
-  console.log("🚀 ~ file: textSearcher.ts:24 ~ searchText ~ text:", text);
+function getHealthExamDateFromText(text: string) {
+  const dateRegex = /Ημ\/νία παραλαβής:[0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}/;
+  const regex = new RegExp(dateRegex, "g");
+
+  const match = text.match(regex);
+
+  return match?.[0].replace("Ημ/νία παραλαβής:", "");
+}
+
+export const searchText = (
+  text: string
+): { date: string; result: Map<HealthTermsType, number> } => {
   const result: Map<HealthTermsType, number> = new Map();
+
+  const date = getHealthExamDateFromText(text);
 
   const unionOfMetrics = healthTerms.join("|");
   const regex = new RegExp(`[0-9].*(${unionOfMetrics})`, "g");
@@ -41,5 +53,5 @@ export const searchText = (text: string): Map<HealthTermsType, number> => {
     result.set(healthTerm as HealthTermsType, value);
   });
 
-  return result;
+  return { date: date || "", result };
 };
