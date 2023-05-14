@@ -156,6 +156,17 @@ electron.ipcMain.handle("open-win", (_, arg) => {
     childWindow.loadFile(indexHtml, { hash: arg });
   }
 });
+const parseHealthExams = async () => {
+  const healthData = await extractHealthDataFromPDFs();
+  console.info("Results:", JSON.stringify(objectPrintFormatter(healthData)));
+};
+electron.ipcMain.on(
+  "parseHealthExams",
+  async (e, content) => {
+    console.debug(e, content);
+    await parseHealthExams();
+  }
+);
 const objectPrintFormatter = (toPrint) => {
   if (toPrint instanceof Set || toPrint instanceof Map) {
     return JSON.stringify(Array.from(toPrint));
@@ -164,13 +175,4 @@ const objectPrintFormatter = (toPrint) => {
   }
   return toPrint;
 };
-(async () => {
-  try {
-    console.log(__dirname);
-    const healthData = await extractHealthDataFromPDFs();
-    console.info("Results:", JSON.stringify(objectPrintFormatter(healthData)));
-  } catch (error) {
-    console.error(error);
-  }
-})();
 //# sourceMappingURL=index.js.map

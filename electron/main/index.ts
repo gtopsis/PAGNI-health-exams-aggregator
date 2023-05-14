@@ -1,6 +1,7 @@
 import { app, BrowserWindow, shell, ipcMain } from "electron";
 import { release } from "node:os";
 import { join } from "node:path";
+import { extractHealthDataFromPDFs } from "./healthExamParser/PDFHealthDataExtractor";
 
 // The built directory structure
 //
@@ -117,7 +118,18 @@ ipcMain.handle("open-win", (_, arg) => {
   }
 });
 
-import { extractHealthDataFromPDFs } from "./healthExamParser/PDFHealthDataExtractor";
+const parseHealthExams = async () => {
+  const healthData = await extractHealthDataFromPDFs();
+  console.info("Results:", JSON.stringify(objectPrintFormatter(healthData)));
+};
+
+ipcMain.on(
+  "parseHealthExams",
+  async (e: Electron.IpcMainEvent, content: unknown) => {
+    console.debug(e, content);
+    await parseHealthExams();
+  }
+);
 
 const objectPrintFormatter = (toPrint: unknown) => {
   if (toPrint instanceof Set || toPrint instanceof Map) {
@@ -127,13 +139,3 @@ const objectPrintFormatter = (toPrint: unknown) => {
   }
   return toPrint;
 };
-
-(async () => {
-  try {
-    console.log(__dirname);
-    const healthData = await extractHealthDataFromPDFs();
-    console.info("Results:", JSON.stringify(objectPrintFormatter(healthData)));
-  } catch (error) {
-    console.error(error);
-  }
-})();
