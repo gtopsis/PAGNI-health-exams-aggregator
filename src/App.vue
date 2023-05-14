@@ -1,13 +1,30 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import HelloWorld from "./components/HelloWorld.vue";
 
-console.log("[App.vue]", `Hello world from Electron ${process.versions.electron}!`)
+// console.log(
+//   "[App.vue]",
+//   `Hello world from Electron ${process.versions.electron}!`
+// );
+
+const parseHealthExams = () => {
+  window.healthExamsParser.parseHealthExams();
+};
+
+// import { ipcRenderer } from "electron";
+
+// ipcRenderer.on("main-process-message", (_event, ...args) => {
+//   console.log("[Receive Main-process message]:", ...args);
+// });
 </script>
 
 <template>
   <div>
     <a href="https://www.electronjs.org/" target="_blank">
-      <img src="./assets/electron.svg" class="logo electron" alt="Electron logo" />
+      <img
+        src="./assets/electron.svg"
+        class="logo electron"
+        alt="Electron logo"
+      />
     </a>
     <a href="https://vitejs.dev/" target="_blank">
       <img src="./assets/vite.svg" class="logo" alt="Vite logo" />
@@ -19,7 +36,10 @@ console.log("[App.vue]", `Hello world from Electron ${process.versions.electron}
   <HelloWorld msg="Electron + Vite + Vue" />
   <div class="flex-center">
     Place static files into the <code>/public</code> folder
-    <img style="width: 2.4em; margin-left: .4em;" src="/logo.svg" alt="Logo">
+    <img style="width: 2.4em; margin-left: 0.4em" src="/logo.svg" alt="Logo" />
+  </div>
+  <div>
+    <button @click="parseHealthExams">Parse health exams</button>
   </div>
 </template>
 
@@ -38,7 +58,7 @@ console.log("[App.vue]", `Hello world from Electron ${process.versions.electron}
 }
 
 .logo.electron:hover {
-  filter: drop-shadow(0 0 2em #9FEAF9);
+  filter: drop-shadow(0 0 2em #9feaf9);
 }
 
 .logo:hover {
