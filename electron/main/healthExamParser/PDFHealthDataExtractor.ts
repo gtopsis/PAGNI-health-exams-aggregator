@@ -1,6 +1,7 @@
 import fs from "fs";
 import pdfParser from "pdf-parse";
 import { HealthTermsType, healthTerms, searchText } from "./textSearcher";
+import path from "path";
 
 interface FileDetails {
   fileId: number;
@@ -31,7 +32,7 @@ export async function extractHealthDataFromPDF(filePath: string): Promise<{
 }
 
 export async function extractHealthDataFromPDFs() {
-  const pdfsDir = "./pdfs";
+  const pdfsDir = path.resolve(__dirname, '../../pdfs');
   const filesData: FileDetails[] = [];
   const healthDataOfAllFiles: FilesResults = new Map(
     healthTerms.map((term) => [term, []])
