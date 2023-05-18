@@ -1,38 +1,52 @@
 import fs from "fs";
 import pdfParser from "pdf-parse";
-import { HealthTermsType, healthTerms, searchText } from "./textSearcher";
+import {
+  getHealthExamDateFromText,
+  getHealthTermsDataFromText,
+} from "./textSearcher";
 import path from "path";
+import { FileDetails, FilesResults, Results } from "../../../common/interfaces";
 
-interface FileDetails {
-  fileId: number;
-  filename: string;
-  date: string;
-}
-
-interface HealthTermValueInFile {
-  fileId: number;
-  healthTermValue: number;
-}
-type FilesResults = Map<HealthTermsType, HealthTermValueInFile[]>;
+export const healthTerms = [
+  "WBC  Λευκά αιμοσφ.",
+  "Ne Ουδετερόφιλα",
+  "Ly Λεμφοκύτταρα",
+  "Mo Μονοκύτταρα",
+  "Eos Ηωσινόφιλα",
+  "Bas Βασεόφιλα",
+  "RBC Ερυθρά αιμοσφαίρια",
+  "HGB Αιμοσφαιρίνη",
+  "HCT Αιματοκρίτης",
+  "MCV Μέσος όγκος",
+  "MCH Μέση περ.Hb",
+  "MCHC Μέση πυκνότητα",
+  "RDW Εύρος καταν.ερυθρ.",
+  "PLT Αιμοπετάλια",
+  "MPV Μέσος όγκος αιμοπεταλίων",
+  "PCT Αιμοπεταλιοκρίτης",
+  "PDW Εύρος κατανομής",
+];
 
 export async function extractHealthDataFromPDF(filePath: string): Promise<{
   date: FileDetails["date"];
-  result: Map<HealthTermsType, number>;
+  result: Map<string, number>;
 }> {
   try {
     const dataBuffer = fs.readFileSync(filePath);
     const { text } = await pdfParser(dataBuffer);
+    const date = getHealthExamDateFromText(text);
+    const result = getHealthTermsDataFromText(text, healthTerms);
 
-    return searchText(text);
+    return { date, result };
   } catch (error) {
     console.error("Error: ", error);
 
-    return { date: "", result: new Map<HealthTermsType, number>() };
+    return { date: undefined, result: new Map<string, number>() };
   }
 }
 
-export async function extractHealthDataFromPDFs() {
-  const pdfsDir = path.resolve(__dirname, '../../pdfs');
+export async function extractHealthDataFromPDFs(): Promise<Results> {
+  const pdfsDir = path.resolve(__dirname, "../../pdfs");
   const filesData: FileDetails[] = [];
   const healthDataOfAllFiles: FilesResults = new Map(
     healthTerms.map((term) => [term, []])

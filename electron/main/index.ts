@@ -50,7 +50,7 @@ async function createWindow() {
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
       // Consider using contextBridge.exposeInMainWorld
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
-      nodeIntegration: true,
+      nodeIntegration: false,
       contextIsolation: true,
     },
   });
@@ -107,7 +107,7 @@ ipcMain.handle("open-win", (_, arg) => {
     webPreferences: {
       preload,
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
     },
   });
 
@@ -118,24 +118,15 @@ ipcMain.handle("open-win", (_, arg) => {
   }
 });
 
-const parseHealthExams = async () => {
-  const healthData = await extractHealthDataFromPDFs();
-  console.info("Results:", JSON.stringify(objectPrintFormatter(healthData)));
-};
+const parseHealthExams = async () => extractHealthDataFromPDFs();
 
 ipcMain.on(
   "parseHealthExams",
   async (e: Electron.IpcMainEvent, content: unknown) => {
-    console.debug(e, content);
-    await parseHealthExams();
+    const results = await parseHealthExams();
+    console.log("🚀 ~ file: index.ts:131 ~ results:", results);
+
+    // Send result back to renderer process
+    win?.webContents.send("D", results);
   }
 );
-
-const objectPrintFormatter = (toPrint: unknown) => {
-  if (toPrint instanceof Set || toPrint instanceof Map) {
-    return JSON.stringify(Array.from(toPrint));
-  } else if (toPrint instanceof Object) {
-    return JSON.stringify(toPrint);
-  }
-  return toPrint;
-};

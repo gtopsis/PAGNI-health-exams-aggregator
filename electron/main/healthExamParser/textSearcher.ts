@@ -1,28 +1,6 @@
 import dayjs from "dayjs";
 
-export const healthTerms = [
-  "WBC  Λευκά αιμοσφ.",
-  "Ne Ουδετερόφιλα",
-  "Ly Λεμφοκύτταρα",
-  "Mo Μονοκύτταρα",
-  "Eos Ηωσινόφιλα",
-  "Bas Βασεόφιλα",
-  "RBC Ερυθρά αιμοσφαίρια",
-  "HGB Αιμοσφαιρίνη",
-  "HCT Αιματοκρίτης",
-  "MCV Μέσος όγκος",
-  "MCH Μέση περ.Hb",
-  "MCHC Μέση πυκνότητα",
-  "RDW Εύρος καταν.ερυθρ.",
-  "PLT Αιμοπετάλια",
-  "MPV Μέσος όγκος αιμοπεταλίων",
-  "PCT Αιμοπεταλιοκρίτης",
-  "PDW Εύρος κατανομής",
-] as const;
-
-export type HealthTermsType = (typeof healthTerms)[number];
-
-function getHealthExamDateFromText(text: string) {
+export function getHealthExamDateFromText(text: string) {
   const dateRegex = /Ημ\/νία παραλαβής:[0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}/;
   const regex = new RegExp(dateRegex, "g");
 
@@ -32,14 +10,13 @@ function getHealthExamDateFromText(text: string) {
   return dayjs(date).isValid() ? date : undefined;
 }
 
-export const searchText = (
-  text: string
-): { date: string; result: Map<HealthTermsType, number> } => {
-  const result: Map<HealthTermsType, number> = new Map();
+export const getHealthTermsDataFromText = (
+  text: string,
+  queryTerms: string[]
+): Map<string, number> => {
+  const result: Map<string, number> = new Map();
 
-  const date = getHealthExamDateFromText(text);
-
-  const unionOfMetrics = healthTerms.join("|");
+  const unionOfMetrics = queryTerms.join("|");
   const regex = new RegExp(`[0-9].*(${unionOfMetrics})`, "g");
   const matches = text.match(regex);
 
@@ -53,8 +30,8 @@ export const searchText = (
     );
 
     // safe typecast case regex match ensures
-    result.set(healthTerm as HealthTermsType, value);
+    result.set(healthTerm, value);
   });
 
-  return { date: date || "", result };
+  return result;
 };

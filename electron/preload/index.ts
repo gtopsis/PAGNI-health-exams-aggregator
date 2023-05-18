@@ -95,6 +95,9 @@ window.onmessage = (ev) => {
 
 contextBridge.exposeInMainWorld("healthExamsParser", {
   parseHealthExams: () => ipcRenderer.send("parseHealthExams"),
+  receiveFromD: (func: Function) => {
+    ipcRenderer.on("D", (event, ...args) => func(event, ...args));
+  },
   // content: ipcRenderer.invoke("loadContent"),
 });
 

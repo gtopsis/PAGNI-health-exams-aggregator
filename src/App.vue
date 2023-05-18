@@ -1,46 +1,33 @@
 <script setup lang="ts">
-import HelloWorld from "./components/HelloWorld.vue";
+import { ref } from "vue";
+import { Results } from "../common/interfaces";
 
-// console.log(
-//   "[App.vue]",
-//   `Hello world from Electron ${process.versions.electron}!`
-// );
+let healthData = ref<Results | undefined>();
+
+// Called when message received from main process
+window.healthExamsParser.receiveFromD((event: unknown, data: Results) => {
+  console.log(`Received from main process`);
+  console.log(data);
+
+  healthData.value = data;
+});
 
 const parseHealthExams = () => {
   window.healthExamsParser.parseHealthExams();
 };
-
-// import { ipcRenderer } from "electron";
-
-// ipcRenderer.on("main-process-message", (_event, ...args) => {
-//   console.log("[Receive Main-process message]:", ...args);
-// });
 </script>
 
 <template>
   <div>
-    <a href="https://www.electronjs.org/" target="_blank">
-      <img
-        src="./assets/electron.svg"
-        class="logo electron"
-        alt="Electron logo"
-      />
-    </a>
-    <a href="https://vitejs.dev/" target="_blank">
-      <img src="./assets/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Electron + Vite + Vue" />
-  <div class="flex-center">
-    Place static files into the <code>/public</code> folder
-    <img style="width: 2.4em; margin-left: 0.4em" src="/logo.svg" alt="Logo" />
-  </div>
-  <div>
     <button @click="parseHealthExams">Parse health exams</button>
   </div>
+  <div class="flex-center">
+    <!-- <div v-for="(item, index) in healthData.healthDataOfAllFiles" :key="index">
+      {{ item }}
+    </div> -->
+    {{ healthData }}
+  </div>
+  <!-- <HelloWorld msg="Electron + Vite + Vue" /> -->
 </template>
 
 <style>
