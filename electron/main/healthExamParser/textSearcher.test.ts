@@ -8,7 +8,7 @@ describe("Search date of exam in text", () => {
   it("will not return a date when the text is empty", () => {
     const date = getHealthExamDateFromText("");
 
-    expect(date).toEqual("");
+    expect(date).toEqual(undefined);
   });
 
   it("will not return info of the health exam's date when the text contains invalid date", () => {
@@ -19,7 +19,7 @@ describe("Search date of exam in text", () => {
     `
     );
 
-    expect(date).toEqual("");
+    expect(date).toEqual(undefined);
   });
 });
 
