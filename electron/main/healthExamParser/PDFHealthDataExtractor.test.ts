@@ -20,7 +20,7 @@ describe("Extract health data of a single file", () => {
 
     const { date, result } = await extractHealthDataFromPDF("test_filename");
 
-    expect(date).toEqual("");
+    expect(date).toEqual(undefined);
     expect(result).not.toEqual(undefined);
     expect(result instanceof Map).toBeTruthy();
     expect(result.size).toEqual(0);
@@ -36,7 +36,7 @@ describe("Extract health data of a single file", () => {
 
     const { date, result } = await extractHealthDataFromPDF("test_filename");
 
-    expect(date).toEqual("");
+    expect(date).toEqual(undefined);
     expect(result).not.toEqual(undefined);
     expect(result instanceof Map).toBeTruthy();
     expect(result.size).toEqual(0);
@@ -55,7 +55,7 @@ describe("Extract health data of a single file", () => {
 
     const { date, result } = await extractHealthDataFromPDF("test_filename");
 
-    expect(date).toEqual("");
+    expect(date).toEqual(undefined);
     expect(result instanceof Map).toBeTruthy();
     expect(result.size).toEqual(1);
     expect(result.get("HCT Αιματοκρίτης")).toEqual(11.3);
@@ -73,7 +73,7 @@ describe("Extract health data of a single file", () => {
 
     const { date, result } = await extractHealthDataFromPDF("test_filename");
 
-    expect(date).toEqual("");
+    expect(date).toEqual(undefined);
     expect(result).not.toEqual(undefined);
     expect(result instanceof Map).toBeTruthy();
     expect(result.size).toEqual(1);
@@ -100,7 +100,7 @@ describe("Extract health data of multiple files", () => {
 
     expect(filesData).not.toEqual(undefined);
     expect(filesData).toEqual([
-      { fileId: 0, filename: "file1", date: "" },
+      { fileId: 0, filename: "file1", date: undefined },
       { fileId: 1, filename: "file2", date: "05/04/2023" },
     ]);
     expect(healthDataOfAllFiles).not.toEqual(undefined);
