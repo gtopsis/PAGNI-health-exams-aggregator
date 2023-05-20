@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { Results } from "../common/interfaces";
+import FileUpload from "./components/FileUpload.vue";
 
 let healthData = ref<Results | undefined>();
 
@@ -18,16 +19,15 @@ const parseHealthExams = () => {
 </script>
 
 <template>
-  <div>
+  <!-- <div>
     <button @click="parseHealthExams">Parse health exams</button>
   </div>
+
   <div class="flex-center">
-    <!-- <div v-for="(item, index) in healthData.healthDataOfAllFiles" :key="index">
-      {{ item }}
-    </div> -->
     {{ healthData }}
-  </div>
-  <!-- <HelloWorld msg="Electron + Vite + Vue" /> -->
+  </div> -->
+
+  <FileUpload :maxSize="5" accept="pdf" />
 </template>
 
 <style>
