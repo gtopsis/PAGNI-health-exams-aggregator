@@ -103,6 +103,13 @@ contextBridge.exposeInMainWorld("healthExamsParser", {
       callback(event, ...args)
     );
   },
+  loadStoredHealtData: (
+    callback: (event: Event, ...args: unknown[]) => void
+  ) => {
+    ipcRenderer.on("load-stored-health-data", (event, ...args) =>
+      callback(event, ...args)
+    );
+  },
 });
-
+// load-stored-health-data
 setTimeout(removeLoading, 4999);

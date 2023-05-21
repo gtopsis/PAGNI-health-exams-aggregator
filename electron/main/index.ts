@@ -71,7 +71,7 @@ async function createWindow() {
   win.webContents.on("did-finish-load", () => {
     const data = store.get("stored_health_data");
 
-    win?.webContents.send("main-process-message", data);
+    win?.webContents.send("load-stored-health-data", data);
   });
 
   // Make all links open with the browser, not with the application

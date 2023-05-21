@@ -5,11 +5,21 @@ import FileUpload from "./components/FileUpload.vue";
 
 let healthData = ref<Results | undefined>();
 
-// Called when message received from main process
+// Called when new health data calculated
+window.healthExamsParser.loadStoredHealtData(
+  (event: unknown, data: Results) => {
+    console.info(`Retrieved stored data`);
+    console.info(data);
+
+    healthData.value = data;
+  }
+);
+
+// Called when new health data calculated
 window.healthExamsParser.receiveAggregatedHealtData(
   (event: unknown, data: Results) => {
-    console.log(`Received from main process`);
-    console.log(data);
+    console.info(`Received new data`);
+    console.info(data);
 
     healthData.value = data;
   }

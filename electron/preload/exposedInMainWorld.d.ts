@@ -3,6 +3,9 @@ export interface IElectronAPI {
   receiveAggregatedHealtData: (
     callback: (event: Event, ...args: unknown[]) => void
   ) => Promise<void>;
+  loadStoredHealtData: (
+    callback: (event: Event, ...args: unknown[]) => void
+  ) => Promise<void>;
 }
 
 declare global {
