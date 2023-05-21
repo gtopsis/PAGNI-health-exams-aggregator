@@ -14,6 +14,8 @@ jest.mock("fs", () => {
 
 jest.mock("pdf-parse");
 
+const files = ["path/to/file1.pdf", "path/to/file2.pdf"];
+
 describe("Extract health data of a single file", () => {
   it("will return no data when the file content is empty", async () => {
     (pdfParser as jest.Mock).mockResolvedValueOnce({ text: "" });
@@ -95,13 +97,14 @@ describe("Extract health data of multiple files", () => {
     `,
     });
 
-    const { filesData, healthDataOfAllFiles } =
-      await extractHealthDataFromPDFs();
+    const { filesData, healthDataOfAllFiles } = await extractHealthDataFromPDFs(
+      files
+    );
 
     expect(filesData).not.toEqual(undefined);
     expect(filesData).toEqual([
-      { fileId: 0, filename: "file1", date: undefined },
-      { fileId: 1, filename: "file2", date: "05/04/2023" },
+      { fileId: 0, filePath: "path/to/file1.pdf", date: undefined },
+      { fileId: 1, filePath: "path/to/file2.pdf", date: "04/05/2023" },
     ]);
     expect(healthDataOfAllFiles).not.toEqual(undefined);
     expect(healthDataOfAllFiles instanceof Map).toBeTruthy();
@@ -131,13 +134,14 @@ describe("Extract health data of multiple files", () => {
     `,
     });
 
-    const { filesData, healthDataOfAllFiles } =
-      await extractHealthDataFromPDFs();
+    const { filesData, healthDataOfAllFiles } = await extractHealthDataFromPDFs(
+      files
+    );
 
     expect(filesData).not.toEqual(undefined);
     expect(filesData).toEqual([
-      { fileId: 0, filename: "file1", date: "11/05/2023" },
-      { fileId: 1, filename: "file2", date: "05/04/2023" },
+      { fileId: 0, filePath: "path/to/file1.pdf", date: "05/11/2023" },
+      { fileId: 1, filePath: "path/to/file2.pdf", date: "04/05/2023" },
     ]);
     expect(healthDataOfAllFiles).not.toEqual(undefined);
     expect(healthDataOfAllFiles instanceof Map).toBeTruthy();
