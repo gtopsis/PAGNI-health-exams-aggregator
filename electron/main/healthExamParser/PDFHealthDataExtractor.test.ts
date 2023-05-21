@@ -1,4 +1,3 @@
-import { readdirSync } from "fs";
 import pdfParser from "pdf-parse";
 import {
   extractHealthDataFromPDF,
@@ -8,7 +7,6 @@ import {
 jest.mock("fs", () => {
   return {
     readFileSync: jest.fn(),
-    readdirSync: jest.fn(),
   };
 });
 
@@ -85,7 +83,6 @@ describe("Extract health data of a single file", () => {
 
 describe("Extract health data of multiple files", () => {
   it("will return a single value fro HCT when only one of the file contains valid data for HCT", async () => {
-    (readdirSync as jest.Mock).mockReturnValueOnce(["file1", "file2"]);
     (pdfParser as jest.Mock).mockResolvedValueOnce({
       text: "",
     });
@@ -117,7 +114,6 @@ describe("Extract health data of multiple files", () => {
   });
 
   it("will return a two values for HCT and one for MCHC when two files contain valid data for HCT and MCHC", async () => {
-    (readdirSync as jest.Mock).mockReturnValueOnce(["file1", "file2"]);
     (pdfParser as jest.Mock).mockResolvedValueOnce({
       text: `
       Ημ/νία παραλαβής:11/05/2023
