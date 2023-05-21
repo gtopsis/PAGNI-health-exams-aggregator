@@ -2,7 +2,10 @@ import { app, BrowserWindow, shell, ipcMain } from "electron";
 import { release } from "node:os";
 import { join } from "node:path";
 import { extractHealthDataFromPDFs } from "./healthExamParser/PDFHealthDataExtractor";
+import { stringifyDataWithComplexStructure } from "./util";
+import Store from "electron-store";
 
+const store = new Store();
 // The built directory structure
 //
 // ├─┬ dist-electron
@@ -66,7 +69,9 @@ async function createWindow() {
 
   // Test actively push message to the Electron-Renderer
   win.webContents.on("did-finish-load", () => {
-    win?.webContents.send("main-process-message", new Date().toLocaleString());
+    const data = store.get("stored_health_data");
+
+    win?.webContents.send("main-process-message", data);
   });
 
   // Make all links open with the browser, not with the application
@@ -125,6 +130,9 @@ ipcMain.on(
   "parseHealthExams",
   async (e: Electron.IpcMainEvent, content: string[]) => {
     const results = await parseHealthExams(content);
+
+    // store data to disk
+    store.set("stored_health_data", stringifyDataWithComplexStructure(results));
 
     // Send result back to renderer process
     win?.webContents.send("agreegatedHealthDataCalculated", results);
