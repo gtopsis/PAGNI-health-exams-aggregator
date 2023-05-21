@@ -5,9 +5,13 @@ export function getHealthExamDateFromText(text: string) {
   const regex = new RegExp(dateRegex, "g");
 
   const match = text.match(regex);
-  const date = match?.[0].replace("Ημ/νία παραλαβής:", "");
+  const dateParts = match?.[0]
+    .replace("Ημ/νία παραλαβής:", "")
+    .trim()
+    .split("/");
+  const formattedDate = `${dateParts?.[1]}/${dateParts?.[0]}/${dateParts?.[2]}`;
 
-  return dayjs(date).isValid() ? date : undefined;
+  return dayjs(formattedDate).isValid() ? formattedDate : undefined;
 }
 
 export const getHealthTermsDataFromText = (
