@@ -27,35 +27,21 @@ const file = {
 
 function handleFileChange(e: Event) {
   const files = (e.target as HTMLInputElement)?.files;
+  // Get uploaded file
+  const file = files?.[0];
+
   // Check if file is selected
-  if (!files || !files[0]) {
+  if (!file) {
     return;
   }
 
   // Check if file is valid
-  if (!isFileValid(files[0])) {
+  if (!isFileValid(file)) {
     console.error("Invalid file");
   }
 
-  // Get uploaded file
-  const file = files[0],
-    // Get file size
-    fileSize = Math.round((file.size / 1024 / 1024) * 100) / 100,
-    // Get file extension
-    fileExtention = file.name.split(".").pop(),
-    // Get file name
-    fileName = file.name.split(".").shift(),
-    // Check if file is an image
-    isPdf =
-      fileExtention === undefined
-        ? false
-        : ["pdf", "application/vnd.ms-excel"].includes(fileExtention);
-  // Print to console
   // @ts-ignore
   window.healthExamsParser.parseHealthExams([file.path]);
-
-  // @ts-ignore
-  console.log(file.path, fileSize, fileExtention, fileName, isPdf);
 }
 
 function isFileSizeValid(fileSize: number) {

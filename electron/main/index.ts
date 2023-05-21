@@ -123,8 +123,8 @@ const parseHealthExams = async (filesPaths: string[]) =>
 
 ipcMain.on(
   "parseHealthExams",
-  async (e: Electron.IpcMainEvent, content: unknown) => {
-    const results = await parseHealthExams(content as string[]);
+  async (e: Electron.IpcMainEvent, content: string[]) => {
+    const results = await parseHealthExams(content);
 
     // Send result back to renderer process
     win?.webContents.send("D", results);

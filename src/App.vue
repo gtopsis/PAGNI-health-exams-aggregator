@@ -12,21 +12,9 @@ window.healthExamsParser.receiveFromD((event: unknown, data: Results) => {
 
   healthData.value = data;
 });
-
-const parseHealthExams = () => {
-  window.healthExamsParser.parseHealthExams();
-};
 </script>
 
 <template>
-  <!-- <div>
-    <button @click="parseHealthExams">Parse health exams</button>
-  </div>
-
-  <div class="flex-center">
-    {{ healthData }}
-  </div> -->
-
   <FileUpload :maxSize="5" accept="pdf" />
 </template>
 
