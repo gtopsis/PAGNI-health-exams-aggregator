@@ -4,7 +4,6 @@ import {
   getHealthExamDateFromText,
   getHealthTermsDataFromText,
 } from "./textSearcher";
-import path from "path";
 import { FileDetails, FilesResults, Results } from "../../../common/interfaces";
 
 export const healthTerms = [
@@ -45,22 +44,20 @@ export async function extractHealthDataFromPDF(filePath: string): Promise<{
   }
 }
 
-export async function extractHealthDataFromPDFs(): Promise<Results> {
-  const pdfsDir = path.resolve(__dirname, "../../pdfs");
+export async function extractHealthDataFromPDFs(
+  filesPaths: string[]
+): Promise<Results> {
   const filesData: FileDetails[] = [];
   const healthDataOfAllFiles: FilesResults = new Map(
     healthTerms.map((term) => [term, []])
   );
 
-  const filenames = fs.readdirSync(pdfsDir);
-  for (const filename of filenames) {
-    const filePath = `${pdfsDir}/${filename}`;
-
+  for (const filePath of filesPaths) {
     const { date, result: healthTermsFromFile } =
       await extractHealthDataFromPDF(filePath);
 
     const fileId = filesData.length;
-    filesData.push({ fileId, filename, date });
+    filesData.push({ fileId, filePath, date });
 
     healthTermsFromFile.forEach((healthTermValue, healthTerm) => {
       const existingValuesOfHealthTerm =

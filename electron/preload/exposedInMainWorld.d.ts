@@ -1,5 +1,5 @@
 export interface IElectronAPI {
-  parseHealthExams: () => Promise<void>;
+  parseHealthExams: (filesPatths: string[]) => Promise<void>;
   receiveFromD: (f: Function) => Promise<void>;
 }
 

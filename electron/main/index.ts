@@ -118,13 +118,13 @@ ipcMain.handle("open-win", (_, arg) => {
   }
 });
 
-const parseHealthExams = async () => extractHealthDataFromPDFs();
+const parseHealthExams = async (filesPaths: string[]) =>
+  extractHealthDataFromPDFs(filesPaths);
 
 ipcMain.on(
   "parseHealthExams",
   async (e: Electron.IpcMainEvent, content: unknown) => {
-    const results = await parseHealthExams();
-    console.log("🚀 ~ file: index.ts:131 ~ results:", results);
+    const results = await parseHealthExams(content as string[]);
 
     // Send result back to renderer process
     win?.webContents.send("D", results);

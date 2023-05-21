@@ -51,7 +51,11 @@ function handleFileChange(e: Event) {
         ? false
         : ["pdf", "application/vnd.ms-excel"].includes(fileExtention);
   // Print to console
-  console.log(fileSize, fileExtention, fileName, isPdf);
+  // @ts-ignore
+  window.healthExamsParser.parseHealthExams([file.path]);
+
+  // @ts-ignore
+  console.log(file.path, fileSize, fileExtention, fileName, isPdf);
 }
 
 function isFileSizeValid(fileSize: number) {
@@ -70,14 +74,16 @@ function isFileTypeValid(fileExtention: string) {
   }
 }
 
-function isFileValid(file) {
+function isFileValid(file: File) {
   isFileSizeValid(Math.round((file.size / 1024 / 1024) * 100) / 100);
-  isFileTypeValid(file.name.split(".").pop());
-  if (errors.length === 0) {
-    return true;
-  } else {
+  const filename = file.name?.split(".").pop();
+  if (!filename) {
     return false;
   }
+
+  isFileTypeValid(filename);
+
+  return errors.length === 0;
 }
 </script>
 
