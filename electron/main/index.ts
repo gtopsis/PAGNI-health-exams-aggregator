@@ -127,6 +127,6 @@ ipcMain.on(
     const results = await parseHealthExams(content);
 
     // Send result back to renderer process
-    win?.webContents.send("D", results);
+    win?.webContents.send("agreegatedHealthDataCalculated", results);
   }
 );

@@ -6,12 +6,14 @@ import FileUpload from "./components/FileUpload.vue";
 let healthData = ref<Results | undefined>();
 
 // Called when message received from main process
-window.healthExamsParser.receiveFromD((event: unknown, data: Results) => {
-  console.log(`Received from main process`);
-  console.log(data);
+window.healthExamsParser.receiveAggregatedHealtData(
+  (event: unknown, data: Results) => {
+    console.log(`Received from main process`);
+    console.log(data);
 
-  healthData.value = data;
-});
+    healthData.value = data;
+  }
+);
 </script>
 
 <template>

@@ -1,6 +1,8 @@
 export interface IElectronAPI {
   parseHealthExams: (filesPatths: string[]) => Promise<void>;
-  receiveFromD: (f: Function) => Promise<void>;
+  receiveAggregatedHealtData: (
+    callback: (event: Event, ...args: unknown[]) => void
+  ) => Promise<void>;
 }
 
 declare global {

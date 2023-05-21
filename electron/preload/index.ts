@@ -1,4 +1,4 @@
-const { ipcRenderer, contextBridge } = require("electron");
+import { ipcRenderer, contextBridge } from "electron";
 
 function domReady(
   condition: DocumentReadyState[] = ["complete", "interactive"]
@@ -96,10 +96,13 @@ window.onmessage = (ev) => {
 contextBridge.exposeInMainWorld("healthExamsParser", {
   parseHealthExams: (filesPaths: string[]) =>
     ipcRenderer.send("parseHealthExams", filesPaths),
-  receiveFromD: (func: Function) => {
-    ipcRenderer.on("D", (event, ...args) => func(event, ...args));
+  receiveAggregatedHealtData: (
+    callback: (event: Event, ...args: unknown[]) => void
+  ) => {
+    ipcRenderer.on("agreegatedHealthDataCalculated", (event, ...args) =>
+      callback(event, ...args)
+    );
   },
-  // content: ipcRenderer.invoke("loadContent"),
 });
 
 setTimeout(removeLoading, 4999);
