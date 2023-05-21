@@ -127,7 +127,7 @@ const parseHealthExams = async (filesPaths: string[]) =>
   extractHealthDataFromPDFs(filesPaths);
 
 ipcMain.on(
-  "parseHealthExams",
+  "parse-health-exams",
   async (e: Electron.IpcMainEvent, content: string[]) => {
     const results = await parseHealthExams(content);
 
@@ -135,6 +135,6 @@ ipcMain.on(
     store.set("stored_health_data", stringifyDataWithComplexStructure(results));
 
     // Send result back to renderer process
-    win?.webContents.send("agreegatedHealthDataCalculated", results);
+    win?.webContents.send("agreegated-health-data-calculated", results);
   }
 );

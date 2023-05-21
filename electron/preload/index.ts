@@ -95,11 +95,11 @@ window.onmessage = (ev) => {
 
 contextBridge.exposeInMainWorld("healthExamsParser", {
   parseHealthExams: (filesPaths: string[]) =>
-    ipcRenderer.send("parseHealthExams", filesPaths),
+    ipcRenderer.send("parse-health-exams", filesPaths),
   receiveAggregatedHealtData: (
     callback: (event: Event, ...args: unknown[]) => void
   ) => {
-    ipcRenderer.on("agreegatedHealthDataCalculated", (event, ...args) =>
+    ipcRenderer.on("agreegated-health-data-calculated", (event, ...args) =>
       callback(event, ...args)
     );
   },
@@ -111,5 +111,4 @@ contextBridge.exposeInMainWorld("healthExamsParser", {
     );
   },
 });
-// load-stored-health-data
 setTimeout(removeLoading, 4999);
