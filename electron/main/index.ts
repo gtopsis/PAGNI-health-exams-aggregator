@@ -2,10 +2,13 @@ import { app, BrowserWindow, shell, ipcMain } from "electron";
 import { release } from "node:os";
 import { join } from "node:path";
 import { extractHealthDataFromPDFs } from "./healthExamParser/PDFHealthDataExtractor";
-import { stringifyDataWithComplexStructure } from "./util";
+import {
+  parseStringifiedDataWithComplexStructure,
+  stringifyDataWithComplexStructure,
+} from "./util";
 import Store from "electron-store";
+import { HealthTermValueInFile, Results } from "../../common/interfaces";
 
-const store = new Store();
 // The built directory structure
 //
 // ├─┬ dist-electron
@@ -69,9 +72,12 @@ async function createWindow() {
 
   // Test actively push message to the Electron-Renderer
   win.webContents.on("did-finish-load", () => {
-    const data = store.get("stored_health_data");
+    const storedData = store.get("stored_health_data") as string;
+    existingHealthData = parseStringifiedDataWithComplexStructure(
+      storedData
+    ) as Results;
 
-    win?.webContents.send("load-stored-health-data", data);
+    win?.webContents.send("load-stored-health-data", existingHealthData);
   });
 
   // Make all links open with the browser, not with the application
@@ -123,18 +129,48 @@ ipcMain.handle("open-win", (_, arg) => {
   }
 });
 
+const store = new Store();
+let existingHealthData: Results = {
+  filesData: [],
+  healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
+};
+
 const parseHealthExams = async (filesPaths: string[]) =>
   extractHealthDataFromPDFs(filesPaths);
 
 ipcMain.on(
   "parse-health-exams",
   async (e: Electron.IpcMainEvent, content: string[]) => {
-    const results = await parseHealthExams(content);
+    const newHealthData: Results = await parseHealthExams(content);
+
+    existingHealthData.filesData = [
+      ...existingHealthData.filesData,
+      ...newHealthData.filesData,
+    ];
+
+    newHealthData.healthDataOfAllFiles.forEach((values, healthTerm) => {
+      if (!values.length) {
+        return;
+      }
+      const existingValues =
+        existingHealthData.healthDataOfAllFiles.get(healthTerm) || [];
+
+      existingHealthData.healthDataOfAllFiles.set(healthTerm, [
+        ...existingValues,
+        ...values,
+      ]);
+    });
 
     // store data to disk
-    store.set("stored_health_data", stringifyDataWithComplexStructure(results));
+    store.set(
+      "stored_health_data",
+      stringifyDataWithComplexStructure(existingHealthData)
+    );
 
     // Send result back to renderer process
-    win?.webContents.send("agreegated-health-data-calculated", results);
+    win?.webContents.send(
+      "agreegated-health-data-calculated",
+      existingHealthData
+    );
   }
 );

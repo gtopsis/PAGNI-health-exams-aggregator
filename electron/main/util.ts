@@ -23,5 +23,5 @@ export function stringifyDataWithComplexStructure(data: unknown) {
 }
 
 export function parseStringifiedDataWithComplexStructure(data: string) {
-  return JSON.stringify(data, reviver);
+  return JSON.parse(data, reviver);
 }

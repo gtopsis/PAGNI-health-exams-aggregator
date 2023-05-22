@@ -5,7 +5,7 @@ export interface FileDetails {
   date?: string | undefined;
 }
 
-interface HealthTermValueInFile {
+export interface HealthTermValueInFile {
   fileId: number;
   healthTermValue: number;
 }
