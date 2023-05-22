@@ -152,6 +152,7 @@ ipcMain.on(
       if (!values.length) {
         return;
       }
+
       const existingValues =
         existingHealthData.healthDataOfAllFiles.get(healthTerm) || [];
 

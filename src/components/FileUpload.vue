@@ -25,7 +25,7 @@ const file = {
   isUploaded: false,
 };
 
-function handleFileChange(e: Event) {
+const handleFileChange = (e: Event) => {
   const files = (e.target as HTMLInputElement)?.files;
   // Get uploaded file
   const file = files?.[0];
@@ -40,27 +40,26 @@ function handleFileChange(e: Event) {
     console.error("Invalid file");
   }
 
-  // @ts-ignore
   window.healthExamsParser.parseHealthExams([file.path]);
-}
+};
 
-function isFileSizeValid(fileSize: number) {
+const isFileSizeValid = (fileSize: number) => {
   if (fileSize <= props.maxSize) {
     console.log("File size is valid");
   } else {
     errors.push(`File size should be less than ${props.maxSize} MB`);
   }
-}
+};
 
-function isFileTypeValid(fileExtention: string) {
+const isFileTypeValid = (fileExtention: string) => {
   if (props.accept.split(",").includes(fileExtention)) {
     console.log("File type is valid");
   } else {
     errors.push(`File type should be ${props.accept}`);
   }
-}
+};
 
-function isFileValid(file: File) {
+const isFileValid = (file: File) => {
   isFileSizeValid(Math.round((file.size / 1024 / 1024) * 100) / 100);
   const filename = file.name?.split(".").pop();
   if (!filename) {
@@ -70,7 +69,7 @@ function isFileValid(file: File) {
   isFileTypeValid(filename);
 
   return errors.length === 0;
-}
+};
 </script>
 
 <template>

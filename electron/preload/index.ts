@@ -111,4 +111,5 @@ contextBridge.exposeInMainWorld("healthExamsParser", {
     );
   },
 });
+
 setTimeout(removeLoading, 4999);
