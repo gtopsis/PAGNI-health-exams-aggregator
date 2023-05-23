@@ -6,6 +6,7 @@ export interface IElectronAPI {
   loadStoredHealtData: (
     callback: (event: Event, ...args: unknown[]) => void
   ) => Promise<void>;
+  clearHealthData: () => void;
 }
 
 declare global {

@@ -110,6 +110,7 @@ contextBridge.exposeInMainWorld("healthExamsParser", {
       callback(event, ...args)
     );
   },
+  clearHealthData: () => ipcRenderer.send("clear-health-data"),
 });
 
 setTimeout(removeLoading, 4999);

@@ -52,7 +52,7 @@ export async function addHealthDataFromNewHealthExams(
     const { date, result: healthTermsFromFile } =
       await extractHealthDataFromPDF(filePath);
 
-    const fileId = existingHealthData.filesData.length;
+    const fileId = existingHealthData.filesData?.length || 0;
     existingHealthData.filesData.push({ fileId: fileId, filePath, date });
 
     healthTermsFromFile.forEach((healthTermValue, healthTerm) => {

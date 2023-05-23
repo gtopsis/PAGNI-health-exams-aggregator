@@ -44,17 +44,13 @@ const handleFileChange = (e: Event) => {
 };
 
 const isFileSizeValid = (fileSize: number) => {
-  if (fileSize <= props.maxSize) {
-    console.log("File size is valid");
-  } else {
+  if (fileSize > props.maxSize) {
     errors.push(`File size should be less than ${props.maxSize} MB`);
   }
 };
 
 const isFileTypeValid = (fileExtention: string) => {
-  if (props.accept.split(",").includes(fileExtention)) {
-    console.log("File type is valid");
-  } else {
+  if (!props.accept.split(",").includes(fileExtention)) {
     errors.push(`File type should be ${props.accept}`);
   }
 };

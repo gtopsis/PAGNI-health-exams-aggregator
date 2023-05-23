@@ -5,11 +5,9 @@ import {
 } from "./PDFHealthDataExtractor";
 import { HealthTermValueInFile, Results } from "../../../common/interfaces";
 
-jest.mock("fs", () => {
-  return {
-    readFileSync: jest.fn(),
-  };
-});
+jest.mock("fs", () => ({
+  readFileSync: jest.fn(),
+}));
 
 jest.mock("pdf-parse");
 

@@ -24,10 +24,15 @@ window.healthExamsParser.receiveAggregatedHealtData(
     healthData.value = data;
   }
 );
+
+const clearResults = () => {
+  window.healthExamsParser.clearHealthData();
+};
 </script>
 
 <template>
   <FileUpload :maxSize="5" accept="pdf" />
+  <div><button @click="clearResults">Remove results</button></div>
 </template>
 
 <style>

@@ -20,5 +20,14 @@ const reviver = (key: string, value: any) => {
 export const stringifyDataWithComplexStructure = (data: unknown) =>
   JSON.stringify(data, replacer);
 
-export const parseStringifiedDataWithComplexStructure = (data: string) =>
-  JSON.parse(data, reviver);
+export const parseStringifiedDataWithComplexStructure = (data: string) => {
+  try {
+    return JSON.parse(data, reviver);
+  } catch (e) {
+    console.error(
+      "Stored data in the file config.json has not a valid json format"
+    );
+
+    return {};
+  }
+};

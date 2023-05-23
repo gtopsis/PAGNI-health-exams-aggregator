@@ -9,6 +9,13 @@ import {
 import Store from "electron-store";
 import { HealthTermValueInFile, Results } from "../../common/interfaces";
 
+const initTotalHealthData = () => ({
+  filesData: [],
+  healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
+});
+const store = new Store();
+let totalHealthData: Results = initTotalHealthData();
+
 // The built directory structure
 //
 // ├─┬ dist-electron
@@ -73,9 +80,11 @@ async function createWindow() {
   // Test actively push message to the Electron-Renderer
   win.webContents.on("did-finish-load", () => {
     const storedData = store.get("stored_health_data") as string;
-    totalHealthData = parseStringifiedDataWithComplexStructure(
-      storedData
-    ) as Results;
+    if (storedData) {
+      totalHealthData = parseStringifiedDataWithComplexStructure(
+        storedData
+      ) as Results;
+    }
 
     win?.webContents.send("load-stored-health-data", totalHealthData);
   });
@@ -129,12 +138,6 @@ ipcMain.handle("open-win", (_, arg) => {
   }
 });
 
-const store = new Store();
-let totalHealthData: Results = {
-  filesData: [],
-  healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
-};
-
 ipcMain.on(
   "parse-health-exams",
   async (e: Electron.IpcMainEvent, filesPaths: string[]) => {
@@ -153,3 +156,8 @@ ipcMain.on(
     win?.webContents.send("agreegated-health-data-calculated", totalHealthData);
   }
 );
+
+ipcMain.on("clear-health-data", () => {
+  store.clear();
+  totalHealthData = initTotalHealthData();
+});
