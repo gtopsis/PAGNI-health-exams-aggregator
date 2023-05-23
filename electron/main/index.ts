@@ -160,4 +160,7 @@ ipcMain.on(
 ipcMain.on("clear-health-data", () => {
   store.clear();
   totalHealthData = initTotalHealthData();
+
+  // Send result back to renderer process
+  win?.webContents.send("agreegated-health-data-calculated", totalHealthData);
 });

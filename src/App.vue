@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { Ref, ref } from "vue";
 import { Results } from "../common/interfaces";
 import FileUpload from "./components/FileUpload.vue";
 
-let healthData = ref<Results | undefined>();
+let healthData: Ref<Results> = ref<Results | null>(null);
 
 // Called when new health data calculated
 window.healthExamsParser.loadStoredHealtData(
@@ -31,8 +31,17 @@ const clearResults = () => {
 </script>
 
 <template>
+  <h2>Health data Aggregator</h2>
+
   <FileUpload :maxSize="5" accept="pdf" />
   <div><button @click="clearResults">Remove results</button></div>
+
+  <h3>Files</h3>
+  <ul>
+    <li v-for="file in healthData.filesData">
+      <span>{{ file.filePath }}</span>
+    </li>
+  </ul>
 </template>
 
 <style>

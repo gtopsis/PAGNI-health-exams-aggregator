@@ -95,12 +95,13 @@ const isFileValid = (file: File) => {
 
 <style scoped>
 .file-upload {
-  height: 100vh;
+  height: 300px;
   width: 100%;
   display: flex;
   align-items: flex-start;
   justify-content: center;
 }
+
 .file-upload .file-upload__area {
   width: 600px;
   min-height: 200px;
