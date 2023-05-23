@@ -1,5 +1,9 @@
 import pdfParser from "pdf-parse";
-import { extractHealthDataFromPDF } from "./PDFHealthDataExtractor";
+import {
+  addHealthDataFromNewHealthExams,
+  extractHealthDataFromPDF,
+} from "./PDFHealthDataExtractor";
+import { HealthTermValueInFile, Results } from "../../../common/interfaces";
 
 jest.mock("fs", () => {
   return {
@@ -73,5 +77,97 @@ describe("Extract health data of a single file", () => {
     expect(result instanceof Map).toBeTruthy();
     expect(result.size).toEqual(1);
     expect(result.get("HCT Αιματοκρίτης")).toEqual(40.6);
+  });
+});
+
+describe("Extract health data of multiple files", () => {
+  const files = ["path/to/file1.pdf", "path/to/file2.pdf"];
+
+  it("will return a single value fro HCT when only one of the file contains valid data for HCT", async () => {
+    (pdfParser as jest.Mock).mockResolvedValueOnce({
+      text: "",
+    });
+    (pdfParser as jest.Mock).mockResolvedValueOnce({
+      text: `
+        Ημ/νία παραλαβής:05/04/2023
+        12,9AAA Αιμοσφαιρίνη  14-18g/dl
+        40,6HCT Αιματοκρίτης 40-52%
+    `,
+    });
+    const totalHealthData: Results = {
+      filesData: [],
+      healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
+    };
+
+    const { filesData, healthDataOfAllFiles } =
+      await addHealthDataFromNewHealthExams(totalHealthData, files);
+
+    expect(filesData).not.toEqual(undefined);
+    expect(filesData).toEqual([
+      { fileId: 0, filePath: "path/to/file1.pdf", date: undefined },
+      { fileId: 1, filePath: "path/to/file2.pdf", date: "04/05/2023" },
+    ]);
+    expect(healthDataOfAllFiles).not.toEqual(undefined);
+    expect(healthDataOfAllFiles instanceof Map).toBeTruthy();
+    expect(healthDataOfAllFiles.size).toEqual(1);
+    expect(healthDataOfAllFiles.get("HCT Αιματοκρίτης")).toHaveLength(1);
+    expect(healthDataOfAllFiles.get("HCT Αιματοκρίτης")?.[0]).toEqual({
+      fileId: 1,
+      healthTermValue: 40.6,
+    });
+  });
+
+  it("will return a two values for HCT and one for MCHC when two files contain valid data for HCT and MCHC", async () => {
+    (pdfParser as jest.Mock).mockResolvedValueOnce({
+      text: `
+      Ημ/νία παραλαβής:11/05/2023
+      12,9AAA Αιμοσφαιρίνη  14-18g/dl
+      49,1HCT Αιματοκρίτης 52%
+      25,9MCHC Μέση πυκνότητα
+    `,
+    });
+    (pdfParser as jest.Mock).mockResolvedValueOnce({
+      text: `
+        Ημ/νία παραλαβής:05/04/2023
+        12,9AAA Αιμοσφαιρίνη  14-18g/dl
+        40,6HCT Αιματοκρίτης 40-52%
+    `,
+    });
+    const totalHealthData: Results = {
+      filesData: [],
+      healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
+    };
+
+    const { filesData, healthDataOfAllFiles } =
+      await addHealthDataFromNewHealthExams(totalHealthData, files);
+
+    expect(filesData).not.toEqual(undefined);
+    expect(filesData).toEqual([
+      { fileId: 0, filePath: "path/to/file1.pdf", date: "05/11/2023" },
+      { fileId: 1, filePath: "path/to/file2.pdf", date: "04/05/2023" },
+    ]);
+    expect(healthDataOfAllFiles).not.toEqual(undefined);
+    expect(healthDataOfAllFiles instanceof Map).toBeTruthy();
+    expect(healthDataOfAllFiles.size).toEqual(2);
+    expect(healthDataOfAllFiles.get("HCT Αιματοκρίτης")).toHaveLength(2);
+    expect(healthDataOfAllFiles.get("HCT Αιματοκρίτης")).toEqual([
+      {
+        fileId: 0,
+        healthTermValue: 49.1,
+      },
+      {
+        fileId: 1,
+        healthTermValue: 40.6,
+      },
+    ]);
+    expect(
+      totalHealthData.healthDataOfAllFiles.get("MCHC Μέση πυκνότητα")
+    ).toHaveLength(1);
+    expect(
+      totalHealthData.healthDataOfAllFiles.get("MCHC Μέση πυκνότητα")?.[0]
+    ).toEqual({
+      fileId: 0,
+      healthTermValue: 25.9,
+    });
   });
 });

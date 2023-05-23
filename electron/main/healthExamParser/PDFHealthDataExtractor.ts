@@ -4,7 +4,7 @@ import {
   getHealthExamDateFromText,
   getHealthTermsDataFromText,
 } from "./textSearcher";
-import { FileDetails } from "../../../common/interfaces";
+import { FileDetails, Results } from "../../../common/interfaces";
 
 export const healthTerms = [
   "WBC  Λευκά αιμοσφ.",
@@ -42,4 +42,31 @@ export async function extractHealthDataFromPDF(filePath: string): Promise<{
 
     return { date: undefined, result: new Map<string, number>() };
   }
+}
+
+export async function addHealthDataFromNewHealthExams(
+  existingHealthData: Results,
+  filesPaths: string[]
+) {
+  for (const filePath of filesPaths) {
+    const { date, result: healthTermsFromFile } =
+      await extractHealthDataFromPDF(filePath);
+
+    const fileId = existingHealthData.filesData.length;
+    existingHealthData.filesData.push({ fileId: fileId, filePath, date });
+
+    healthTermsFromFile.forEach((healthTermValue, healthTerm) => {
+      const existingValuesOfHealthTerm =
+        existingHealthData.healthDataOfAllFiles.get(healthTerm) || [];
+
+      existingValuesOfHealthTerm.push({ fileId, healthTermValue });
+
+      existingHealthData.healthDataOfAllFiles.set(
+        healthTerm,
+        existingValuesOfHealthTerm
+      );
+    });
+  }
+
+  return existingHealthData;
 }

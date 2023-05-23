@@ -1,7 +1,7 @@
 import { app, BrowserWindow, shell, ipcMain } from "electron";
 import { release } from "node:os";
 import { join } from "node:path";
-import { extractHealthDataFromPDF } from "./healthExamParser/PDFHealthDataExtractor";
+import { addHealthDataFromNewHealthExams } from "./healthExamParser/PDFHealthDataExtractor";
 import {
   parseStringifiedDataWithComplexStructure,
   stringifyDataWithComplexStructure,
@@ -134,33 +134,6 @@ let totalHealthData: Results = {
   filesData: [],
   healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
 };
-
-export async function addHealthDataFromNewHealthExams(
-  existingHealthData: Results,
-  filesPaths: string[]
-) {
-  for (const filePath of filesPaths) {
-    const { date, result: healthTermsFromFile } =
-      await extractHealthDataFromPDF(filePath);
-
-    const fileId = existingHealthData.filesData.length;
-    existingHealthData.filesData.push({ fileId: fileId, filePath, date });
-
-    healthTermsFromFile.forEach((healthTermValue, healthTerm) => {
-      const existingValuesOfHealthTerm =
-        existingHealthData.healthDataOfAllFiles.get(healthTerm) || [];
-
-      existingValuesOfHealthTerm.push({ fileId, healthTermValue });
-
-      existingHealthData.healthDataOfAllFiles.set(
-        healthTerm,
-        existingValuesOfHealthTerm
-      );
-    });
-  }
-
-  return existingHealthData;
-}
 
 ipcMain.on(
   "parse-health-exams",
