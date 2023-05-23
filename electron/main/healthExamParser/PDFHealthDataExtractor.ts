@@ -4,7 +4,7 @@ import {
   getHealthExamDateFromText,
   getHealthTermsDataFromText,
 } from "./textSearcher";
-import { FileDetails, FilesResults, Results } from "../../../common/interfaces";
+import { FileDetails } from "../../../common/interfaces";
 
 export const healthTerms = [
   "WBC  Λευκά αιμοσφ.",
@@ -42,32 +42,4 @@ export async function extractHealthDataFromPDF(filePath: string): Promise<{
 
     return { date: undefined, result: new Map<string, number>() };
   }
-}
-
-export async function extractHealthDataFromPDFs(
-  filesPaths: string[]
-): Promise<Results> {
-  const filesData: FileDetails[] = [];
-  const healthDataOfAllFiles: FilesResults = new Map(
-    healthTerms.map((term) => [term, []])
-  );
-
-  for (const filePath of filesPaths) {
-    const { date, result: healthTermsFromFile } =
-      await extractHealthDataFromPDF(filePath);
-
-    const fileId = filesData.length;
-    filesData.push({ fileId, filePath, date });
-
-    healthTermsFromFile.forEach((healthTermValue, healthTerm) => {
-      const existingValuesOfHealthTerm =
-        healthDataOfAllFiles.get(healthTerm) || [];
-
-      existingValuesOfHealthTerm.push({ fileId, healthTermValue });
-
-      healthDataOfAllFiles.set(healthTerm, existingValuesOfHealthTerm);
-    });
-  }
-
-  return { filesData, healthDataOfAllFiles };
 }

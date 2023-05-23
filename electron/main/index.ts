@@ -1,7 +1,7 @@
 import { app, BrowserWindow, shell, ipcMain } from "electron";
 import { release } from "node:os";
 import { join } from "node:path";
-import { extractHealthDataFromPDFs } from "./healthExamParser/PDFHealthDataExtractor";
+import { extractHealthDataFromPDF } from "./healthExamParser/PDFHealthDataExtractor";
 import {
   parseStringifiedDataWithComplexStructure,
   stringifyDataWithComplexStructure,
@@ -73,11 +73,11 @@ async function createWindow() {
   // Test actively push message to the Electron-Renderer
   win.webContents.on("did-finish-load", () => {
     const storedData = store.get("stored_health_data") as string;
-    existingHealthData = parseStringifiedDataWithComplexStructure(
+    totalHealthData = parseStringifiedDataWithComplexStructure(
       storedData
     ) as Results;
 
-    win?.webContents.send("load-stored-health-data", existingHealthData);
+    win?.webContents.send("load-stored-health-data", totalHealthData);
   });
 
   // Make all links open with the browser, not with the application
@@ -130,48 +130,53 @@ ipcMain.handle("open-win", (_, arg) => {
 });
 
 const store = new Store();
-let existingHealthData: Results = {
+let totalHealthData: Results = {
   filesData: [],
   healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
 };
 
-const parseHealthExams = async (filesPaths: string[]) =>
-  extractHealthDataFromPDFs(filesPaths);
+export async function addHealthDataFromNewHealthExams(
+  existingHealthData: Results,
+  filesPaths: string[]
+) {
+  for (const filePath of filesPaths) {
+    const { date, result: healthTermsFromFile } =
+      await extractHealthDataFromPDF(filePath);
+
+    const fileId = existingHealthData.filesData.length;
+    existingHealthData.filesData.push({ fileId: fileId, filePath, date });
+
+    healthTermsFromFile.forEach((healthTermValue, healthTerm) => {
+      const existingValuesOfHealthTerm =
+        existingHealthData.healthDataOfAllFiles.get(healthTerm) || [];
+
+      existingValuesOfHealthTerm.push({ fileId, healthTermValue });
+
+      existingHealthData.healthDataOfAllFiles.set(
+        healthTerm,
+        existingValuesOfHealthTerm
+      );
+    });
+  }
+
+  return existingHealthData;
+}
 
 ipcMain.on(
   "parse-health-exams",
-  async (e: Electron.IpcMainEvent, content: string[]) => {
-    const newHealthData: Results = await parseHealthExams(content);
-
-    existingHealthData.filesData = [
-      ...existingHealthData.filesData,
-      ...newHealthData.filesData,
-    ];
-
-    newHealthData.healthDataOfAllFiles.forEach((values, healthTerm) => {
-      if (!values.length) {
-        return;
-      }
-
-      const existingValues =
-        existingHealthData.healthDataOfAllFiles.get(healthTerm) || [];
-
-      existingHealthData.healthDataOfAllFiles.set(healthTerm, [
-        ...existingValues,
-        ...values,
-      ]);
-    });
+  async (e: Electron.IpcMainEvent, filesPaths: string[]) => {
+    totalHealthData = await addHealthDataFromNewHealthExams(
+      totalHealthData,
+      filesPaths
+    );
 
     // store data to disk
     store.set(
       "stored_health_data",
-      stringifyDataWithComplexStructure(existingHealthData)
+      stringifyDataWithComplexStructure(totalHealthData)
     );
 
     // Send result back to renderer process
-    win?.webContents.send(
-      "agreegated-health-data-calculated",
-      existingHealthData
-    );
+    win?.webContents.send("agreegated-health-data-calculated", totalHealthData);
   }
 );
