@@ -66,6 +66,8 @@ async function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
     },
+    width: 1000,
+    height: 1000,
   });
 
   if (process.env.VITE_DEV_SERVER_URL) {
