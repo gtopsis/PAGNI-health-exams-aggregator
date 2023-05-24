@@ -3,7 +3,10 @@ import { Ref, ref } from "vue";
 import { Results } from "../common/interfaces";
 import FileUpload from "./components/FileUpload.vue";
 
-let healthData: Ref<Results> = ref<Results | null>(null);
+let healthData: Ref<Results> = ref<Results | null>({
+  filesData: [],
+  healthDataOfAllFiles: new Map(),
+});
 
 // Called when new health data calculated
 window.healthExamsParser.loadStoredHealtData(
@@ -42,6 +45,13 @@ const clearResults = () => {
       <span>{{ file.filePath }}</span>
     </li>
   </ul>
+
+  <h3>Results</h3>
+  <div id="app">
+    <div v-for="[key, value] in healthData.healthDataOfAllFiles">
+      {{ key }} => {{ value.map((v) => v.healthTermValue) }};
+    </div>
+  </div>
 </template>
 
 <style>
