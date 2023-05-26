@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { Ref, ref } from "vue";
-import { Results } from "../common/interfaces";
+import { Ref, computed, ref } from "vue";
+import {
+  Results,
+  HealthTermValueInFile,
+  FileDetails,
+} from "../common/interfaces";
 import FileUpload from "./components/FileUpload.vue";
+import HealthTermGraph from "./components/HealthTermGraph.vue";
 
 let healthData: Ref<Results> = ref<Results | null>({
   filesData: [],
@@ -11,8 +16,7 @@ let healthData: Ref<Results> = ref<Results | null>({
 // Called when new health data calculated
 window.healthExamsParser.loadStoredHealtData(
   (event: unknown, data: Results) => {
-    console.info(`Retrieved stored data`);
-    console.info(data);
+    // console.debug(data);
 
     healthData.value = data;
   }
@@ -21,9 +25,6 @@ window.healthExamsParser.loadStoredHealtData(
 // Called when new health data calculated
 window.healthExamsParser.receiveAggregatedHealtData(
   (event: unknown, data: Results) => {
-    console.info(`Received new data`);
-    console.info(data);
-
     healthData.value = data;
   }
 );
@@ -31,10 +32,42 @@ window.healthExamsParser.receiveAggregatedHealtData(
 const clearResults = () => {
   window.healthExamsParser.clearHealthData();
 };
+
+const graphTitle = "HCT Αιματοκρίτης";
+
+let data = computed(() => {
+  const filesData = <Results["filesData"]>healthData.value.filesData;
+  const healthTermValueInFile = <HealthTermValueInFile[]>(
+    healthData.value.healthDataOfAllFiles?.get("HCT Αιματοκρίτης")
+  );
+
+  const result =
+    healthTermValueInFile?.map(
+      ({
+        fileId,
+        healthTermValue,
+      }: {
+        fileId: string;
+        healthTermValue: number;
+      }) => {
+        return {
+          date: filesData.find(
+            (fileData: FileDetails) => fileData.fileId === fileId
+          ).date,
+          value: healthTermValue,
+        };
+      }
+    ) || [];
+
+  return result;
+});
 </script>
 
 <template>
   <h2>Health data Aggregator</h2>
+
+  <h3>{{ graphTitle }}</h3>
+  <HealthTermGraph v-if="data.length" :graphData="data"></HealthTermGraph>
 
   <FileUpload :maxSize="5" accept="pdf" />
   <div><button @click="clearResults">Remove results</button></div>
@@ -45,13 +78,6 @@ const clearResults = () => {
       <span>{{ file.filePath }}</span>
     </li>
   </ul>
-
-  <h3>Results</h3>
-  <div id="app">
-    <div v-for="[key, value] in healthData.healthDataOfAllFiles">
-      {{ key }} => {{ value.map((v) => v.healthTermValue) }};
-    </div>
-  </div>
 </template>
 
 <style>
