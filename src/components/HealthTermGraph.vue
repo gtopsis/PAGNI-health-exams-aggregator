@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import * as d3 from "d3";
 import { PropType, onMounted, toRefs, watchEffect } from "vue";
-import dayjs from "dayjs";
 
 interface GraphData {
   date: string;
@@ -33,8 +32,18 @@ onMounted(() => {
 
   // whenever any dependencies (like data, resizeState) change, call this!
   watchEffect(() => {
+    // Title
+    svg
+      .append("text")
+      .attr("x", width / 2 + 100)
+      .attr("y", 100)
+      .attr("text-anchor", "middle")
+      .style("font-family", "Helvetica")
+      .style("font-size", 17)
+      .text("Line Chart");
+
     // Add X axis --> it is a date format
-    const x = d3
+    const xScale = d3
       .scaleTime()
       .domain(
         <[Date, Date]>d3.extent(
@@ -48,13 +57,14 @@ onMounted(() => {
         )
       )
       .range([0, width]);
+
     svg
       .append("g")
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(xScale));
 
     // Add Y axis
-    const y = d3
+    const yScale = d3
       .scaleLinear()
       .domain(
         <[number, number]>(
@@ -62,13 +72,26 @@ onMounted(() => {
         )
       )
       .range([height, 0]);
-    svg.append("g").call(d3.axisLeft(y));
+    svg.append("g").call(d3.axisLeft(yScale));
 
     const line = d3
       .line<GraphData>()
-      .x(({ date }: { date: string }) => x(new Date(date)))
-      .y(({ value }: { value: number }) => y(value))
-      .curve(d3.curveBasis);
+      .x(({ date }: { date: string }) => xScale(new Date(date)))
+      .y(({ value }: { value: number }) => yScale(value))
+      .curve(d3.curveMonotoneX);
+
+    // Add red scatter dots
+    svg
+      .append("g")
+      .selectAll("dot")
+      .data(graphData.value)
+      .enter()
+      .append("circle")
+      .attr("cx", ({ date }: { date: string }) => xScale(new Date(date)))
+      .attr("cy", ({ value }: { value: number }) => yScale(value))
+      .attr("r", 4)
+      .attr("transform", "translate(" + 100 + "," + 100 + ")")
+      .style("fill", "red");
 
     // Add the line
     svg
