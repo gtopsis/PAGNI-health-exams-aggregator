@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import * as d3 from "d3";
-import { PropType, onMounted, toRefs, watchEffect } from "vue";
+import { PropType, computed, onMounted, toRefs, watchEffect } from "vue";
 
 interface GraphData {
   date: string;
@@ -21,6 +21,11 @@ const margin = { top: 10, right: 30, bottom: 30, left: 60 };
 const width = 500 - margin.left - margin.right;
 const height = 450 - margin.top - margin.bottom;
 
+const sortedGraphDataByDate = computed(() => {
+  return graphData.value.sort((a: GraphData, b: GraphData) => {
+    return new Date(a.date).getDate() - new Date(b.date).getDate();
+  });
+});
 onMounted(() => {
   // // append the svg object to the body of the page
   const svg = d3
@@ -47,7 +52,7 @@ onMounted(() => {
       .scaleTime()
       .domain(
         <[Date, Date]>d3.extent(
-          graphData.value,
+          sortedGraphDataByDate.value,
           ({ date }: { date: string }) => {
             const dateParts = date.split("/");
             const formattedDate = `${dateParts?.[1]}/${dateParts?.[0]}/${dateParts?.[2]}`;
@@ -68,7 +73,10 @@ onMounted(() => {
       .scaleLinear()
       .domain(
         <[number, number]>(
-          d3.extent(graphData.value, ({ value }: { value: number }) => value)
+          d3.extent(
+            sortedGraphDataByDate.value,
+            ({ value }: { value: number }) => value
+          )
         )
       )
       .range([height, 0]);
@@ -78,13 +86,13 @@ onMounted(() => {
       .line<GraphData>()
       .x(({ date }: { date: string }) => xScale(new Date(date)))
       .y(({ value }: { value: number }) => yScale(value))
-      .curve(d3.curveMonotoneX);
+      .curve(d3.curveBasis);
 
     // Add red scatter dots
     svg
       .append("g")
       .selectAll("dot")
-      .data(graphData.value)
+      .data(sortedGraphDataByDate.value)
       .enter()
       .append("circle")
       .attr("cx", ({ date }: { date: string }) => xScale(new Date(date)))
@@ -96,7 +104,7 @@ onMounted(() => {
     // Add the line
     svg
       .append("path")
-      .datum(graphData.value)
+      .datum(sortedGraphDataByDate.value)
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
@@ -109,6 +117,8 @@ onMounted(() => {
   <div>
     <svg></svg>
   </div>
+
+  {{ sortedGraphDataByDate }}
 </template>
 
 <style scoped></style>
