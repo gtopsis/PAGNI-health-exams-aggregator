@@ -41,6 +41,11 @@ const handleFileChange = (e: Event) => {
   }
 
   window.healthExamsParser.parseHealthExams([file.path]);
+
+  const fileHTMLEl = <HTMLInputElement>document.getElementById("fileUploadBtn");
+  if (fileHTMLEl) {
+    fileHTMLEl.value = "";
+  }
 };
 
 const isFileSizeValid = (fileSize: number) => {
@@ -74,7 +79,7 @@ const isFileValid = (file: File) => {
       <input
         type="file"
         name=""
-        id=""
+        id="fileUploadBtn"
         @change="handleFileChange($event)"
         accept="application/pdf,application/vnd.ms-excel"
         multiple

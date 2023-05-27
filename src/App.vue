@@ -35,7 +35,7 @@ const clearResults = () => {
 
 const graphTitle = "HCT Αιματοκρίτης";
 
-let data = computed(() => {
+const data = computed(() => {
   const filesData = <Results["filesData"]>healthData.value.filesData;
   const healthTermValueInFile = <HealthTermValueInFile[]>(
     healthData.value.healthDataOfAllFiles?.get("HCT Αιματοκρίτης")
@@ -70,7 +70,7 @@ let data = computed(() => {
   <HealthTermGraph v-if="data.length" :graphData="data"></HealthTermGraph>
 
   <FileUpload :maxSize="5" accept="pdf" />
-  <div><button @click="clearResults">Remove results</button></div>
+  <div><button @click="clearResults">Clear results</button></div>
 
   <h3>Files</h3>
   <ul>
