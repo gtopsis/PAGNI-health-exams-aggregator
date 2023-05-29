@@ -50,22 +50,22 @@ const sortedGraphDataByDate = computed(() => {
 });
 const groupedData = computed(() =>
   sortedGraphDataByDate.value.reduce(
-    (acc: { dates: string[]; values: number[] }, next: GraphData) => {
+    (acc: [string[], number[]], next: GraphData) => {
       const dateInStandartFormat = convertUStoStartDateFormat(next.date) || "";
-      acc.dates.push(dateInStandartFormat);
-      acc.values.push(next.value);
+      acc[0].push(dateInStandartFormat);
+      acc[1].push(next.value);
 
       return acc;
     },
-    { dates: [], values: [] }
+    [[], []]
   )
 );
 const data = computed(() => {
   return {
-    labels: groupedData.value.dates,
+    labels: groupedData.value[0],
     datasets: [
       {
-        data: groupedData.value.values,
+        data: groupedData.value[1],
         label: label.value,
         fill: false,
         borderColor: "rgb(75, 192, 192)",
