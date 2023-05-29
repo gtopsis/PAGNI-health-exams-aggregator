@@ -38,7 +38,7 @@ const convertUStoStartDateFormat = (dateInUSFormat: string) => {
 
   return dateParts.length != 3
     ? null
-    : `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
+    : `${dateParts[1]}/${dateParts[0]}/${dateParts[2]}`;
 };
 
 const sortedGraphDataByDate = computed(() => {
@@ -47,7 +47,7 @@ const sortedGraphDataByDate = computed(() => {
       new Date(date1).getDate() - new Date(date2).getDate()
   );
 });
-const formattedGraphData = computed(() =>
+const groupedData = computed(() =>
   sortedGraphDataByDate.value.reduce(
     (acc: { dates: string[]; values: number[] }, next: GraphData) => {
       const dateInStandartFormat = convertUStoStartDateFormat(next.date) || "";
@@ -61,10 +61,10 @@ const formattedGraphData = computed(() =>
 );
 const data = computed(() => {
   return {
-    labels: formattedGraphData.value.dates,
+    labels: groupedData.value.dates,
     datasets: [
       {
-        data: formattedGraphData.value.values,
+        data: groupedData.value.values,
         label: "My First Dataset",
         fill: false,
         borderColor: "rgb(75, 192, 192)",
