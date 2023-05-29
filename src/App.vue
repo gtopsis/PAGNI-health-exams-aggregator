@@ -6,7 +6,6 @@ import {
   FileDetails,
 } from "../common/interfaces";
 import FileUpload from "./components/FileUpload.vue";
-import HealthTermGraph from "./components/HealthTermGraph.vue";
 import LineGraph from "./components/LineGraph.vue";
 
 let healthData: Ref<Results> = ref<Results | null>({
@@ -30,9 +29,7 @@ window.healthExamsParser.receiveAggregatedHealtData(
   }
 );
 
-const clearResults = () => {
-  window.healthExamsParser.clearHealthData();
-};
+const clearResults = () => window.healthExamsParser.clearHealthData();
 
 const graphTitle = "HCT Αιματοκρίτης";
 
@@ -70,8 +67,11 @@ const data = computed(() => {
   <h3>{{ graphTitle }}</h3>
   <LineGraph v-if="data.length" :graph-data="data"></LineGraph>
 
+  <div class="flex-center">
+    <button @click="clearResults">Clear results</button>
+  </div>
+
   <FileUpload :maxSize="5" accept="pdf" />
-  <div><button @click="clearResults">Clear results</button></div>
 
   <h3>Files</h3>
   <ul>
@@ -95,15 +95,7 @@ const data = computed(() => {
   transition: filter 300ms;
 }
 
-.logo.electron:hover {
-  filter: drop-shadow(0 0 2em #9feaf9);
-}
-
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
 }
 </style>
