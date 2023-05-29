@@ -64,8 +64,11 @@ const data = computed(() => {
 <template>
   <h2>Health data Aggregator</h2>
 
-  <h3>{{ graphTitle }}</h3>
-  <LineGraph v-if="data.length" :graph-data="data"></LineGraph>
+  <LineGraph
+    v-if="data.length"
+    :graph-data="data"
+    :label="graphTitle"
+  ></LineGraph>
 
   <div class="flex-center">
     <button @click="clearResults">Clear results</button>

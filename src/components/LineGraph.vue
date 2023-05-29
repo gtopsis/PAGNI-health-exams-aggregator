@@ -29,9 +29,10 @@ interface GraphData {
 
 const props = defineProps({
   graphData: { type: Array as PropType<GraphData[]>, required: true },
+  label: { type: String, required: true },
 });
 
-const { graphData } = toRefs(props);
+const { graphData, label } = toRefs(props);
 
 const convertUStoStartDateFormat = (dateInUSFormat: string) => {
   const dateParts = dateInUSFormat.split("/");
@@ -65,8 +66,8 @@ const data = computed(() => {
     datasets: [
       {
         data: groupedData.value.values,
-        label: "My First Dataset",
-        fill: false,
+        label: label.value,
+        fill: true,
         borderColor: "rgb(75, 192, 192)",
         tension: 0.1,
       },
