@@ -27,10 +27,12 @@
     "test": "jest"
   },
   "dependencies": {
-    "d3": "^7.8.4",
+    "chart.js": "^4.3.0",
+    "chartjs": "^0.3.24",
     "dayjs": "^1.11.7",
     "electron-store": "^8.1.0",
-    "pdf-parse": "^1.1.1"
+    "pdf-parse": "^1.1.1",
+    "vue-chartjs": "^5.2.0"
   },
   "devDependencies": {
     "@types/d3": "^7.4.0",

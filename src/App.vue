@@ -7,6 +7,7 @@ import {
 } from "../common/interfaces";
 import FileUpload from "./components/FileUpload.vue";
 import HealthTermGraph from "./components/HealthTermGraph.vue";
+import LineGraph from "./components/LineGraph.vue";
 
 let healthData: Ref<Results> = ref<Results | null>({
   filesData: [],
@@ -67,7 +68,7 @@ const data = computed(() => {
   <h2>Health data Aggregator</h2>
 
   <h3>{{ graphTitle }}</h3>
-  <HealthTermGraph v-if="data.length" :graphData="data"></HealthTermGraph>
+  <LineGraph v-if="data.length" :graph-data="data"></LineGraph>
 
   <FileUpload :maxSize="5" accept="pdf" />
   <div><button @click="clearResults">Clear results</button></div>
@@ -75,7 +76,7 @@ const data = computed(() => {
   <h3>Files</h3>
   <ul>
     <li v-for="file in healthData.filesData">
-      <span>{{ file.filePath }}</span>
+      <small>{{ file.filePath }}</small>
     </li>
   </ul>
 </template>
