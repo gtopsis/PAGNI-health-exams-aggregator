@@ -33,29 +33,38 @@ const props = defineProps({
 
 const { graphData } = toRefs(props);
 
-const formattedGraphData = computed(() =>
-  graphData.value.map((d) => {
-    const dateParts = d.date.split("/");
-    const formattedDate = `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
+const convertUStoStartDateFormat = (dateInUSFormat: string) => {
+  const dateParts = dateInUSFormat.split("/");
 
-    return {
-      date: formattedDate,
-      value: d.value,
-    };
-  })
-);
+  return dateParts.length != 3
+    ? null
+    : `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
+};
+
 const sortedGraphDataByDate = computed(() => {
-  return formattedGraphData.value.sort(
+  return graphData.value.sort(
     ({ date: date1 }: { date: string }, { date: date2 }: { date: string }) =>
       new Date(date1).getDate() - new Date(date2).getDate()
   );
 });
+const formattedGraphData = computed(() =>
+  sortedGraphDataByDate.value.reduce(
+    (acc: { dates: string[]; values: number[] }, next: GraphData) => {
+      const dateInStandartFormat = convertUStoStartDateFormat(next.date) || "";
+      acc.dates.push(dateInStandartFormat);
+      acc.values.push(next.value);
+
+      return acc;
+    },
+    { dates: [], values: [] }
+  )
+);
 const data = computed(() => {
   return {
-    labels: sortedGraphDataByDate.value.map((d) => d.date),
+    labels: formattedGraphData.value.dates,
     datasets: [
       {
-        data: sortedGraphDataByDate.value.map((d) => d.value),
+        data: formattedGraphData.value.values,
         label: "My First Dataset",
         fill: false,
         borderColor: "rgb(75, 192, 192)",
