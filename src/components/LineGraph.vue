@@ -45,7 +45,7 @@ const convertUStoStartDateFormat = (dateInUSFormat: string) => {
 const sortedGraphDataByDate = computed(() => {
   return graphData.value.sort(
     ({ date: date1 }: { date: string }, { date: date2 }: { date: string }) =>
-      new Date(date1).getDate() - new Date(date2).getDate()
+      new Date(date1).getTime() - new Date(date2).getTime()
   );
 });
 const groupedData = computed(() =>
@@ -67,7 +67,7 @@ const data = computed(() => {
       {
         data: groupedData.value.values,
         label: label.value,
-        fill: true,
+        fill: false,
         borderColor: "rgb(75, 192, 192)",
         tension: 0.1,
       },
