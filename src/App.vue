@@ -77,17 +77,21 @@ const removeFile = (filePath: string) =>
     <button @click="clearResults">Clear results</button>
   </div>
 
-  <FileUpload :maxSize="5" accept="pdf" />
-
   <h3>Files</h3>
   <span v-if="healthData.filesData.length === 0"> No files so far</span>
 
-  <ul v-else>
-    <li v-for="file in healthData.filesData">
-      <small>{{ file.filePath }}</small>
-      <button @click="removeFile(file.filePath)">Remove</button>
-    </li>
-  </ul>
+  <div v-else>
+    <div v-for="file in healthData.filesData" class="files-list-item">
+      <div class="files-list-item_description">
+        <small>{{ file.filePath }}</small>
+      </div>
+      <div class="files-list-item_action">
+        <button @click="removeFile(file.filePath)">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <FileUpload :maxSize="5" accept="pdf" />
 </template>
 
 <style>
@@ -106,5 +110,18 @@ const removeFile = (filePath: string) =>
 
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.files-list-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.files-list-item_description {
+  max-width: 75%;
+}
+
+.files-list-item_action {
+  /* width: 20%; */
 }
 </style>
