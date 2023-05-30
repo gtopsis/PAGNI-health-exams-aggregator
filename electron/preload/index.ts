@@ -111,6 +111,7 @@ contextBridge.exposeInMainWorld("healthExamsParser", {
     );
   },
   clearHealthData: () => ipcRenderer.send("clear-health-data"),
+  removeFile: (filePath: string) => ipcRenderer.send("remove-file", filePath),
 });
 
 setTimeout(removeLoading, 4999);

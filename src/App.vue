@@ -59,6 +59,9 @@ const data = computed(() => {
 
   return result;
 });
+
+const removeFile = (filePath: string) =>
+  window.healthExamsParser.removeFile(filePath);
 </script>
 
 <template>
@@ -80,6 +83,7 @@ const data = computed(() => {
   <ul>
     <li v-for="file in healthData.filesData">
       <small>{{ file.filePath }}</small>
+      <button @click="removeFile(file.filePath)">Remove</button>
     </li>
   </ul>
 </template>

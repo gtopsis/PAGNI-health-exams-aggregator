@@ -181,3 +181,39 @@ ipcMain.on("clear-health-data", () => {
   // Send result back to renderer process
   win?.webContents.send("agreegated-health-data-calculated", totalHealthData);
 });
+
+ipcMain.on("remove-file", (e: Electron.IpcMainEvent, filePath: string) => {
+  const fileToBeRemovedIndex = totalHealthData.filesData.findIndex(
+    (file) => file.filePath === filePath
+  );
+  if (fileToBeRemovedIndex === -1) {
+    return;
+  }
+  const fileToBeRemovedId =
+    totalHealthData.filesData[fileToBeRemovedIndex]?.fileId;
+
+  totalHealthData.healthDataOfAllFiles.forEach((value, key) => {
+    const index = value.findIndex(
+      (healthDataOfTermInFile) =>
+        healthDataOfTermInFile.fileId === fileToBeRemovedId
+    );
+
+    if (index === -1) {
+      return;
+    }
+
+    value.splice(index, 1);
+  });
+
+  // remove the file from the list
+  totalHealthData.filesData.splice(fileToBeRemovedIndex, 1);
+
+  // store data to disk
+  store.set(
+    "stored_health_data",
+    stringifyDataWithComplexStructure(totalHealthData)
+  );
+
+  // Send result back to renderer process
+  win?.webContents.send("agreegated-health-data-calculated", totalHealthData);
+});

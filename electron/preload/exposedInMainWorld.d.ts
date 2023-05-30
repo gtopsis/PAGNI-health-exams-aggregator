@@ -7,6 +7,7 @@ export interface IElectronAPI {
     callback: (event: Event, ...args: unknown[]) => void
   ) => Promise<void>;
   clearHealthData: () => void;
+  removeFile: (filePath: string) => boolean;
 }
 
 declare global {
