@@ -69,7 +69,7 @@ const data = computed(() => {
         label: label.value,
         fill: false,
         borderColor: "rgb(75, 192, 192)",
-        tension: 0.1,
+        tension: 0.2,
       },
     ],
   };
@@ -77,6 +77,32 @@ const data = computed(() => {
 
 const options = {
   responsive: true,
+  elements: {
+    point: {
+      radius: 4,
+      hoverRadius: 5,
+    },
+  },
+  scales: {
+    y: {
+      title: {
+        display: true,
+        text: "Value",
+        font: {
+          size: 15,
+        },
+      },
+    },
+    x: {
+      title: {
+        display: true,
+        text: "Date",
+        font: {
+          size: 15,
+        },
+      },
+    },
+  },
 };
 </script>
 
