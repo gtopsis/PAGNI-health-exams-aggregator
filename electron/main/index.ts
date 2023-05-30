@@ -143,9 +143,24 @@ ipcMain.handle("open-win", (_, arg) => {
 ipcMain.on(
   "parse-health-exams",
   async (e: Electron.IpcMainEvent, filesPaths: string[]) => {
+    // check if some files have already been processed
+    const newFilePaths = filesPaths.filter(
+      (filePath) =>
+        !totalHealthData.filesData.find(
+          (existingFile) => existingFile.filePath === filePath
+        )
+    );
+    if (newFilePaths.length != filesPaths.length) {
+      console.warn("Tried to process a file which it has already been handled");
+    }
+
+    if (newFilePaths.length === 0) {
+      return;
+    }
+
     totalHealthData = await addHealthDataFromNewHealthExams(
       totalHealthData,
-      filesPaths
+      newFilePaths
     );
 
     // store data to disk

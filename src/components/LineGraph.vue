@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import { Line } from "vue-chartjs";
 import { compareDates, convertUStoStartDateFormat } from "../util";
+import { number } from "yargs";
 
 ChartJS.register(
   CategoryScale,
@@ -84,6 +85,9 @@ const options = {
         font: {
           size: 15,
         },
+      },
+      ticks: {
+        callback: (value: number) => `${value}%`,
       },
     },
     x: {
