@@ -11,6 +11,7 @@ import {
   PointElement,
 } from "chart.js";
 import { Line } from "vue-chartjs";
+import { compareDates, convertUStoStartDateFormat } from "../util";
 
 ChartJS.register(
   CategoryScale,
@@ -34,18 +35,10 @@ const props = defineProps({
 
 const { graphData, label } = toRefs(props);
 
-const convertUStoStartDateFormat = (dateInUSFormat: string) => {
-  const dateParts = dateInUSFormat.split("/");
-
-  return dateParts.length != 3
-    ? null
-    : `${dateParts[1]}/${dateParts[0]}/${dateParts[2]}`;
-};
-
 const sortedGraphDataByDate = computed(() => {
   return graphData.value.sort(
     ({ date: date1 }: { date: string }, { date: date2 }: { date: string }) =>
-      new Date(date1).getTime() - new Date(date2).getTime()
+      compareDates(date1, date2) ?? -1
   );
 });
 const groupedData = computed(() =>
