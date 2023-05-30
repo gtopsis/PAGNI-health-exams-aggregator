@@ -65,33 +65,43 @@ const removeFile = (filePath: string) =>
 </script>
 
 <template>
-  <h2>Health data Aggregator</h2>
+  <v-app id="inspire">
+    <v-app-bar>
+      <v-toolbar-title>Health data Aggregator</v-toolbar-title>
+    </v-app-bar>
 
-  <LineGraph
-    v-if="data.length"
-    :graph-data="data"
-    :label="graphTitle"
-  ></LineGraph>
+    <v-main>
+      <!--  -->
 
-  <div class="flex-center" v-if="healthData.filesData.length !== 0">
-    <button @click="clearResults">Clear results</button>
-  </div>
+      <LineGraph
+        v-if="data.length"
+        :graph-data="data"
+        :label="graphTitle"
+      ></LineGraph>
 
-  <h3>Files</h3>
-  <span v-if="healthData.filesData.length === 0"> No files so far</span>
-
-  <div v-else>
-    <div v-for="file in healthData.filesData" class="files-list-item">
-      <div class="files-list-item_description">
-        <small>{{ file.filePath }}</small>
+      <div class="flex-center" v-if="healthData.filesData.length !== 0">
+        <v-btn color="error" @click="clearResults">Clear results</v-btn>
       </div>
-      <div class="files-list-item_action">
-        <button @click="removeFile(file.filePath)">Remove</button>
-      </div>
-    </div>
-  </div>
 
-  <FileUpload :maxSize="5" accept="pdf" />
+      <h3>Files</h3>
+      <span v-if="healthData.filesData.length === 0"> No files so far</span>
+
+      <div v-else>
+        <div v-for="file in healthData.filesData" class="files-list-item">
+          <div class="files-list-item_description">
+            <small>{{ file.filePath }}</small>
+          </div>
+          <div class="files-list-item_action">
+            <v-btn color="error" @click="removeFile(file.filePath)"
+              >Remove</v-btn
+            >
+          </div>
+        </div>
+      </div>
+
+      <FileUpload :maxSize="5" accept="pdf" />
+    </v-main>
+  </v-app>
 </template>
 
 <style>
