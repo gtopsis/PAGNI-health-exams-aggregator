@@ -73,14 +73,16 @@ const removeFile = (filePath: string) =>
     :label="graphTitle"
   ></LineGraph>
 
-  <div class="flex-center">
+  <div class="flex-center" v-if="healthData.filesData.length !== 0">
     <button @click="clearResults">Clear results</button>
   </div>
 
   <FileUpload :maxSize="5" accept="pdf" />
 
   <h3>Files</h3>
-  <ul>
+  <span v-if="healthData.filesData.length === 0"> No files so far</span>
+
+  <ul v-else>
     <li v-for="file in healthData.filesData">
       <small>{{ file.filePath }}</small>
       <button @click="removeFile(file.filePath)">Remove</button>
