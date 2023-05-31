@@ -16,7 +16,7 @@ let healthData: Ref<Results> = ref<Results | null>({
 });
 
 const healthTerms = computed(() =>
-  healthData.value.healthDataOfAllFiles?.keys()
+  Array.from(healthData.value.healthDataOfAllFiles.keys()).sort()
 );
 
 const graphTitle = "HCT Αιματοκρίτης";
@@ -126,7 +126,10 @@ const toggleUploadArea = () =>
                 :label="graphTitle"
               ></LineGraph>
 
-              <div class="flex-center" v-if="healthData.filesData.length !== 0">
+              <div
+                class="flex-center my-5"
+                v-if="healthData.filesData.length !== 0"
+              >
                 <v-btn color="error" @click="clearResults">Clear results</v-btn>
               </div>
 
@@ -145,6 +148,7 @@ const toggleUploadArea = () =>
                   </div>
                   <div class="files-list-item_action">
                     <v-btn
+                      size="x-small"
                       color="error"
                       small
                       @click="removeFile(file.filePath)"
