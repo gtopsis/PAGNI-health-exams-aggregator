@@ -7,23 +7,24 @@ import {
 } from "../common/interfaces";
 import FileUpload from "./components/FileUpload.vue";
 import LineGraph from "./components/LineGraph.vue";
+import { ComputedRef } from "vue";
 
 let isUploadAreaVisible = ref(false);
 
-let healthData: Ref<Results> = ref<Results | null>({
+let healthData = ref({
   filesData: [],
-  healthDataOfAllFiles: new Map(),
+  healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
 });
 
-const healthTerms = computed(() =>
+const healthTerms: ComputedRef<string[]> = computed(() =>
   Array.from(healthData.value.healthDataOfAllFiles.keys()).sort()
 );
 
-const graphTitle = "HCT Αιματοκρίτης";
+const activeHealthTerm = ref("HCT Αιματοκρίτης");
 const data = computed(() => {
   const filesData = <Results["filesData"]>healthData.value.filesData;
   const healthTermValueInFile = <HealthTermValueInFile[]>(
-    healthData.value.healthDataOfAllFiles?.get("HCT Αιματοκρίτης")
+    healthData.value.healthDataOfAllFiles?.get(activeHealthTerm.value)
   );
 
   const result =
@@ -97,12 +98,14 @@ const toggleUploadArea = () =>
                   no-gutters
                   align="center"
                 >
-                  <v-col cols="2">
+                  <v-col cols="2" lg="1">
                     <input
                       class="health-term-list-item__radio-btn"
                       type="radio"
                       name="healthTermsRadioBtnGroup"
                       :id="healthTerm"
+                      v-model="activeHealthTerm"
+                      :value="healthTerm"
                     />
                   </v-col>
 
@@ -123,7 +126,7 @@ const toggleUploadArea = () =>
               <LineGraph
                 v-if="data.length"
                 :graph-data="data"
-                :label="graphTitle"
+                :label="activeHealthTerm"
               ></LineGraph>
 
               <div
