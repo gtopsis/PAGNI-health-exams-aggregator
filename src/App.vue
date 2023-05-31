@@ -8,31 +8,18 @@ import {
 import FileUpload from "./components/FileUpload.vue";
 import LineGraph from "./components/LineGraph.vue";
 
+let isUploadAreaVisible = ref(false);
+
 let healthData: Ref<Results> = ref<Results | null>({
   filesData: [],
   healthDataOfAllFiles: new Map(),
 });
 
-// Called when new health data calculated
-window.healthExamsParser.loadStoredHealtData(
-  (event: unknown, data: Results) => {
-    // console.debug(data);
-
-    healthData.value = data;
-  }
+const healthTerms = computed(() =>
+  healthData.value.healthDataOfAllFiles?.keys()
 );
-
-// Called when new health data calculated
-window.healthExamsParser.receiveAggregatedHealtData(
-  (event: unknown, data: Results) => {
-    healthData.value = data;
-  }
-);
-
-const clearResults = () => window.healthExamsParser.clearHealthData();
 
 const graphTitle = "HCT Αιματοκρίτης";
-
 const data = computed(() => {
   const filesData = <Results["filesData"]>healthData.value.filesData;
   const healthTermValueInFile = <HealthTermValueInFile[]>(
@@ -60,13 +47,23 @@ const data = computed(() => {
   return result;
 });
 
+// Called when new health data calculated
+window.healthExamsParser.loadStoredHealtData(
+  (event: unknown, data: Results) => (healthData.value = data)
+);
+
+// Called when new health data calculated
+window.healthExamsParser.receiveAggregatedHealtData(
+  (event: unknown, data: Results) => (healthData.value = data)
+);
+
+const clearResults = () => window.healthExamsParser.clearHealthData();
+
 const removeFile = (filePath: string) =>
   window.healthExamsParser.removeFile(filePath);
 
-let isUploadAreaVisible = ref(false);
-const toggleUploadArea = () => {
-  isUploadAreaVisible.value = !isUploadAreaVisible.value;
-};
+const toggleUploadArea = () =>
+  (isUploadAreaVisible.value = !isUploadAreaVisible.value);
 </script>
 
 <template>
@@ -82,32 +79,47 @@ const toggleUploadArea = () => {
     <v-main class="bg-grey-lighten-3">
       <v-container>
         <Transition>
-          <v-row v-if="isUploadAreaVisible">
+          <v-row class="pa-2" v-if="isUploadAreaVisible">
             <v-col class="upload-file-area">
               <FileUpload :maxSize="5" accept="pdf" />
             </v-col>
           </v-row>
         </Transition>
 
-        <v-row>
-          <v-col cols="2" px="3">
+        <v-row class="pa-2">
+          <v-col class="pa-2" cols="3" sm="12">
             <v-sheet rounded="lg">
-              <v-list rounded="lg">
-                <v-list-item v-for="n in 4" :key="n" link>
-                  <v-list-item-title> List Item {{ n }} </v-list-item-title>
-                </v-list-item>
+              <v-container class="health-terms-list pa-2">
+                <v-row
+                  v-for="healthTerm in healthTerms"
+                  :key="healthTerm"
+                  class="py-2"
+                  no-gutters
+                  align="center"
+                >
+                  <v-col cols="2">
+                    <input
+                      class="health-term-list-item__radio-btn"
+                      type="radio"
+                      name="healthTermsRadioBtnGroup"
+                      :id="healthTerm"
+                    />
+                  </v-col>
 
-                <v-divider class="my-2"></v-divider>
-
-                <v-list-item link color="grey-lighten-4">
-                  <v-list-item-title> Refresh </v-list-item-title>
-                </v-list-item>
-              </v-list>
+                  <v-col class="pl-2 text-left">
+                    <label
+                      class="health-term-list-item__label"
+                      :for="healthTerm"
+                      >{{ healthTerm }}</label
+                    >
+                  </v-col>
+                </v-row>
+              </v-container>
             </v-sheet>
           </v-col>
 
-          <v-col px="4">
-            <v-sheet min-height="70vh" rounded="lg">
+          <v-col>
+            <v-sheet min-height="70vh" rounded="lg" class="pa-2">
               <LineGraph
                 v-if="data.length"
                 :graph-data="data"
@@ -132,7 +144,10 @@ const toggleUploadArea = () => {
                     <small>{{ file.filePath }}</small>
                   </div>
                   <div class="files-list-item_action">
-                    <v-btn color="error" @click="removeFile(file.filePath)"
+                    <v-btn
+                      color="error"
+                      small
+                      @click="removeFile(file.filePath)"
                       >Remove</v-btn
                     >
                   </div>
@@ -187,6 +202,16 @@ const toggleUploadArea = () => {
   width: 100%;
   height: 350px;
   transition: all 0.25s ease;
+}
+
+.health-terms-list {
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+.health-term-list-item__label:hover,
+.health-term-list-item__radio-btn:hover {
+  cursor: pointer;
 }
 
 /* we will explain what these classes do next! */
