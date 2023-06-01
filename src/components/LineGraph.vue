@@ -50,8 +50,10 @@ const groupedData = computed(() =>
       const dateInStandartFormat = next.date
         ? convertUStoStartDateFormat(next.date)
         : "";
-      acc[0].push(dateInStandartFormat);
-      acc[1].push(next.value);
+
+      const [xAxisData, yAxisData] = acc;
+      xAxisData.push(dateInStandartFormat);
+      yAxisData.push(next.value);
 
       return acc;
     },
@@ -59,11 +61,12 @@ const groupedData = computed(() =>
   )
 );
 const data = computed(() => {
+  const [xAxisData, yAxisData] = groupedData.value;
   return {
-    labels: groupedData.value[0],
+    labels: xAxisData,
     datasets: [
       {
-        data: groupedData.value[1],
+        data: yAxisData,
         label: label.value,
         fill: false,
         borderColor: "rgb(75, 192, 192)",

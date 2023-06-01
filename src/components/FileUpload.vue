@@ -16,7 +16,6 @@ const props = defineProps({
 });
 
 const name = "FileUpload";
-const errors: string[] = [];
 const isLoading = false;
 const uploadReady = true;
 const file = {
@@ -29,6 +28,7 @@ const file = {
   isUploaded: false,
 };
 
+let fileErrors: string[] = [];
 const handleFileChange = (e: Event) => {
   const files = (e.target as HTMLInputElement)?.files;
   // Get uploaded file
@@ -36,12 +36,17 @@ const handleFileChange = (e: Event) => {
 
   // Check if file is selected
   if (!file) {
+    console.error("No file uploaded correctly");
+
     return;
   }
 
   // Check if file is valid
-  if (!isFileValid(file)) {
-    console.error("Invalid file");
+  fileErrors = getFileErrors(file);
+  if (fileErrors.length > 0) {
+    console.error(`Invalid file.\n Errors:\n ${fileErrors.join("\n")}`);
+
+    return;
   }
 
   window.healthExamsParser.parseHealthExams([(file as FileWithPath).path]);
@@ -52,28 +57,30 @@ const handleFileChange = (e: Event) => {
   }
 };
 
-const isFileSizeValid = (fileSize: number) => {
-  if (fileSize > props.maxSize) {
+const isFileSizeValid = (fileSize: number) => fileSize <= props.maxSize;
+
+const isFileTypeValid = (fileExtention: string | undefined) =>
+  fileExtention && props.accept.split(",").includes(fileExtention);
+
+const getFileErrors = (file: File) => {
+  const errors: string[] = [];
+
+  const fileSize = Math.round((file.size / 1024 / 1024) * 100) / 100;
+
+  if (!isFileSizeValid(fileSize)) {
     errors.push(`File size should be less than ${props.maxSize} MB`);
   }
-};
 
-const isFileTypeValid = (fileExtention: string) => {
-  if (!props.accept.split(",").includes(fileExtention)) {
+  const filenameExtension = file.name?.split(".").pop();
+  if (!filenameExtension) {
+    errors.push(`File name is not correct`);
+  }
+
+  if (!isFileTypeValid(filenameExtension)) {
     errors.push(`File type should be ${props.accept}`);
   }
-};
 
-const isFileValid = (file: File) => {
-  isFileSizeValid(Math.round((file.size / 1024 / 1024) * 100) / 100);
-  const filename = file.name?.split(".").pop();
-  if (!filename) {
-    return false;
-  }
-
-  isFileTypeValid(filename);
-
-  return errors.length === 0;
+  return errors;
 };
 </script>
 
@@ -89,10 +96,10 @@ const isFileValid = (file: File) => {
         multiple
       />
 
-      <div v-if="errors.length > 0">
+      <div v-if="fileErrors.length > 0">
         <div
           class="file-upload__error"
-          v-for="(error, index) in errors"
+          v-for="(error, index) in fileErrors"
           :key="index"
         >
           <span>{{ error }}</span>
