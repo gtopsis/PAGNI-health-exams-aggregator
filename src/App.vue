@@ -20,7 +20,7 @@ const healthTerms: ComputedRef<string[]> = computed(() =>
   Array.from(healthData.value.healthDataOfAllFiles.keys()).sort()
 );
 
-const activeHealthTerm = ref("HCT Αιματοκρίτης");
+const activeHealthTerm = ref(healthTerms.value?.[0]);
 const data = computed(() => {
   const filesData = <Results["filesData"]>healthData.value.filesData;
   const healthTermValueInFile = <HealthTermValueInFile[]>(
