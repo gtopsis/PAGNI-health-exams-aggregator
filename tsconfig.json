@@ -13,6 +13,6 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src", "jest.config.ts", "electron/preload", "common/*"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
