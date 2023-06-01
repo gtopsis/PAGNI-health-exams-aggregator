@@ -4,7 +4,7 @@ import {
   Results,
   HealthTermValueInFile,
   FileDetails,
-} from "../common/interfaces.ts";
+} from "../common/interfaces";
 import FileUpload from "./components/FileUpload.vue";
 import LineGraph from "./components/LineGraph.vue";
 import { ComputedRef } from "vue";
@@ -21,7 +21,7 @@ const healthTerms: ComputedRef<string[]> = computed(() =>
 );
 
 const activeHealthTerm = ref(healthTerms.value?.[0]);
-const data = computed(() => {
+const lineGraphdata = computed(() => {
   const filesData = <Results["filesData"]>healthData.value.filesData;
   const healthTermValueInFile = <HealthTermValueInFile[]>(
     healthData.value.healthDataOfAllFiles?.get(activeHealthTerm.value)
@@ -29,20 +29,12 @@ const data = computed(() => {
 
   const result =
     healthTermValueInFile?.map(
-      ({
-        fileId,
-        healthTermValue,
-      }: {
-        fileId: string;
-        healthTermValue: number;
-      }) => {
-        return {
-          date: filesData.find(
-            (fileData: FileDetails) => fileData.fileId === fileId
-          ).date,
-          value: healthTermValue,
-        };
-      }
+      ({ fileId, healthTermValue }: HealthTermValueInFile) => ({
+        date: filesData.find(
+          (fileData: FileDetails) => fileData.fileId === fileId
+        )?.date,
+        value: healthTermValue,
+      })
     ) || [];
 
   return result;
@@ -124,8 +116,8 @@ const toggleUploadArea = () =>
           <v-col>
             <v-sheet min-height="70vh" rounded="lg" class="pa-2">
               <LineGraph
-                v-if="data.length"
-                :graph-data="data"
+                v-if="lineGraphdata.length"
+                :graph-data="lineGraphdata"
                 :label="activeHealthTerm"
               ></LineGraph>
 

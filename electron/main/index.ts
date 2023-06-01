@@ -192,7 +192,7 @@ ipcMain.on("remove-file", (e: Electron.IpcMainEvent, filePath: string) => {
   const fileToBeRemovedId =
     totalHealthData.filesData[fileToBeRemovedIndex]?.fileId;
 
-  totalHealthData.healthDataOfAllFiles.forEach((value, key) => {
+  totalHealthData.healthDataOfAllFiles.forEach((value) => {
     const index = value.findIndex(
       (healthDataOfTermInFile) =>
         healthDataOfTermInFile.fileId === fileToBeRemovedId

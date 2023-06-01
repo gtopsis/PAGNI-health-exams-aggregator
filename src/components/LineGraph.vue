@@ -25,7 +25,7 @@ ChartJS.register(
 );
 
 interface GraphData {
-  date: string;
+  date: string | undefined;
   value: number;
 }
 
@@ -38,14 +38,18 @@ const { graphData, label } = toRefs(props);
 
 const sortedGraphDataByDate = computed(() => {
   return graphData.value.sort(
-    ({ date: date1 }: { date: string }, { date: date2 }: { date: string }) =>
-      compareDates(date1, date2) ?? -1
+    (
+      { date: date1 }: { date: string | undefined },
+      { date: date2 }: { date: string | undefined }
+    ) => compareDates(date1, date2) ?? -1
   );
 });
 const groupedData = computed(() =>
   sortedGraphDataByDate.value.reduce(
-    (acc: [string[], number[]], next: GraphData) => {
-      const dateInStandartFormat = convertUStoStartDateFormat(next.date) || "";
+    (acc: [(string | null)[], number[]], next: GraphData) => {
+      const dateInStandartFormat = next.date
+        ? convertUStoStartDateFormat(next.date)
+        : "";
       acc[0].push(dateInStandartFormat);
       acc[1].push(next.value);
 
