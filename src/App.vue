@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { Ref, computed, ref } from "vue";
+import { computed, ref } from "vue";
 import {
   Results,
   HealthTermValueInFile,
   FileDetails,
-} from "../common/interfaces";
+} from "../common/interfaces.ts";
 import FileUpload from "./components/FileUpload.vue";
 import LineGraph from "./components/LineGraph.vue";
 import { ComputedRef } from "vue";
@@ -12,7 +12,7 @@ import { ComputedRef } from "vue";
 let isUploadAreaVisible = ref(false);
 
 let healthData = ref({
-  filesData: [],
+  filesData: new Array<FileDetails>(),
   healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
 });
 

@@ -1,4 +1,8 @@
 <script setup lang="ts">
+interface FileWithPath extends File {
+  path: string;
+}
+
 const props = defineProps({
   maxSize: {
     type: Number,
@@ -40,7 +44,7 @@ const handleFileChange = (e: Event) => {
     console.error("Invalid file");
   }
 
-  window.healthExamsParser.parseHealthExams([file.path]);
+  window.healthExamsParser.parseHealthExams([(file as FileWithPath).path]);
 
   const fileHTMLEl = <HTMLInputElement>document.getElementById("fileUploadBtn");
   if (fileHTMLEl) {
