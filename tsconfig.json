@@ -13,6 +13,6 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src"],
+  "include": ["src", "electron/preload/exposedInMainWorld.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

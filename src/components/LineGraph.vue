@@ -91,7 +91,7 @@ const options = {
         },
       },
       ticks: {
-        callback: (value: number) => `${value}%`,
+        callback: (value: number | string) => `${value}%`,
       },
     },
     x: {

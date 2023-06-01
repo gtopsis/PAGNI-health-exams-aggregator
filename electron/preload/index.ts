@@ -1,4 +1,5 @@
 import { ipcRenderer, contextBridge } from "electron";
+import { Results } from "../../common/interfaces";
 
 function domReady(
   condition: DocumentReadyState[] = ["complete", "interactive"]
@@ -97,17 +98,15 @@ contextBridge.exposeInMainWorld("healthExamsParser", {
   parseHealthExams: (filesPaths: string[]) =>
     ipcRenderer.send("parse-health-exams", filesPaths),
   receiveAggregatedHealtData: (
-    callback: (event: Event, ...args: unknown[]) => void
+    callback: (event: Event, data: Results) => void
   ) => {
-    ipcRenderer.on("agreegated-health-data-calculated", (event, ...args) =>
-      callback(event, ...args)
+    ipcRenderer.on("agreegated-health-data-calculated", (event, data) =>
+      callback(event, data)
     );
   },
-  loadStoredHealtData: (
-    callback: (event: Event, ...args: unknown[]) => void
-  ) => {
-    ipcRenderer.on("load-stored-health-data", (event, ...args) =>
-      callback(event, ...args)
+  loadStoredHealtData: (callback: (event: Event, data: Results) => void) => {
+    ipcRenderer.on("load-stored-health-data", (event, data) =>
+      callback(event, data)
     );
   },
   clearHealthData: () => ipcRenderer.send("clear-health-data"),
