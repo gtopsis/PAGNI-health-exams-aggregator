@@ -5,12 +5,13 @@ import {
   HealthTermValueInFile,
   FileDetails,
 } from "../common/interfaces";
+import HealthTermsList from "./components/HealthTermsList.vue";
+
 import FileUpload from "./components/FileUpload.vue";
 import LineGraph from "./components/LineGraph.vue";
 import { ComputedRef } from "vue";
 
 let isUploadAreaVisible = ref(false);
-
 let healthData = ref({
   filesData: new Array<FileDetails>(),
   healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
@@ -19,8 +20,24 @@ let healthData = ref({
 const healthTerms: ComputedRef<string[]> = computed(() =>
   Array.from(healthData.value.healthDataOfAllFiles.keys()).sort()
 );
+const activeHealthTerm = ref(healthTerms.value?.[0]);
 
-const activeHealthTerm = computed(() => healthTerms.value?.[0]);
+// Called when new health data calculated
+window.healthExamsParser.loadStoredHealtData(
+  (event: unknown, data: Results) => {
+    healthData.value = data;
+    activeHealthTerm.value = healthTerms.value?.[0];
+  }
+);
+
+// Called when new health data calculated
+window.healthExamsParser.receiveAggregatedHealtData(
+  (event: unknown, data: Results) => {
+    healthData.value = data;
+    activeHealthTerm.value = healthTerms.value?.[0];
+  }
+);
+
 const lineGraphdata = computed(() => {
   const filesData = <Results["filesData"]>healthData.value.filesData;
   const healthTermValueInFile = <HealthTermValueInFile[]>(
@@ -40,16 +57,6 @@ const lineGraphdata = computed(() => {
   return result;
 });
 
-// Called when new health data calculated
-window.healthExamsParser.loadStoredHealtData(
-  (event: unknown, data: Results) => (healthData.value = data)
-);
-
-// Called when new health data calculated
-window.healthExamsParser.receiveAggregatedHealtData(
-  (event: unknown, data: Results) => (healthData.value = data)
-);
-
 const clearResults = () => window.healthExamsParser.clearHealthData();
 
 const removeFile = (filePath: string) =>
@@ -57,6 +64,10 @@ const removeFile = (filePath: string) =>
 
 const toggleUploadArea = () =>
   (isUploadAreaVisible.value = !isUploadAreaVisible.value);
+
+const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
+  activeHealthTerm.value = newActiveHealthTerm;
+};
 </script>
 
 <template>
@@ -79,38 +90,15 @@ const toggleUploadArea = () =>
           </v-row>
         </Transition>
 
-        {{ healthTerms?.[0] }}
         <v-row class="pa-2">
           <v-col class="pa-2" cols="3" sm="12">
             <v-sheet rounded="lg">
-              <v-container class="health-terms-list pa-2">
-                <v-row
-                  v-for="healthTerm in healthTerms"
-                  :key="healthTerm"
-                  class="py-2"
-                  no-gutters
-                  align="center"
-                >
-                  <v-col cols="2" lg="1">
-                    <input
-                      class="health-term-list-item__radio-btn"
-                      type="radio"
-                      name="healthTermsRadioBtnGroup"
-                      :id="healthTerm"
-                      v-model="activeHealthTerm"
-                      :value="healthTerm"
-                    />
-                  </v-col>
-
-                  <v-col class="pl-2 text-left">
-                    <label
-                      class="health-term-list-item__label"
-                      :for="healthTerm"
-                      >{{ healthTerm }}</label
-                    >
-                  </v-col>
-                </v-row>
-              </v-container>
+              <HealthTermsList
+                v-if="healthTerms.length > 0"
+                :active="activeHealthTerm"
+                :health-terms="healthTerms"
+                @active-health-term-updated="changeActiveHealthTerm"
+              ></HealthTermsList>
             </v-sheet>
           </v-col>
 
