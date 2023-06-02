@@ -20,7 +20,7 @@ const healthTerms: ComputedRef<string[]> = computed(() =>
   Array.from(healthData.value.healthDataOfAllFiles.keys()).sort()
 );
 
-const activeHealthTerm = ref(healthTerms.value?.[0]);
+const activeHealthTerm = computed(() => healthTerms.value?.[0]);
 const lineGraphdata = computed(() => {
   const filesData = <Results["filesData"]>healthData.value.filesData;
   const healthTermValueInFile = <HealthTermValueInFile[]>(
@@ -79,6 +79,7 @@ const toggleUploadArea = () =>
           </v-row>
         </Transition>
 
+        {{ healthTerms?.[0] }}
         <v-row class="pa-2">
           <v-col class="pa-2" cols="3" sm="12">
             <v-sheet rounded="lg">
