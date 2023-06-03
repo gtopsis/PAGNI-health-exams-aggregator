@@ -11,6 +11,9 @@ import FileUpload from "./components/FileUpload.vue";
 import LineGraph from "./components/LineGraph.vue";
 import { ComputedRef } from "vue";
 
+const isConfirmationdialogForFileRemovalOpen = ref(false);
+const candidateFileToBeRemoved = ref("");
+
 let isUploadAreaVisible = ref(false);
 let healthData = ref({
   filesData: new Array<FileDetails>(),
@@ -59,14 +62,22 @@ const lineGraphdata = computed(() => {
 
 const clearResults = () => window.healthExamsParser.clearHealthData();
 
-const removeFile = (filePath: string) =>
-  window.healthExamsParser.removeFile(filePath);
-
 const toggleUploadArea = () =>
   (isUploadAreaVisible.value = !isUploadAreaVisible.value);
 
 const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
   activeHealthTerm.value = newActiveHealthTerm;
+};
+
+const openConfirmationDialogForFileRemoval = (filePath: string) => {
+  isConfirmationdialogForFileRemovalOpen.value = true;
+  candidateFileToBeRemoved.value = filePath;
+};
+
+const removeFile = () => {
+  window.healthExamsParser.removeFile(candidateFileToBeRemoved.value);
+  candidateFileToBeRemoved.value = "";
+  isConfirmationdialogForFileRemovalOpen.value = false;
 };
 </script>
 
@@ -135,7 +146,9 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
                       size="x-small"
                       color="error"
                       small
-                      @click="removeFile(file.filePath)"
+                      @click="
+                        openConfirmationDialogForFileRemoval(file.filePath)
+                      "
                       >Remove</v-btn
                     >
                   </div>
@@ -146,6 +159,25 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
         </v-row>
       </v-container>
     </v-main>
+
+    <v-dialog v-model="isConfirmationdialogForFileRemovalOpen" width="auto">
+      <v-card>
+        <v-card-text>
+          Are you sure you want to remove the file
+          <strong>{{ candidateFileToBeRemoved }}</strong
+          >?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="error" @click="removeFile()">Remove</v-btn>
+          <v-btn
+            color="primary"
+            @click="isConfirmationdialogForFileRemovalOpen = false"
+            >Cancel</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
