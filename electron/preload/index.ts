@@ -96,23 +96,25 @@ window.onmessage = (ev) => {
 
 contextBridge.exposeInMainWorld("healthExamsParser", {
   parseHealthExams: (filesPaths: string[]) =>
-    ipcRenderer.send("parse-health-exams", filesPaths),
+    ipcRenderer.send("parse-new-health-exams", filesPaths),
 
   // event triggered from main , callback is provided from renderer
   receiveAggregatedHealtData: (
     callback: (event: Event, data: Results) => void
   ) =>
-    ipcRenderer.on("agreegated-health-data-calculated", (event, data) =>
+    ipcRenderer.on("receive-agreegated-health-data", (event, data) =>
       callback(event, data)
     ),
 
   // event triggered from main , callback is provided from renderer
   loadStoredHealtData: (callback: (event: Event, data: Results) => void) =>
-    ipcRenderer.on("load-stored-health-data", (event, data) =>
+    ipcRenderer.on("load-stored-aggregated-health-data", (event, data) =>
       callback(event, data)
     ),
-  clearHealthData: () => ipcRenderer.send("clear-health-data"),
-  removeFile: (filePath: string) => ipcRenderer.send("remove-file", filePath),
+  clearHealthData: () =>
+    ipcRenderer.send("remove-all-agreegated-health-results"),
+  removeFile: (filePath: string) =>
+    ipcRenderer.send("remove-health-exam", filePath),
 });
 
 setTimeout(removeLoading, 4999);

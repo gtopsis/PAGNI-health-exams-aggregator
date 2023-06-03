@@ -88,7 +88,10 @@ async function createWindow() {
       ) as Results;
     }
 
-    win?.webContents.send("load-stored-health-data", totalHealthData);
+    win?.webContents.send(
+      "load-stored-aggregated-health-data",
+      totalHealthData
+    );
   });
 
   // Make all links open with the browser, not with the application
@@ -141,7 +144,7 @@ ipcMain.handle("open-win", (_, arg) => {
 });
 
 ipcMain.on(
-  "parse-health-exams",
+  "parse-new-health-exams",
   async (e: Electron.IpcMainEvent, filesPaths: string[]) => {
     // check if some files have already been processed
     const newFilePaths = filesPaths.filter(
@@ -170,50 +173,55 @@ ipcMain.on(
     );
 
     // Send result back to renderer process
-    win?.webContents.send("agreegated-health-data-calculated", totalHealthData);
+    win?.webContents.send("receive-agreegated-health-data", totalHealthData);
   }
 );
 
-ipcMain.on("clear-health-data", () => {
+ipcMain.on("remove-all-agreegated-health-results", () => {
   store.clear();
   totalHealthData = initTotalHealthData();
 
   // Send result back to renderer process
-  win?.webContents.send("agreegated-health-data-calculated", totalHealthData);
+  win?.webContents.send("receive-agreegated-health-data", totalHealthData);
 });
 
-ipcMain.on("remove-file", (e: Electron.IpcMainEvent, filePath: string) => {
-  const fileToBeRemovedIndex = totalHealthData.filesData.findIndex(
-    (file) => file.filePath === filePath
-  );
-  if (fileToBeRemovedIndex === -1) {
-    return;
-  }
-  const fileToBeRemovedId =
-    totalHealthData.filesData[fileToBeRemovedIndex]?.fileId;
-
-  totalHealthData.healthDataOfAllFiles.forEach((value) => {
-    const index = value.findIndex(
-      (healthDataOfTermInFile) =>
-        healthDataOfTermInFile.fileId === fileToBeRemovedId
+ipcMain.on(
+  "remove-health-exam",
+  (e: Electron.IpcMainEvent, filePath: string) => {
+    const fileToBeRemovedIndex = totalHealthData.filesData.findIndex(
+      (file) => file.filePath === filePath
     );
-
-    if (index === -1) {
+    if (fileToBeRemovedIndex === -1) {
       return;
     }
+    const fileToBeRemovedId =
+      totalHealthData.filesData[fileToBeRemovedIndex]?.fileId;
 
-    value.splice(index, 1);
-  });
+    totalHealthData.healthDataOfAllFiles.forEach(
+      (value: HealthTermValueInFile[]) => {
+        const index = value.findIndex(
+          (healthDataOfTermInFile) =>
+            healthDataOfTermInFile.fileId === fileToBeRemovedId
+        );
 
-  // remove the file from the list
-  totalHealthData.filesData.splice(fileToBeRemovedIndex, 1);
+        if (index === -1) {
+          return;
+        }
 
-  // store data to disk
-  store.set(
-    "stored_health_data",
-    stringifyDataWithComplexStructure(totalHealthData)
-  );
+        value.splice(index, 1);
+      }
+    );
 
-  // Send result back to renderer process
-  win?.webContents.send("agreegated-health-data-calculated", totalHealthData);
-});
+    // remove the file from the list
+    totalHealthData.filesData.splice(fileToBeRemovedIndex, 1);
+
+    // store data to disk
+    store.set(
+      "stored_health_data",
+      stringifyDataWithComplexStructure(totalHealthData)
+    );
+
+    // Send result back to renderer process
+    win?.webContents.send("receive-agreegated-health-data", totalHealthData);
+  }
+);
