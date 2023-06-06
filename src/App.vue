@@ -116,12 +116,8 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
                 :label="activeHealthTerm"
               ></LineGraph>
 
-              <h3>Files</h3>
-              <span v-if="healthData.filesData.length === 0">
-                No files so far</span
-              >
-
               <div v-else>
+                <h3>Files</h3>
                 <FilesList :files="healthData.filesData"></FilesList>
               </div>
             </v-sheet>

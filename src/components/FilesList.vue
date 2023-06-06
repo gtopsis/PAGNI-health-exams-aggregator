@@ -26,13 +26,20 @@ const removeFile = () => {
 </script>
 
 <template>
-  <v-container class="health-terms-list pa-2">
+  <v-container class="health-terms-list pa-2" style="overflow-y: hidden">
+    <v-row no-gutters v-if="filesList.length === 0">
+      <v-col>
+        <span> No files so far</span>
+      </v-col>
+    </v-row>
+
     <v-row
       v-for="file in filesList"
       :key="file.fileId"
       class="files-list-item py-2"
       no-gutters
       align="center"
+      v-else
     >
       <v-col class="files-list-item_description">
         <small>{{ file.filePath }}</small>
