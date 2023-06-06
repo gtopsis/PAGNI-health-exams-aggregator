@@ -73,7 +73,15 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
     <v-app-bar>
       <v-toolbar-title>Health data Aggregator</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn color="primary" @click="toggleUploadArea">
+
+      <v-btn
+        size="small"
+        :disabled="healthData.filesData.length === 0"
+        color="error"
+        @click="clearResults"
+        >Clear results</v-btn
+      >
+      <v-btn size="small" color="primary" @click="toggleUploadArea">
         <span>Upload health exam(s)</span>
       </v-btn>
     </v-app-bar>
@@ -107,13 +115,6 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
                 :graph-data="lineGraphdata"
                 :label="activeHealthTerm"
               ></LineGraph>
-
-              <div
-                class="flex-center my-5"
-                v-if="healthData.filesData.length !== 0"
-              >
-                <v-btn color="error" @click="clearResults">Clear results</v-btn>
-              </div>
 
               <h3>Files</h3>
               <span v-if="healthData.filesData.length === 0">
