@@ -12,7 +12,7 @@ import LineGraph from "./components/LineGraph.vue";
 import FilesList from "./components/FilesList.vue";
 import { ComputedRef } from "vue";
 
-let isUploadAreaVisible = ref(false);
+let manuallyOpenedUploadArea = ref(true);
 let healthData = ref({
   filesData: new Array<FileDetails>(),
   healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
@@ -58,10 +58,15 @@ const lineGraphdata = computed(() => {
   return result;
 });
 
+const isUploadAreaVisible = computed(
+  () =>
+    manuallyOpenedUploadArea.value || healthData.value.filesData.length === 0
+);
+
 const clearResults = () => window.healthExamsParser.clearHealthData();
 
 const toggleUploadArea = () =>
-  (isUploadAreaVisible.value = !isUploadAreaVisible.value);
+  (manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value);
 
 const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
   activeHealthTerm.value = newActiveHealthTerm;
@@ -81,7 +86,12 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
         @click="clearResults"
         >Clear results</v-btn
       >
-      <v-btn size="small" color="primary" @click="toggleUploadArea">
+      <v-btn
+        size="small"
+        :disabled="healthData.filesData.length === 0"
+        color="primary"
+        @click="toggleUploadArea"
+      >
         <span>Upload health exam(s)</span>
       </v-btn>
     </v-app-bar>
