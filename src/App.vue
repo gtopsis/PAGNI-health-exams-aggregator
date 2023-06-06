@@ -63,9 +63,17 @@ const isUploadAreaVisible = computed(
     manuallyOpenedUploadArea.value || healthData.value.filesData.length === 0
 );
 
+const isClearAllDataButtonEnabled = computed(
+  () => healthData.value.filesData.length === 0
+);
+
+const isUploadHealthExamsButtonEnabled = computed(
+  () => healthData.value.filesData.length === 0
+);
+
 const clearResults = () => window.healthExamsParser.clearHealthData();
 
-const toggleUploadArea = () =>
+const toggleUploadAreaVissibility = () =>
   (manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value);
 
 const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
@@ -81,16 +89,16 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
 
       <v-btn
         size="small"
-        :disabled="healthData.filesData.length === 0"
+        :disabled="isClearAllDataButtonEnabled"
         color="error"
         @click="clearResults"
         >Clear results</v-btn
       >
       <v-btn
         size="small"
-        :disabled="healthData.filesData.length === 0"
+        :disabled="isUploadHealthExamsButtonEnabled"
         color="primary"
-        @click="toggleUploadArea"
+        @click="toggleUploadAreaVissibility"
       >
         <span>Upload health exam(s)</span>
       </v-btn>
@@ -127,7 +135,6 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
               ></LineGraph>
 
               <div v-else>
-                <h3>Files</h3>
                 <FilesList :files="healthData.filesData"></FilesList>
               </div>
             </v-sheet>

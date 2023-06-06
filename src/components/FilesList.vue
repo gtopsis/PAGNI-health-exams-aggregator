@@ -27,6 +27,8 @@ const removeFile = () => {
 
 <template>
   <v-container class="health-terms-list pa-2" style="overflow-y: hidden">
+    <h3>Files</h3>
+
     <v-row no-gutters v-if="filesList.length === 0">
       <v-col>
         <span> No files so far</span>
