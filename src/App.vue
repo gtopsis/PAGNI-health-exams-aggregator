@@ -97,7 +97,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
         </Transition>
 
         <v-row class="pa-2">
-          <v-col class="pa-2" cols="3" sm="12">
+          <v-col class="pa-2" md="3" sm="12">
             <v-sheet rounded="lg">
               <HealthTermsList
                 v-if="healthTerms.length > 0"
@@ -108,7 +108,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
             </v-sheet>
           </v-col>
 
-          <v-col>
+          <v-col md="9" sm="12">
             <v-sheet min-height="70vh" rounded="lg" class="pa-2">
               <LineGraph
                 v-if="lineGraphdata.length"
