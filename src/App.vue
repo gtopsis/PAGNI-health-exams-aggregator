@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ComputedRef, computed, ref } from "vue";
 import {
   Results,
   HealthTermValueInFile,
@@ -10,7 +10,7 @@ import HealthTermsList from "./components/HealthTermsList.vue";
 import FileUpload from "./components/FileUpload.vue";
 import LineGraph from "./components/LineGraph.vue";
 import FilesList from "./components/FilesList.vue";
-import { ComputedRef } from "vue";
+import TheAppBar from "./components/TheAppBar.vue";
 
 let manuallyOpenedUploadArea = ref(true);
 let healthData = ref({
@@ -63,14 +63,6 @@ const isUploadAreaVisible = computed(
     manuallyOpenedUploadArea.value || healthData.value.filesData.length === 0
 );
 
-const isClearAllDataButtonEnabled = computed(
-  () => healthData.value.filesData.length === 0
-);
-
-const isUploadHealthExamsButtonEnabled = computed(
-  () => healthData.value.filesData.length === 0
-);
-
 const clearResults = () => window.healthExamsParser.clearHealthData();
 
 const toggleUploadAreaVissibility = () =>
@@ -83,26 +75,11 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
 
 <template>
   <v-app id="app">
-    <v-app-bar>
-      <v-toolbar-title>Health data Aggregator</v-toolbar-title>
-      <v-spacer></v-spacer>
-
-      <v-btn
-        size="small"
-        :disabled="isClearAllDataButtonEnabled"
-        color="error"
-        @click="clearResults"
-        >Clear results</v-btn
-      >
-      <v-btn
-        size="small"
-        :disabled="isUploadHealthExamsButtonEnabled"
-        color="primary"
-        @click="toggleUploadAreaVissibility"
-      >
-        <span>Upload health exam(s)</span>
-      </v-btn>
-    </v-app-bar>
+    <TheAppBar
+      :number-of-files="healthData.filesData.length"
+      @clear-results="clearResults"
+      @toggle-upload-area-vissibility="toggleUploadAreaVissibility"
+    ></TheAppBar>
 
     <v-main class="bg-grey-lighten-3">
       <v-container>
