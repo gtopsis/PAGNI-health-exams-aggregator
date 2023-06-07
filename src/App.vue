@@ -115,10 +115,9 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
         </Transition>
 
         <v-row class="pa-2">
-          <v-col class="pa-2" md="3" sm="12">
-            <v-sheet rounded="lg">
+          <v-col md="3" sm="12" v-if="healthTerms.length > 0">
+            <v-sheet rounded="lg" class="pa-2">
               <HealthTermsList
-                v-if="healthTerms.length > 0"
                 :active="activeHealthTerm"
                 :health-terms="healthTerms"
                 @active-health-term-updated="changeActiveHealthTerm"
@@ -134,9 +133,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
                 :label="activeHealthTerm"
               ></LineGraph>
 
-              <div v-else>
-                <FilesList :files="healthData.filesData"></FilesList>
-              </div>
+              <FilesList v-else :files="healthData.filesData"></FilesList>
             </v-sheet>
           </v-col>
         </v-row>
@@ -152,37 +149,10 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
   padding-right: 0;
 }
 
-.flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
 .upload-file-area {
   width: 100%;
   height: 350px;
   transition: all 0.25s ease;
-}
-
-.health-terms-list {
-  max-height: 400px;
-  overflow-y: scroll;
-}
-
-.health-term-list-item__label:hover,
-.health-term-list-item__radio-btn:hover {
-  cursor: pointer;
 }
 
 /* we will explain what these classes do next! */

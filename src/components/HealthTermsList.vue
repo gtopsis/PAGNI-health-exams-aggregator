@@ -46,4 +46,9 @@ const updateActiveHealthTerm = () => {
   </v-container>
 </template>
 
-<style scoped></style>
+<style scoped>
+.health-term-list-item__label:hover,
+.health-term-list-item__radio-btn:hover {
+  cursor: pointer;
+}
+</style>

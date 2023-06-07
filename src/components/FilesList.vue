@@ -5,11 +5,9 @@ import { FileDetails } from "../../common/interfaces";
 const props = defineProps<{
   files: FileDetails[];
 }>();
-// const emit = defineEmits<{
-//   (e: "active-health-term-updated", newValue: string): void;
-// }>();
 
 const filesList = computed(() => props.files);
+const isFileListEmpty = computed(() => filesList.value.length === 0);
 const isConfirmationdialogForFileRemovalOpen = ref(false);
 const candidateFileToBeRemoved = ref("");
 
@@ -26,10 +24,10 @@ const removeFile = () => {
 </script>
 
 <template>
-  <v-container class="health-terms-list pa-2" style="overflow-y: hidden">
+  <v-container class="health-terms-list pa-2">
     <h3>Files</h3>
 
-    <v-row no-gutters v-if="filesList.length === 0">
+    <v-row no-gutters v-if="isFileListEmpty">
       <v-col>
         <span> No files so far</span>
       </v-col>
@@ -80,6 +78,11 @@ const removeFile = () => {
 </template>
 
 <style scoped>
+.health-terms-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
 .files-list-item {
   display: flex;
   justify-content: space-between;
