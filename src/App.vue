@@ -83,15 +83,17 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
 
     <v-main class="bg-grey-lighten-3">
       <v-container>
-        <Transition>
-          <v-row class="pa-2" v-if="isUploadAreaVisible">
-            <v-col class="upload-file-area">
+        <v-row class="pa-2">
+          <Transition>
+            <v-col
+              sm="12"
+              class="upload-file-area pa-2"
+              v-if="isUploadAreaVisible"
+            >
               <FileUpload :maxSize="5" accept="pdf" />
             </v-col>
-          </v-row>
-        </Transition>
+          </Transition>
 
-        <v-row class="pa-2">
           <v-col md="3" sm="12" v-if="healthTerms.length > 0">
             <v-sheet rounded="lg" class="pa-2">
               <HealthTermsList
