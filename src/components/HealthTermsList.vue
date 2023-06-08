@@ -17,11 +17,11 @@ const updateActiveHealthTerm = () => {
 </script>
 
 <template>
-  <v-container class="health-terms-list pa-2">
+  <v-container class="health-terms-list pa-0">
     <v-row
       v-for="healthTerm in healthTerms"
       :key="healthTerm"
-      class="py-2"
+      class="py-1"
       no-gutters
       align="center"
     >
@@ -38,9 +38,9 @@ const updateActiveHealthTerm = () => {
       </v-col>
 
       <v-col class="pl-2 text-left">
-        <label class="health-term-list-item__label" :for="healthTerm">{{
-          healthTerm
-        }}</label>
+        <label class="health-term-list-item__label" :for="healthTerm">
+          <small> {{ healthTerm }} </small>
+        </label>
       </v-col>
     </v-row>
   </v-container>
