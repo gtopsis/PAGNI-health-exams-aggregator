@@ -21,13 +21,13 @@ let healthData = ref({
 const healthTerms: ComputedRef<string[]> = computed(() =>
   Array.from(healthData.value.healthDataOfAllFiles.keys()).sort()
 );
-const activeHealthTerm = ref(healthTerms.value?.[0]);
+const selectedHealthTerm = ref(healthTerms.value?.[0]);
 
 // Called when new health data calculated
 window.healthExamsParser.loadStoredHealtData(
   (event: unknown, data: Results) => {
     healthData.value = data;
-    activeHealthTerm.value = healthTerms.value?.[0];
+    selectedHealthTerm.value = healthTerms.value?.[0];
   }
 );
 
@@ -35,14 +35,14 @@ window.healthExamsParser.loadStoredHealtData(
 window.healthExamsParser.receiveAggregatedHealtData(
   (event: unknown, data: Results) => {
     healthData.value = data;
-    activeHealthTerm.value = healthTerms.value?.[0];
+    selectedHealthTerm.value = healthTerms.value?.[0];
   }
 );
 
 const lineGraphdata = computed(() => {
   const filesData = <Results["filesData"]>healthData.value.filesData;
   const healthTermValueInFile = <HealthTermValueInFile[]>(
-    healthData.value.healthDataOfAllFiles?.get(activeHealthTerm.value)
+    healthData.value.healthDataOfAllFiles?.get(selectedHealthTerm.value)
   );
 
   const result =
@@ -63,13 +63,15 @@ const isUploadAreaVisible = computed(
     manuallyOpenedUploadArea.value || healthData.value.filesData.length === 0
 );
 
+const isHealthTermsListEmpty = computed(() => healthTerms.value.length > 0);
+
 const clearResults = () => window.healthExamsParser.clearHealthData();
 
 const toggleUploadAreaVissibility = () =>
   (manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value);
 
 const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
-  activeHealthTerm.value = newActiveHealthTerm;
+  selectedHealthTerm.value = newActiveHealthTerm;
 };
 </script>
 
@@ -94,10 +96,10 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
             </v-col>
           </Transition>
 
-          <v-col md="3" sm="12" v-if="healthTerms.length > 0">
+          <v-col md="3" sm="12" v-if="isHealthTermsListEmpty">
             <v-sheet rounded="lg" class="pa-2">
               <HealthTermsList
-                :active="activeHealthTerm"
+                :active="selectedHealthTerm"
                 :health-terms="healthTerms"
                 @active-health-term-updated="changeActiveHealthTerm"
               ></HealthTermsList>
@@ -109,7 +111,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
               <LineGraph
                 v-if="lineGraphdata.length"
                 :graph-data="lineGraphdata"
-                :label="activeHealthTerm"
+                :label="selectedHealthTerm"
               ></LineGraph>
 
               <FilesList v-else :files="healthData.filesData"></FilesList>

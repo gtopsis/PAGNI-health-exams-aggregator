@@ -24,7 +24,7 @@ const removeFile = () => {
 </script>
 
 <template>
-  <v-container class="health-terms-list pa-2">
+  <v-container class="pa-2">
     <h3>Files</h3>
 
     <v-row no-gutters v-if="isFileListEmpty">
@@ -78,11 +78,6 @@ const removeFile = () => {
 </template>
 
 <style scoped>
-.health-terms-list {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
 .files-list-item {
   display: flex;
   justify-content: space-between;

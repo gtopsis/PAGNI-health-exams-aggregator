@@ -26,8 +26,9 @@ const toggleUploadAreaVissibility = () =>
       :disabled="noFilesExists"
       color="error"
       @click="clearResults"
-      >Clear results</v-btn
     >
+      <span>Clear results</span>
+    </v-btn>
     <v-btn
       size="small"
       :disabled="noFilesExists"
