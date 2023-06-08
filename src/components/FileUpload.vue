@@ -85,8 +85,11 @@ const getFileErrors = (file: File) => {
 </script>
 
 <template>
-  <div class="file-upload">
-    <div class="file-upload__area">
+  <v-container class="file-upload pa-2 align-center justify-center">
+    <v-row
+      no-gutters
+      class="file-upload__area d-flex align-center justify-center"
+    >
       <input
         type="file"
         name=""
@@ -105,26 +108,23 @@ const getFileErrors = (file: File) => {
           <span>{{ error }}</span>
         </div>
       </div>
-    </div>
-  </div>
+    </v-row>
+  </v-container>
 </template>
 
 <style scoped>
 .file-upload {
   height: 300px;
   width: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
 }
 
 .file-upload .file-upload__area {
-  width: 600px;
-  min-height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  min-height: 100%;
   border: 2px dashed #ccc;
-  margin-top: 40px;
+}
+
+.file-upload .file-upload__error {
+  color: red;
 }
 </style>
