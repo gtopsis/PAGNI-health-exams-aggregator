@@ -47,6 +47,10 @@ const updateActiveHealthTerm = () => {
 </template>
 
 <style scoped>
+.health-terms-list {
+  max-height: 350px;
+  overflow-y: auto;
+}
 .health-term-list-item__label:hover,
 .health-term-list-item__radio-btn:hover {
   cursor: pointer;
