@@ -41,11 +41,11 @@ const removeFile = () => {
       align="center"
       v-else
     >
-      <v-col class="files-list-item_description">
-        <small>{{ file.filePath }}</small>
+      <v-col class="files-list-item_description text-left" cols="8">
+        <small class="text-left">{{ file.filePath }}</small>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col class="files-list-item_action" cols="2">
+      <v-col class="files-list-item_action justify-end">
         <v-btn
           size="x-small"
           color="error"
@@ -57,7 +57,7 @@ const removeFile = () => {
     </v-row>
   </v-container>
 
-  <v-dialog v-model="isConfirmationdialogForFileRemovalOpen" width="auto">
+  <v-dialog v-model="isConfirmationdialogForFileRemovalOpen" width="70%">
     <v-card>
       <v-card-text>
         Are you sure you want to remove the file
@@ -84,10 +84,8 @@ const removeFile = () => {
 }
 
 .files-list-item_description {
-  max-width: 75%;
 }
 
 .files-list-item_action {
-  /* width: 20%; */
 }
 </style>
