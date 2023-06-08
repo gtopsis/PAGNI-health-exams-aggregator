@@ -139,7 +139,6 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
   transition: all 0.25s ease;
 }
 
-/* we will explain what these classes do next! */
 .v-enter-active,
 .v-leave-active {
   transition: opacity 0.25s ease;

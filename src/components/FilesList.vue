@@ -66,12 +66,12 @@ const removeFile = () => {
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="error" @click="removeFile()">Remove</v-btn>
         <v-btn
           color="primary"
           @click="isConfirmationdialogForFileRemovalOpen = false"
           >Cancel</v-btn
         >
+        <v-btn color="error" @click="removeFile">Remove</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
