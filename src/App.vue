@@ -109,9 +109,12 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
             </v-sheet>
           </v-col>
 
-          <v-col sm="12" v-if="healthData.filesData.length > 0">
+          <v-col sm="12">
             <v-sheet min-height="30vh" rounded="lg" class="pa-2">
-              <FilesList :files="healthData.filesData"></FilesList>
+              <FilesList
+                v-if="healthData.filesData.length > 0"
+                :files="healthData.filesData"
+              ></FilesList>
 
               <Transition>
                 <FileUpload
