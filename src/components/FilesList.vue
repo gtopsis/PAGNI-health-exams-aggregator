@@ -25,7 +25,7 @@ const removeFile = () => {
 
 <template>
   <v-container class="pa-2">
-    <h3>Files</h3>
+    <h2>Files</h2>
 
     <v-row no-gutters v-if="isFileListEmpty">
       <v-col>

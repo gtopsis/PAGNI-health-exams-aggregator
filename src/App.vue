@@ -86,18 +86,8 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
     <v-main class="bg-grey-lighten-3">
       <v-container>
         <v-row class="pa-2">
-          <Transition>
-            <v-col
-              sm="12"
-              class="upload-file-area pa-2"
-              v-if="isUploadAreaVisible"
-            >
-              <FileUpload :maxSize="5" accept="pdf" />
-            </v-col>
-          </Transition>
-
           <v-col md="3" sm="12" v-if="isHealthTermsListEmpty">
-            <v-sheet rounded="lg" class="pa-2">
+            <v-sheet min-height="60vh" rounded="lg" class="pa-2">
               <HealthTermsList
                 :active="selectedHealthTerm"
                 :health-terms="healthTerms"
@@ -111,13 +101,26 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
             sm="12"
             v-if="lineGraphdata.length > 0 && healthData.filesData.length > 0"
           >
-            <v-sheet min-height="70vh" rounded="lg" class="pa-2">
+            <v-sheet min-height="60vh" rounded="lg" class="pa-2">
               <LineGraph
                 :graph-data="lineGraphdata"
                 :label="selectedHealthTerm"
               ></LineGraph>
+            </v-sheet>
+          </v-col>
 
+          <v-col sm="12" v-if="healthData.filesData.length > 0">
+            <v-sheet min-height="30vh" rounded="lg" class="pa-2">
               <FilesList :files="healthData.filesData"></FilesList>
+
+              <Transition>
+                <FileUpload
+                  class="upload-file-area pa-2"
+                  :maxSize="5"
+                  accept="pdf"
+                  v-if="isUploadAreaVisible"
+                />
+              </Transition>
             </v-sheet>
           </v-col>
         </v-row>
