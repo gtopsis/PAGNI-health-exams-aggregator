@@ -215,6 +215,14 @@ ipcMain.on(
     // remove the file from the list
     totalHealthData.filesData.splice(fileToBeRemovedIndex, 1);
 
+    // if no processed files exist then remove all health terms
+    if (totalHealthData.filesData.length === 0) {
+      totalHealthData.healthDataOfAllFiles = new Map<
+        string,
+        HealthTermValueInFile[]
+      >();
+    }
+
     // store data to disk
     store.set(
       "stored_health_data",
