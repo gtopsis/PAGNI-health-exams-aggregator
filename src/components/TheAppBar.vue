@@ -23,19 +23,20 @@ const toggleUploadAreaVissibility = () =>
 
     <v-btn
       size="small"
-      :disabled="noFilesExists"
+      icon="fas fa-remove"
       color="error"
+      :disabled="noFilesExists"
       @click="clearResults"
     >
-      <span>Clear results</span>
     </v-btn>
+
     <v-btn
       size="small"
-      :disabled="noFilesExists"
+      icon="fas fa-upload"
       color="primary"
+      :disabled="noFilesExists"
       @click="toggleUploadAreaVissibility"
     >
-      <span>Upload health exam(s)</span>
     </v-btn>
   </v-app-bar>
 </template>
