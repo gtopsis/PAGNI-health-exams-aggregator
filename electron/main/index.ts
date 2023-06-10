@@ -1,17 +1,18 @@
 import { app, BrowserWindow, shell, ipcMain } from "electron";
 import { release } from "node:os";
 import { join } from "node:path";
-import { addHealthDataFromNewHealthExams } from "./healthExamParser/PDFHealthDataExtractor";
 import {
   parseStringifiedDataWithComplexStructure,
   stringifyDataWithComplexStructure,
 } from "./util";
 import Store from "electron-store";
+import { HealthTermValueInFile, Results } from "../../common/interfaces";
 import {
-  FilesResults,
-  HealthTermValueInFile,
-  Results,
-} from "../../common/interfaces";
+  parseNewHealthExam,
+  handleRemoveAllAgreegatedResultsRequest,
+  handleRemoveHealthExamRequest,
+  removeHealthExam,
+} from "./ipcEventsHandlers";
 
 const initTotalHealthData = () => ({
   filesData: [],
@@ -151,40 +152,6 @@ ipcMain.handle("open-win", (_, arg) => {
 //      CUSTOM IPC EVENTS
 // ============================================
 
-const handleParseNewHealthExamRequest = async (
-  e: Electron.IpcMainEvent,
-  filesPaths: string[]
-) => {
-  // check if some files have already been processed
-  const newFilePaths = filesPaths.filter(
-    (filePath) =>
-      !totalHealthData.filesData.find(
-        (existingFile) => existingFile.filePath === filePath
-      )
-  );
-  if (newFilePaths.length != filesPaths.length) {
-    console.warn("Tried to process a file which it has already been handled");
-  }
-
-  if (newFilePaths.length === 0) {
-    return;
-  }
-
-  totalHealthData = await addHealthDataFromNewHealthExams(
-    totalHealthData,
-    newFilePaths
-  );
-
-  // store data to disk
-  store.set(
-    "stored_health_data",
-    stringifyDataWithComplexStructure(totalHealthData)
-  );
-
-  // Send result back to renderer process
-  win?.webContents.send("receive-agreegated-health-data", totalHealthData);
-};
-
 const handleRemoveAllAgreegatedResultsRequest = () => {
   store.clear();
   totalHealthData = initTotalHealthData();
@@ -193,61 +160,34 @@ const handleRemoveAllAgreegatedResultsRequest = () => {
   win?.webContents.send("receive-agreegated-health-data", totalHealthData);
 };
 
-const removeAllHealthTermsResultsForFile = (
-  healthDataOfAllFiles: FilesResults,
-  fileId: number
-) => {
-  healthDataOfAllFiles.forEach((value: HealthTermValueInFile[]) => {
-    const index = value.findIndex(
-      (healthTermValueInFile) => healthTermValueInFile.fileId === fileId
-    );
-
-    if (index !== -1) {
-      value.splice(index, 1);
-    }
-  });
-
-  return healthDataOfAllFiles;
+const storeHealthDataToFile = (totalHealthData: Results) => {
+  store.set(
+    "stored_health_data",
+    stringifyDataWithComplexStructure(totalHealthData)
+  );
 };
 
 const handleRemoveHealthExamRequest = (
   e: Electron.IpcMainEvent,
   filePath: string
 ) => {
-  const fileToBeRemovedIndex = totalHealthData.filesData.findIndex(
-    (file) => file.filePath === filePath
-  );
-  if (fileToBeRemovedIndex === -1) {
-    return;
-  }
-
-  const fileToBeRemovedId =
-    totalHealthData.filesData[fileToBeRemovedIndex]?.fileId;
-  if (!fileToBeRemovedId) {
-    return;
-  }
-
-  totalHealthData.healthDataOfAllFiles = removeAllHealthTermsResultsForFile(
-    totalHealthData.healthDataOfAllFiles,
-    fileToBeRemovedId
-  );
-
-  // remove the file from the list
-  totalHealthData.filesData.splice(fileToBeRemovedIndex, 1);
-
-  // if no processed files exist then remove all health terms
-  if (totalHealthData.filesData.length === 0) {
-    totalHealthData.healthDataOfAllFiles = new Map<
-      string,
-      HealthTermValueInFile[]
-    >();
-  }
+  removeHealthExam(totalHealthData, filePath);
 
   // store data to disk
-  store.set(
-    "stored_health_data",
-    stringifyDataWithComplexStructure(totalHealthData)
-  );
+  storeHealthDataToFile(totalHealthData);
+
+  // Send result back to renderer process
+  win?.webContents.send("receive-agreegated-health-data", totalHealthData);
+};
+
+const handleParseNewHealthExamRequest = async (
+  e: Electron.IpcMainEvent,
+  filesPaths: string[]
+) => {
+  totalHealthData = await parseNewHealthExam(totalHealthData, filesPaths);
+
+  // store data to disk
+  storeHealthDataToFile(totalHealthData);
 
   // Send result back to renderer process
   win?.webContents.send("receive-agreegated-health-data", totalHealthData);
