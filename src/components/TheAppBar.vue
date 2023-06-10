@@ -17,8 +17,10 @@ const toggleUploadAreaVissibility = () =>
 </script>
 
 <template>
-  <v-app-bar>
-    <v-toolbar-title>Health data Aggregator</v-toolbar-title>
+  <v-app-bar class="px-4">
+    <v-toolbar-title class="text-left ml-0"
+      >Health data Aggregator</v-toolbar-title
+    >
     <v-spacer></v-spacer>
 
     <v-btn
@@ -31,6 +33,7 @@ const toggleUploadAreaVissibility = () =>
     </v-btn>
 
     <v-btn
+      class="mr-0"
       size="small"
       icon="fas fa-upload"
       color="primary"

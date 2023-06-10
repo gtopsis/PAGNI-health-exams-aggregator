@@ -152,19 +152,19 @@ ipcMain.handle("open-win", (_, arg) => {
 //      CUSTOM IPC EVENTS
 // ============================================
 
+const storeHealthDataToFile = (totalHealthData: Results) => {
+  store.set(
+    "stored_health_data",
+    stringifyDataWithComplexStructure(totalHealthData)
+  );
+};
+
 const handleRemoveAllAgreegatedResultsRequest = () => {
   store.clear();
   totalHealthData = initTotalHealthData();
 
   // Send result back to renderer process
   win?.webContents.send("receive-agreegated-health-data", totalHealthData);
-};
-
-const storeHealthDataToFile = (totalHealthData: Results) => {
-  store.set(
-    "stored_health_data",
-    stringifyDataWithComplexStructure(totalHealthData)
-  );
 };
 
 const handleRemoveHealthExamRequest = (
