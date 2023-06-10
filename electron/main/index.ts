@@ -7,7 +7,11 @@ import {
   stringifyDataWithComplexStructure,
 } from "./util";
 import Store from "electron-store";
-import { HealthTermValueInFile, Results } from "../../common/interfaces";
+import {
+  FilesResults,
+  HealthTermValueInFile,
+  Results,
+} from "../../common/interfaces";
 
 const initTotalHealthData = () => ({
   filesData: [],
@@ -143,93 +147,115 @@ ipcMain.handle("open-win", (_, arg) => {
   }
 });
 
-ipcMain.on(
-  "parse-new-health-exams",
-  async (e: Electron.IpcMainEvent, filesPaths: string[]) => {
-    // check if some files have already been processed
-    const newFilePaths = filesPaths.filter(
-      (filePath) =>
-        !totalHealthData.filesData.find(
-          (existingFile) => existingFile.filePath === filePath
-        )
-    );
-    if (newFilePaths.length != filesPaths.length) {
-      console.warn("Tried to process a file which it has already been handled");
-    }
+// ============================================
+//      CUSTOM IPC EVENTS
+// ============================================
 
-    if (newFilePaths.length === 0) {
-      return;
-    }
-
-    totalHealthData = await addHealthDataFromNewHealthExams(
-      totalHealthData,
-      newFilePaths
-    );
-
-    // store data to disk
-    store.set(
-      "stored_health_data",
-      stringifyDataWithComplexStructure(totalHealthData)
-    );
-
-    // Send result back to renderer process
-    win?.webContents.send("receive-agreegated-health-data", totalHealthData);
+const handleParseNewHealthExamRequest = async (
+  e: Electron.IpcMainEvent,
+  filesPaths: string[]
+) => {
+  // check if some files have already been processed
+  const newFilePaths = filesPaths.filter(
+    (filePath) =>
+      !totalHealthData.filesData.find(
+        (existingFile) => existingFile.filePath === filePath
+      )
+  );
+  if (newFilePaths.length != filesPaths.length) {
+    console.warn("Tried to process a file which it has already been handled");
   }
-);
 
-ipcMain.on("remove-all-agreegated-health-results", () => {
+  if (newFilePaths.length === 0) {
+    return;
+  }
+
+  totalHealthData = await addHealthDataFromNewHealthExams(
+    totalHealthData,
+    newFilePaths
+  );
+
+  // store data to disk
+  store.set(
+    "stored_health_data",
+    stringifyDataWithComplexStructure(totalHealthData)
+  );
+
+  // Send result back to renderer process
+  win?.webContents.send("receive-agreegated-health-data", totalHealthData);
+};
+
+const handleRemoveAllAgreegatedResultsRequest = () => {
   store.clear();
   totalHealthData = initTotalHealthData();
 
   // Send result back to renderer process
   win?.webContents.send("receive-agreegated-health-data", totalHealthData);
-});
+};
 
-ipcMain.on(
-  "remove-health-exam",
-  (e: Electron.IpcMainEvent, filePath: string) => {
-    const fileToBeRemovedIndex = totalHealthData.filesData.findIndex(
-      (file) => file.filePath === filePath
+const removeAllHealthTermsResultsForFile = (
+  healthDataOfAllFiles: FilesResults,
+  fileId: number
+) => {
+  healthDataOfAllFiles.forEach((value: HealthTermValueInFile[]) => {
+    const index = value.findIndex(
+      (healthTermValueInFile) => healthTermValueInFile.fileId === fileId
     );
-    if (fileToBeRemovedIndex === -1) {
-      return;
+
+    if (index !== -1) {
+      value.splice(index, 1);
     }
-    const fileToBeRemovedId =
-      totalHealthData.filesData[fileToBeRemovedIndex]?.fileId;
+  });
 
-    totalHealthData.healthDataOfAllFiles.forEach(
-      (value: HealthTermValueInFile[]) => {
-        const index = value.findIndex(
-          (healthDataOfTermInFile) =>
-            healthDataOfTermInFile.fileId === fileToBeRemovedId
-        );
+  return healthDataOfAllFiles;
+};
 
-        if (index === -1) {
-          return;
-        }
-
-        value.splice(index, 1);
-      }
-    );
-
-    // remove the file from the list
-    totalHealthData.filesData.splice(fileToBeRemovedIndex, 1);
-
-    // if no processed files exist then remove all health terms
-    if (totalHealthData.filesData.length === 0) {
-      totalHealthData.healthDataOfAllFiles = new Map<
-        string,
-        HealthTermValueInFile[]
-      >();
-    }
-
-    // store data to disk
-    store.set(
-      "stored_health_data",
-      stringifyDataWithComplexStructure(totalHealthData)
-    );
-
-    // Send result back to renderer process
-    win?.webContents.send("receive-agreegated-health-data", totalHealthData);
+const handleRemoveHealthExamRequest = (
+  e: Electron.IpcMainEvent,
+  filePath: string
+) => {
+  const fileToBeRemovedIndex = totalHealthData.filesData.findIndex(
+    (file) => file.filePath === filePath
+  );
+  if (fileToBeRemovedIndex === -1) {
+    return;
   }
+
+  const fileToBeRemovedId =
+    totalHealthData.filesData[fileToBeRemovedIndex]?.fileId;
+  if (!fileToBeRemovedId) {
+    return;
+  }
+
+  totalHealthData.healthDataOfAllFiles = removeAllHealthTermsResultsForFile(
+    totalHealthData.healthDataOfAllFiles,
+    fileToBeRemovedId
+  );
+
+  // remove the file from the list
+  totalHealthData.filesData.splice(fileToBeRemovedIndex, 1);
+
+  // if no processed files exist then remove all health terms
+  if (totalHealthData.filesData.length === 0) {
+    totalHealthData.healthDataOfAllFiles = new Map<
+      string,
+      HealthTermValueInFile[]
+    >();
+  }
+
+  // store data to disk
+  store.set(
+    "stored_health_data",
+    stringifyDataWithComplexStructure(totalHealthData)
+  );
+
+  // Send result back to renderer process
+  win?.webContents.send("receive-agreegated-health-data", totalHealthData);
+};
+
+ipcMain.on("parse-new-health-exams", handleParseNewHealthExamRequest);
+ipcMain.on(
+  "remove-all-agreegated-health-results",
+  handleRemoveAllAgreegatedResultsRequest
 );
+ipcMain.on("remove-health-exam", handleRemoveHealthExamRequest);
