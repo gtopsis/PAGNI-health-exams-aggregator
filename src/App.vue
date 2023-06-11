@@ -77,11 +77,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
 
 <template>
   <v-app id="app">
-    <TheAppBar
-      :number-of-files="healthData.filesData.length"
-      @clear-results="clearResults"
-      @toggle-upload-area-vissibility="toggleUploadAreaVissibility"
-    ></TheAppBar>
+    <TheAppBar></TheAppBar>
 
     <v-main class="bg-grey-lighten-3">
       <v-container>
@@ -114,6 +110,8 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
               <FilesList
                 v-if="healthData.filesData.length > 0"
                 :files="healthData.filesData"
+                @clear-results="clearResults"
+                @toggle-upload-area-vissibility="toggleUploadAreaVissibility"
               ></FilesList>
 
               <Transition>
