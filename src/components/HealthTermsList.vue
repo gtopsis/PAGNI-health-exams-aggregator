@@ -25,7 +25,7 @@ const updateActiveHealthTerm = () => {
       no-gutters
       align="center"
     >
-      <v-col cols="2" lg="1">
+      <v-col md="auto" sm="1">
         <input
           class="health-term-list-item__radio-btn"
           type="radio"

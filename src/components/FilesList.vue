@@ -92,13 +92,18 @@ const removeFile = () => {
       </v-col>
       <v-spacer></v-spacer>
       <v-col class="files-list-item_action" cols="auto">
-        <v-btn
-          size="x-small"
-          variant="text"
-          icon="fas fa-remove"
-          color="error"
-          @click="openConfirmationDialogForFileRemoval(file.filePath)"
-        ></v-btn>
+        <v-tooltip text="Remove health exam" location="start">
+          <template v-slot:activator="{ props }">
+            <v-btn
+              size="x-small"
+              variant="text"
+              icon="fas fa-remove"
+              color="error"
+              v-bind="props"
+              @click="openConfirmationDialogForFileRemoval(file.filePath)"
+            ></v-btn>
+          </template>
+        </v-tooltip>
       </v-col>
     </v-row>
   </v-container>
@@ -125,8 +130,6 @@ const removeFile = () => {
 
 <style scoped>
 .files-list-item {
-  display: flex;
-  justify-content: space-between;
 }
 
 .files-list-item_description {
