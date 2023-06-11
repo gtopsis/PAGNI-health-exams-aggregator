@@ -45,9 +45,10 @@ const removeFile = () => {
         <small class="text-left">{{ file.filePath }}</small>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col class="files-list-item_action justify-end">
+      <v-col class="files-list-item_action" cols="auto">
         <v-btn
           size="x-small"
+          variant="text"
           icon="fas fa-remove"
           color="error"
           @click="openConfirmationDialogForFileRemoval(file.filePath)"
