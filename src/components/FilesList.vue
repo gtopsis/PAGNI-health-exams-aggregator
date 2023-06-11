@@ -16,13 +16,15 @@ const isFileListEmpty = computed(() => filesList.value.length === 0);
 const isConfirmationdialogForFileRemovalOpen = ref(false);
 const candidateFileToBeRemoved = ref("");
 
+const getFilename = (fullPath: string) => fullPath.replace(/^.*[\\\/]/, "");
+
 const clearResults = () => emit("clear-results");
 const toggleUploadAreaVissibility = () =>
   emit("toggle-upload-area-vissibility");
 
 const openConfirmationDialogForFileRemoval = (filePath: string) => {
   isConfirmationdialogForFileRemovalOpen.value = true;
-  candidateFileToBeRemoved.value = filePath;
+  candidateFileToBeRemoved.value = getFilename(filePath);
 };
 
 const removeFile = () => {
@@ -88,7 +90,7 @@ const removeFile = () => {
       v-else
     >
       <v-col class="files-list-item_description text-left" cols="8">
-        <small class="text-left">{{ file.filePath }}</small>
+        <small class="text-left">{{ getFilename(file.filePath) }}</small>
       </v-col>
       <v-spacer></v-spacer>
       <v-col class="files-list-item_action" cols="auto">
