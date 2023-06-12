@@ -29,28 +29,30 @@ const file = {
 };
 
 let fileErrors: string[] = [];
-const handleFileChange = (e: Event) => {
+const handleFilesChange = (e: Event) => {
   const files = (e.target as HTMLInputElement)?.files;
-  // Get uploaded file
-  const file = files?.[0];
 
   // Check if file is selected
-  if (!file) {
+  if (!files) {
     console.error("No file uploaded correctly");
 
     return;
   }
 
-  // Check if file is valid
-  fileErrors = getFileErrors(file);
-  if (fileErrors.length > 0) {
-    console.error(`Invalid file.\n Errors:\n ${fileErrors.join("\n")}`);
+  for (const file of files) {
+    // Check if file is valid
+    fileErrors = getFileErrors(file);
+    if (fileErrors.length > 0) {
+      console.error(`Invalid file.\n Errors:\n ${fileErrors.join("\n")}`);
 
-    return;
+      return;
+    }
   }
 
-  window.healthExamsParser.parseHealthExams([(file as FileWithPath).path]);
+  const filesWithPaths = Array.from(files).map((f) => (f as FileWithPath).path);
+  window.healthExamsParser.parseHealthExams(filesWithPaths);
 
+  // reset html element
   const fileHTMLEl = <HTMLInputElement>document.getElementById("fileUploadBtn");
   if (fileHTMLEl) {
     fileHTMLEl.value = "";
@@ -94,7 +96,7 @@ const getFileErrors = (file: File) => {
         type="file"
         name=""
         id="fileUploadBtn"
-        @change="handleFileChange($event)"
+        @change="handleFilesChange($event)"
         accept="application/pdf,application/vnd.ms-excel"
         multiple
       />
