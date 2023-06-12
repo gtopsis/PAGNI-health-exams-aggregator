@@ -81,9 +81,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
 </script>
 
 <template>
-  <v-app id="app">
-    <TheAppBar></TheAppBar>
-
+  <v-app id="app" class="py-0">
     <v-main class="bg-grey-lighten-3">
       <v-container>
         <v-row class="pa-2">
