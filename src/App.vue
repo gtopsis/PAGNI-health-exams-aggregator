@@ -65,8 +65,10 @@ const isUploadAreaVisible = computed(
 
 const filesList = computed(() => healthData.value.filesData);
 const isFileListEmpty = computed(() => filesList.value.length === 0);
-
 const isHealthTermsListEmpty = computed(() => healthTerms.value.length > 0);
+const toggleUploadAreaIconClass = computed(() =>
+  manuallyOpenedUploadArea.value ? "fas fa-chevron-up" : "fas fa-file-arrow-up"
+);
 
 const clearResults = () => window.healthExamsParser.clearHealthData();
 
@@ -137,7 +139,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
                       <v-btn
                         class="mr-0"
                         size="small"
-                        icon="fas fa-upload"
+                        :icon="toggleUploadAreaIconClass"
                         color="primary"
                         variant="text"
                         v-bind="props"

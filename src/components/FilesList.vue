@@ -12,7 +12,7 @@ const emit = defineEmits<{
 }>();
 
 const filesList = computed(() => props.files.reverse());
-const isFileListEmpty = computed(() => filesList.value.length === 0);
+const isFileListEmpty = computed(() => props.files.length === 0);
 const isConfirmationdialogForFileRemovalOpen = ref(false);
 const candidateFileToBeRemoved = ref("");
 
