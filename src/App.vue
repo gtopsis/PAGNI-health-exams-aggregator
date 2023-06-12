@@ -63,6 +63,9 @@ const isUploadAreaVisible = computed(
     manuallyOpenedUploadArea.value || healthData.value.filesData.length === 0
 );
 
+const filesList = computed(() => healthData.value.filesData);
+const isFileListEmpty = computed(() => filesList.value.length === 0);
+
 const isHealthTermsListEmpty = computed(() => healthTerms.value.length > 0);
 
 const clearResults = () => window.healthExamsParser.clearHealthData();
@@ -107,12 +110,45 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
 
           <v-col sm="12">
             <v-sheet min-height="30vh" rounded="lg" class="pa-2">
-              <FilesList
-                v-if="healthData.filesData.length > 0"
-                :files="healthData.filesData"
-                @clear-results="clearResults"
-                @toggle-upload-area-vissibility="toggleUploadAreaVissibility"
-              ></FilesList>
+              <v-row>
+                <v-col cols="auto">
+                  <h2>Files</h2>
+                </v-col>
+                <v-spacer></v-spacer>
+                <v-col class="px-0" cols="auto">
+                  <v-tooltip text="Clear all" location="start">
+                    <template v-slot:activator="{ props }">
+                      <v-btn
+                        size="small"
+                        icon="fas fa-broom"
+                        color="error"
+                        variant="text"
+                        v-bind="props"
+                        :disabled="isFileListEmpty"
+                        @click="clearResults"
+                      >
+                      </v-btn>
+                    </template>
+                  </v-tooltip>
+                </v-col>
+                <v-col class="px-0" cols="auto">
+                  <v-tooltip text="Upload new health exam" location="start">
+                    <template v-slot:activator="{ props }">
+                      <v-btn
+                        class="mr-0"
+                        size="small"
+                        icon="fas fa-upload"
+                        color="primary"
+                        variant="text"
+                        v-bind="props"
+                        :disabled="isFileListEmpty"
+                        @click="toggleUploadAreaVissibility"
+                      >
+                      </v-btn>
+                    </template>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
 
               <Transition>
                 <FileUpload
@@ -122,6 +158,13 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
                   v-if="isUploadAreaVisible"
                 />
               </Transition>
+
+              <FilesList
+                v-if="healthData.filesData.length > 0"
+                :files="healthData.filesData"
+                @clear-results="clearResults"
+                @toggle-upload-area-vissibility="toggleUploadAreaVissibility"
+              ></FilesList>
             </v-sheet>
           </v-col>
         </v-row>

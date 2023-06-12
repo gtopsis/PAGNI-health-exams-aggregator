@@ -11,16 +11,12 @@ const emit = defineEmits<{
   (e: "toggle-upload-area-vissibility"): void;
 }>();
 
-const filesList = computed(() => props.files);
+const filesList = computed(() => props.files.reverse());
 const isFileListEmpty = computed(() => filesList.value.length === 0);
 const isConfirmationdialogForFileRemovalOpen = ref(false);
 const candidateFileToBeRemoved = ref("");
 
 const getFilename = (fullPath: string) => fullPath.replace(/^.*[\\\/]/, "");
-
-const clearResults = () => emit("clear-results");
-const toggleUploadAreaVissibility = () =>
-  emit("toggle-upload-area-vissibility");
 
 const openConfirmationDialogForFileRemoval = (filePath: string) => {
   isConfirmationdialogForFileRemovalOpen.value = true;
@@ -36,45 +32,6 @@ const removeFile = () => {
 
 <template>
   <v-container class="pa-2">
-    <v-row>
-      <v-col cols="auto">
-        <h2>Files</h2>
-      </v-col>
-      <v-spacer></v-spacer>
-      <v-col class="px-0" cols="auto">
-        <v-tooltip text="Clear all" location="start">
-          <template v-slot:activator="{ props }">
-            <v-btn
-              size="small"
-              icon="fas fa-broom"
-              color="error"
-              variant="text"
-              v-bind="props"
-              :disabled="isFileListEmpty"
-              @click="clearResults"
-            >
-            </v-btn>
-          </template>
-        </v-tooltip>
-      </v-col>
-      <v-col class="px-0" cols="auto">
-        <v-tooltip text="Upload new health exam" location="start">
-          <template v-slot:activator="{ props }">
-            <v-btn
-              class="mr-0"
-              size="small"
-              icon="fas fa-upload"
-              color="primary"
-              variant="text"
-              v-bind="props"
-              :disabled="isFileListEmpty"
-              @click="toggleUploadAreaVissibility"
-            >
-            </v-btn>
-          </template>
-        </v-tooltip>
-      </v-col>
-    </v-row>
     <v-row no-gutters v-if="isFileListEmpty">
       <v-col>
         <span> No files so far</span>
