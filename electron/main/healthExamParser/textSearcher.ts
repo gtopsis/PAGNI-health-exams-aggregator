@@ -23,7 +23,7 @@ export const getHealthTermsDataFromText = (
   const regexForNumber = "\\d*(,\\d+)?";
   const unionOfMetrics = "(" + queryTerms.join("|") + ")";
   const valueRegex = regexForNumber;
-  const healthTermCanonicalValuesRegex = `(${regexForNumber}-${regexForNumber})`;
+  const healthTermCanonicalValuesRegex = `(${regexForNumber}-${regexForNumber})?`;
   const healthTermMeasurementUnitRegex = "\\S*";
 
   const regex = new RegExp(

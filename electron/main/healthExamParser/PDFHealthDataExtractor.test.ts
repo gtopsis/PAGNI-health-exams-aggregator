@@ -79,7 +79,10 @@ describe("Extract health data of a single file", () => {
 });
 
 describe("Extract health data of multiple files", () => {
-  const files = ["path/to/file1.pdf", "path/to/file2.pdf"];
+  const files = [
+    { path: "path/to/file1.pdf", name: "file1.pdf" },
+    { path: "path/to/file2.pdf", name: "file2.pdf" },
+  ];
 
   it("will return a single value fro HCT when only one of the file contains valid data for HCT", async () => {
     (pdfParser as jest.Mock).mockResolvedValueOnce({
@@ -97,19 +100,29 @@ describe("Extract health data of multiple files", () => {
       healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
     };
 
-    const { filesDetails: filesData, healthTermsValues: healthDataOfAllFiles } =
+    const { filesDetails, healthTermsValues } =
       await addHealthDataFromNewHealthExams(totalHealthData, files);
 
-    expect(filesData).not.toEqual(undefined);
-    expect(filesData).toEqual([
-      { fileId: 0, filePath: "path/to/file1.pdf", date: undefined },
-      { fileId: 1, filePath: "path/to/file2.pdf", date: "04/05/2023" },
+    expect(filesDetails).not.toEqual(undefined);
+    expect(filesDetails).toEqual([
+      {
+        fileId: 0,
+        filePath: "path/to/file1.pdf",
+        filename: "file1.pdf",
+        date: undefined,
+      },
+      {
+        fileId: 1,
+        filePath: "path/to/file2.pdf",
+        filename: "file2.pdf",
+        date: "04/05/2023",
+      },
     ]);
-    expect(healthDataOfAllFiles).not.toEqual(undefined);
-    expect(healthDataOfAllFiles instanceof Map).toBeTruthy();
-    expect(healthDataOfAllFiles.size).toEqual(1);
-    expect(healthDataOfAllFiles.get("HCT Αιματοκρίτης")).toHaveLength(1);
-    expect(healthDataOfAllFiles.get("HCT Αιματοκρίτης")?.[0]).toEqual({
+    expect(healthTermsValues).not.toEqual(undefined);
+    expect(healthTermsValues instanceof Map).toBeTruthy();
+    expect(healthTermsValues.size).toEqual(1);
+    expect(healthTermsValues.get("HCT Αιματοκρίτης")).toHaveLength(1);
+    expect(healthTermsValues.get("HCT Αιματοκρίτης")?.[0]).toEqual({
       fileId: 1,
       healthTermValue: 40.6,
     });
@@ -136,19 +149,29 @@ describe("Extract health data of multiple files", () => {
       healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
     };
 
-    const { filesDetails: filesData, healthTermsValues: healthDataOfAllFiles } =
+    const { filesDetails, healthTermsValues } =
       await addHealthDataFromNewHealthExams(totalHealthData, files);
 
-    expect(filesData).not.toEqual(undefined);
-    expect(filesData).toEqual([
-      { fileId: 0, filePath: "path/to/file1.pdf", date: "05/11/2023" },
-      { fileId: 1, filePath: "path/to/file2.pdf", date: "04/05/2023" },
+    expect(filesDetails).not.toEqual(undefined);
+    expect(filesDetails).toEqual([
+      {
+        fileId: 0,
+        filePath: "path/to/file1.pdf",
+        filename: "file1.pdf",
+        date: "05/11/2023",
+      },
+      {
+        fileId: 1,
+        filePath: "path/to/file2.pdf",
+        filename: "file2.pdf",
+        date: "04/05/2023",
+      },
     ]);
-    expect(healthDataOfAllFiles).not.toEqual(undefined);
-    expect(healthDataOfAllFiles instanceof Map).toBeTruthy();
-    expect(healthDataOfAllFiles.size).toEqual(2);
-    expect(healthDataOfAllFiles.get("HCT Αιματοκρίτης")).toHaveLength(2);
-    expect(healthDataOfAllFiles.get("HCT Αιματοκρίτης")).toEqual([
+    expect(healthTermsValues).not.toEqual(undefined);
+    expect(healthTermsValues instanceof Map).toBeTruthy();
+    expect(healthTermsValues.size).toEqual(2);
+    expect(healthTermsValues.get("HCT Αιματοκρίτης")).toHaveLength(2);
+    expect(healthTermsValues.get("HCT Αιματοκρίτης")).toEqual([
       {
         fileId: 0,
         healthTermValue: 49.1,
