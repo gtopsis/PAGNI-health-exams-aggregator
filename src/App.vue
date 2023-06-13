@@ -40,7 +40,7 @@ window.healthExamsParser.receiveAggregatedHealtData(
 );
 
 const lineGraphdata = computed(() => {
-  const filesData = <Results["filesData"]>healthData.value.filesData;
+  const filesData = <Results["filesDetails"]>healthData.value.filesData;
   const healthTermValueInFile = <HealthTermValueInFile[]>(
     healthData.value.healthDataOfAllFiles?.get(selectedHealthTerm.value)
   );
@@ -86,7 +86,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
       <v-container>
         <v-row class="pa-2">
           <v-col md="3" sm="12" v-if="isHealthTermsListEmpty">
-            <v-sheet min-height="60vh" rounded="lg" class="pa-2">
+            <v-sheet height="50vh" max-height="350px" rounded="lg" class="pa-2">
               <HealthTermsList
                 :active="selectedHealthTerm"
                 :health-terms="healthTerms"
@@ -100,7 +100,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
             sm="12"
             v-if="lineGraphdata.length > 0 && healthData.filesData.length > 0"
           >
-            <v-sheet min-height="60vh" rounded="lg" class="pa-2">
+            <v-sheet min-height="50vh" rounded="lg" class="pa-2">
               <LineGraph
                 :graph-data="lineGraphdata"
                 :label="selectedHealthTerm"

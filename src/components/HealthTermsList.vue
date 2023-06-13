@@ -48,7 +48,9 @@ const updateActiveHealthTerm = () => {
 
 <style scoped>
 .health-terms-list {
-  max-height: 350px;
+  height: 100%;
+  max-height: 100%;
+  /* max-height: 350px; */
   overflow-y: auto;
 }
 

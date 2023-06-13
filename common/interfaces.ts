@@ -10,9 +10,9 @@ export interface HealthTermValueInFile {
   healthTermValue: number;
 }
 
-export type FilesResults = Map<string, HealthTermValueInFile[]>;
+export type HealthTermsValues = Map<string, HealthTermValueInFile[]>;
 
 export interface Results {
-  filesData: FileDetails[];
-  healthDataOfAllFiles: FilesResults;
+  filesMetadata: FileDetails[];
+  healthTermsValues: HealthTermsValues;
 }

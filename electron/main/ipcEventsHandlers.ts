@@ -1,6 +1,7 @@
 import { addHealthDataFromNewHealthExams } from "./healthExamParser/PDFHealthDataExtractor";
 import {
-  FilesResults,
+  FileDetails,
+  HealthTermsValues,
   HealthTermValueInFile,
   Results,
 } from "../../common/interfaces";
@@ -11,9 +12,9 @@ export const parseNewHealthExam = async (
 ) => {
   // check if some files have already been processed
   const newFilePaths = filesPaths.filter(
-    (filePath) =>
-      !totalHealthData.filesData.find(
-        (existingFile) => existingFile.filePath === filePath
+    (filePath: string) =>
+      !totalHealthData.filesMetadata.find(
+        (existingFile: FileDetails) => existingFile.filePath === filePath
       )
   );
   if (newFilePaths.length != filesPaths.length) {
@@ -28,7 +29,7 @@ export const parseNewHealthExam = async (
 };
 
 export const removeAllHealthTermsResultsForFile = (
-  healthDataOfAllFiles: FilesResults,
+  healthDataOfAllFiles: HealthTermsValues,
   fileId: number
 ) => {
   healthDataOfAllFiles.forEach((value: HealthTermValueInFile[]) => {
@@ -48,7 +49,7 @@ export const removeHealthExam = (
   totalHealthData: Results,
   filePath: string
 ) => {
-  const fileToBeRemovedIndex = totalHealthData.filesData.findIndex(
+  const fileToBeRemovedIndex = totalHealthData.filesMetadata.findIndex(
     (file) => file.filePath === filePath
   );
   if (fileToBeRemovedIndex === -1) {
@@ -56,22 +57,22 @@ export const removeHealthExam = (
   }
 
   const fileToBeRemovedId =
-    totalHealthData.filesData[fileToBeRemovedIndex]?.fileId;
+    totalHealthData.filesMetadata[fileToBeRemovedIndex]?.fileId;
   if (!fileToBeRemovedId) {
     return;
   }
 
-  totalHealthData.healthDataOfAllFiles = removeAllHealthTermsResultsForFile(
-    totalHealthData.healthDataOfAllFiles,
+  totalHealthData.healthTermsValues = removeAllHealthTermsResultsForFile(
+    totalHealthData.healthTermsValues,
     fileToBeRemovedId
   );
 
   // remove the file from the list
-  totalHealthData.filesData.splice(fileToBeRemovedIndex, 1);
+  totalHealthData.filesMetadata.splice(fileToBeRemovedIndex, 1);
 
   // if no processed files exist then remove all health terms
-  if (totalHealthData.filesData.length === 0) {
-    totalHealthData.healthDataOfAllFiles = new Map<
+  if (totalHealthData.filesMetadata.length === 0) {
+    totalHealthData.healthTermsValues = new Map<
       string,
       HealthTermValueInFile[]
     >();

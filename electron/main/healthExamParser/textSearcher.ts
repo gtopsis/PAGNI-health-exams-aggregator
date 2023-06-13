@@ -20,21 +20,52 @@ export const getHealthTermsDataFromText = (
 ): Map<string, number> => {
   const result: Map<string, number> = new Map();
 
-  const unionOfMetrics = queryTerms.join("|");
-  const regex = new RegExp(`[0-9].*(${unionOfMetrics})`, "g");
+  const regexForNumber = "\\d*(,\\d+)?";
+  const unionOfMetrics = "(" + queryTerms.join("|") + ")";
+  const valueRegex = regexForNumber;
+  const healthTermCanonicalValuesRegex = `(${regexForNumber}-${regexForNumber})`;
+  const healthTermMeasurementUnitRegex = "\\S*";
+
+  const regex = new RegExp(
+    `${valueRegex}${unionOfMetrics}\\D*${healthTermCanonicalValuesRegex}${healthTermMeasurementUnitRegex}`,
+    "g"
+  );
   const matches = text.match(regex);
 
   matches?.forEach((match) => {
-    // this regex based on the format of the above one
-    const indexWhenHealthTermStarts = match.search(/[^(\d|,)]/);
+    const healthTerm = match.match(new RegExp(unionOfMetrics, "g"))?.[0].trim();
+    if (!healthTerm) {
+      return;
+    }
+    let formatedMinValue: number | undefined,
+      formatedMaxValue: number | undefined = undefined;
+    let rest = match.replace(healthTerm, " ");
+    const valueRange = rest.match(healthTermCanonicalValuesRegex)?.[0];
+    if (valueRange) {
+      const [minValue, maxValue] = valueRange.split("-");
+      formatedMinValue = Number(minValue?.replace(",", "."));
+      formatedMaxValue = Number(maxValue?.replace(",", "."));
+      rest = rest.replace(valueRange || "", " ");
+    }
 
-    const healthTerm = match.substring(indexWhenHealthTermStarts).trim();
-    const value = Number(
-      match.substring(0, indexWhenHealthTermStarts).replace(",", ".")
+    const unit = rest.match(healthTermMeasurementUnitRegex + "$")?.[0];
+    const value = rest.match("^" + valueRegex)?.[0];
+
+    if (!value) {
+      return;
+    }
+
+    const formattedValue = Number(value.replace(",", "."));
+    console.log(
+      healthTerm,
+      formattedValue,
+      formatedMinValue,
+      formatedMaxValue,
+      unit
     );
 
     // safe typecast case regex match ensures
-    result.set(healthTerm, value);
+    result.set(healthTerm, formattedValue);
   });
 
   return result;

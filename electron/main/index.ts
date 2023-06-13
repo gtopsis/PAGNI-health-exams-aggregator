@@ -180,7 +180,7 @@ const handleRemoveHealthExamRequest = (
   win?.webContents.send("receive-agreegated-health-data", totalHealthData);
 };
 
-const handleParseNewHealthExamRequest = async (
+const handleParseNewHealthExamsRequest = async (
   e: Electron.IpcMainEvent,
   filesPaths: string[]
 ) => {
@@ -193,7 +193,7 @@ const handleParseNewHealthExamRequest = async (
   win?.webContents.send("receive-agreegated-health-data", totalHealthData);
 };
 
-ipcMain.on("parse-new-health-exams", handleParseNewHealthExamRequest);
+ipcMain.on("parse-new-health-exams", handleParseNewHealthExamsRequest);
 ipcMain.on(
   "remove-all-agreegated-health-results",
   handleRemoveAllAgreegatedResultsRequest

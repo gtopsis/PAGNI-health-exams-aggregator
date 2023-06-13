@@ -93,12 +93,14 @@ describe("Extract health data of multiple files", () => {
     `,
     });
     const totalHealthData: Results = {
-      filesData: [],
-      healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
+      filesMetadata: [],
+      healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
     };
 
-    const { filesData, healthDataOfAllFiles } =
-      await addHealthDataFromNewHealthExams(totalHealthData, files);
+    const {
+      filesMetadata: filesData,
+      healthTermsValues: healthDataOfAllFiles,
+    } = await addHealthDataFromNewHealthExams(totalHealthData, files);
 
     expect(filesData).not.toEqual(undefined);
     expect(filesData).toEqual([
@@ -132,12 +134,14 @@ describe("Extract health data of multiple files", () => {
     `,
     });
     const totalHealthData: Results = {
-      filesData: [],
-      healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
+      filesMetadata: [],
+      healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
     };
 
-    const { filesData, healthDataOfAllFiles } =
-      await addHealthDataFromNewHealthExams(totalHealthData, files);
+    const {
+      filesMetadata: filesData,
+      healthTermsValues: healthDataOfAllFiles,
+    } = await addHealthDataFromNewHealthExams(totalHealthData, files);
 
     expect(filesData).not.toEqual(undefined);
     expect(filesData).toEqual([
@@ -159,10 +163,10 @@ describe("Extract health data of multiple files", () => {
       },
     ]);
     expect(
-      totalHealthData.healthDataOfAllFiles.get("MCHC Μέση πυκνότητα")
+      totalHealthData.healthTermsValues.get("MCHC Μέση πυκνότητα")
     ).toHaveLength(1);
     expect(
-      totalHealthData.healthDataOfAllFiles.get("MCHC Μέση πυκνότητα")?.[0]
+      totalHealthData.healthTermsValues.get("MCHC Μέση πυκνότητα")?.[0]
     ).toEqual({
       fileId: 0,
       healthTermValue: 25.9,

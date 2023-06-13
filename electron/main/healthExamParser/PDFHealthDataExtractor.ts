@@ -52,16 +52,16 @@ export async function addHealthDataFromNewHealthExams(
     const { date, result: healthTermsFromFile } =
       await extractHealthDataFromPDF(filePath);
 
-    const fileId = existingHealthData.filesData?.length || 0;
-    existingHealthData.filesData.push({ fileId: fileId, filePath, date });
+    const fileId = existingHealthData.filesMetadata?.length || 0;
+    existingHealthData.filesMetadata.push({ fileId: fileId, filePath, date });
 
     healthTermsFromFile.forEach((healthTermValue, healthTerm) => {
       const existingValuesOfHealthTerm =
-        existingHealthData.healthDataOfAllFiles.get(healthTerm) || [];
+        existingHealthData.healthTermsValues.get(healthTerm) || [];
 
       existingValuesOfHealthTerm.push({ fileId, healthTermValue });
 
-      existingHealthData.healthDataOfAllFiles.set(
+      existingHealthData.healthTermsValues.set(
         healthTerm,
         existingValuesOfHealthTerm
       );
