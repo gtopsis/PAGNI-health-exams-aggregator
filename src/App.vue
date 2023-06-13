@@ -10,16 +10,15 @@ import HealthTermsList from "./components/HealthTermsList.vue";
 import FileUpload from "./components/FileUpload.vue";
 import LineGraph from "./components/LineGraph.vue";
 import FilesList from "./components/FilesList.vue";
-import TheAppBar from "./components/TheAppBar.vue";
 
 let manuallyOpenedUploadArea = ref(true);
-let healthData = ref({
-  filesData: new Array<FileDetails>(),
-  healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
+let healthData = ref<Results>({
+  filesMetadata: new Array<FileDetails>(),
+  healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
 });
 
 const healthTerms: ComputedRef<string[]> = computed(() =>
-  Array.from(healthData.value.healthDataOfAllFiles.keys()).sort()
+  Array.from(healthData.value.healthTermsValues.keys()).sort()
 );
 const selectedHealthTerm = ref(healthTerms.value?.[0]);
 
@@ -40,9 +39,9 @@ window.healthExamsParser.receiveAggregatedHealtData(
 );
 
 const lineGraphdata = computed(() => {
-  const filesData = <Results["filesDetails"]>healthData.value.filesData;
+  const filesData = <Results["filesMetadata"]>healthData.value.filesMetadata;
   const healthTermValueInFile = <HealthTermValueInFile[]>(
-    healthData.value.healthDataOfAllFiles?.get(selectedHealthTerm.value)
+    healthData.value.healthTermsValues?.get(selectedHealthTerm.value)
   );
 
   const result =
@@ -60,10 +59,11 @@ const lineGraphdata = computed(() => {
 
 const isUploadAreaVisible = computed(
   () =>
-    manuallyOpenedUploadArea.value || healthData.value.filesData.length === 0
+    manuallyOpenedUploadArea.value ||
+    healthData.value.filesMetadata.length === 0
 );
 
-const filesList = computed(() => healthData.value.filesData);
+const filesList = computed(() => healthData.value.filesMetadata);
 const isFileListEmpty = computed(() => filesList.value.length === 0);
 const isHealthTermsListEmpty = computed(() => healthTerms.value.length > 0);
 const toggleUploadAreaIconClass = computed(() =>
@@ -98,7 +98,9 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
           <v-col
             md="9"
             sm="12"
-            v-if="lineGraphdata.length > 0 && healthData.filesData.length > 0"
+            v-if="
+              lineGraphdata.length > 0 && healthData.filesMetadata.length > 0
+            "
           >
             <v-sheet min-height="50vh" rounded="lg" class="pa-2">
               <LineGraph
@@ -160,8 +162,8 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
               </Transition>
 
               <FilesList
-                v-if="healthData.filesData.length > 0"
-                :files="healthData.filesData"
+                v-if="healthData.filesMetadata.length > 0"
+                :files="healthData.filesMetadata"
                 @clear-results="clearResults"
                 @toggle-upload-area-vissibility="toggleUploadAreaVissibility"
               ></FilesList>

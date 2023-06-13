@@ -16,11 +16,9 @@ const isFileListEmpty = computed(() => props.files.length === 0);
 const isConfirmationdialogForFileRemovalOpen = ref(false);
 const candidateFileToBeRemoved = ref("");
 
-const getFilename = (fullPath: string) => fullPath.replace(/^.*[\\\/]/, "");
-
-const openConfirmationDialogForFileRemoval = (filePath: string) => {
+const openConfirmationDialogForFileRemoval = (filename: string) => {
   isConfirmationdialogForFileRemovalOpen.value = true;
-  candidateFileToBeRemoved.value = getFilename(filePath);
+  candidateFileToBeRemoved.value = filename;
 };
 
 const removeFile = () => {
@@ -47,7 +45,7 @@ const removeFile = () => {
       v-else
     >
       <v-col class="files-list-item_description text-left" cols="8">
-        <small class="text-left">{{ getFilename(file.filePath) }}</small>
+        <small class="text-left">{{ file.filename }}</small>
       </v-col>
       <v-spacer></v-spacer>
       <v-col class="files-list-item_action" cols="auto">
@@ -59,7 +57,7 @@ const removeFile = () => {
               icon="fas fa-remove"
               color="error"
               v-bind="props"
-              @click="openConfirmationDialogForFileRemoval(file.filePath)"
+              @click="openConfirmationDialogForFileRemoval(file.filename)"
             ></v-btn>
           </template>
         </v-tooltip>

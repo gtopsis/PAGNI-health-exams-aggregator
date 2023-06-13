@@ -7,16 +7,11 @@ import {
 } from "./util";
 import Store from "electron-store";
 import { HealthTermValueInFile, Results } from "../../common/interfaces";
-import {
-  parseNewHealthExam,
-  handleRemoveAllAgreegatedResultsRequest,
-  handleRemoveHealthExamRequest,
-  removeHealthExam,
-} from "./ipcEventsHandlers";
+import { parseNewHealthExam, removeHealthExam } from "./ipcEventsHandlers";
 
-const initTotalHealthData = () => ({
-  filesData: [],
-  healthDataOfAllFiles: new Map<string, HealthTermValueInFile[]>(),
+const initTotalHealthData = (): Results => ({
+  filesMetadata: [],
+  healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
 });
 const store = new Store();
 let totalHealthData: Results = initTotalHealthData();
@@ -182,9 +177,9 @@ const handleRemoveHealthExamRequest = (
 
 const handleParseNewHealthExamsRequest = async (
   e: Electron.IpcMainEvent,
-  filesPaths: string[]
+  filesMetadata: { filePath: string; filename: string }[]
 ) => {
-  totalHealthData = await parseNewHealthExam(totalHealthData, filesPaths);
+  totalHealthData = await parseNewHealthExam(totalHealthData, filesMetadata);
 
   // store data to disk
   storeHealthDataToFile(totalHealthData);

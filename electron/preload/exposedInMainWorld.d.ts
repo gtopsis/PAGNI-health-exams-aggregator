@@ -1,7 +1,9 @@
 import { Results } from "../../common/interfaces";
 
 export interface IElectronAPI {
-  parseHealthExams: (filesPatths: string[]) => Promise<void>;
+  parseHealthExams: (
+    filesMetadata: { filePath: string; filename: string }[]
+  ) => Promise<void>;
   receiveAggregatedHealtData: (
     callback: (event: Event, data: Results) => void
   ) => Promise<void>;

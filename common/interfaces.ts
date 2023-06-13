@@ -1,6 +1,7 @@
 export interface FileDetails {
   fileId: number;
   filePath: string;
+  filename: string;
   // we have define undefined cause exactOptionalPropertyTypes = ✅true
   date?: string | undefined;
 }

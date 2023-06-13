@@ -8,24 +8,24 @@ import {
 
 export const parseNewHealthExam = async (
   totalHealthData: Results,
-  filesPaths: string[]
+  filesMetadata: { filePath: string; filename: string }[]
 ) => {
   // check if some files have already been processed
-  const newFilePaths = filesPaths.filter(
-    (filePath: string) =>
+  const newFiles = filesMetadata.filter(
+    ({ filePath }: { filePath: string }) =>
       !totalHealthData.filesMetadata.find(
         (existingFile: FileDetails) => existingFile.filePath === filePath
       )
   );
-  if (newFilePaths.length != filesPaths.length) {
+  if (newFiles.length != filesMetadata.length) {
     console.warn("Tried to process a file which it has already been handled");
   }
 
-  if (newFilePaths.length === 0) {
+  if (newFiles.length === 0) {
     return totalHealthData;
   }
 
-  return addHealthDataFromNewHealthExams(totalHealthData, newFilePaths);
+  return addHealthDataFromNewHealthExams(totalHealthData, newFiles);
 };
 
 export const removeAllHealthTermsResultsForFile = (

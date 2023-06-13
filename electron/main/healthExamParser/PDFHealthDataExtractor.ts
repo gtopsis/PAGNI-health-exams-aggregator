@@ -46,14 +46,19 @@ export async function extractHealthDataFromPDF(filePath: string): Promise<{
 
 export async function addHealthDataFromNewHealthExams(
   existingHealthData: Results,
-  filesPaths: string[]
+  filesMetadata: { filePath: string; filename: string }[]
 ) {
-  for (const filePath of filesPaths) {
+  for (const { filePath, filename } of filesMetadata) {
     const { date, result: healthTermsFromFile } =
       await extractHealthDataFromPDF(filePath);
 
     const fileId = existingHealthData.filesMetadata?.length || 0;
-    existingHealthData.filesMetadata.push({ fileId: fileId, filePath, date });
+    existingHealthData.filesMetadata.push({
+      fileId,
+      filePath,
+      filename,
+      date,
+    });
 
     healthTermsFromFile.forEach((healthTermValue, healthTerm) => {
       const existingValuesOfHealthTerm =

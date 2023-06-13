@@ -49,8 +49,10 @@ const handleFilesChange = (e: Event) => {
     }
   }
 
-  const filesWithPaths = Array.from(files).map((f) => (f as FileWithPath).path);
-  window.healthExamsParser.parseHealthExams(filesWithPaths);
+  const filesMetadata: { filePath: string; filename: string }[] = Array.from(
+    files
+  ).map((f) => ({ filePath: (f as FileWithPath).path, filename: f.name }));
+  window.healthExamsParser.parseHealthExams(filesMetadata);
 
   // reset html element
   const fileHTMLEl = <HTMLInputElement>document.getElementById("fileUploadBtn");

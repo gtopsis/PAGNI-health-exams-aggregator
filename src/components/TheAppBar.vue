@@ -1,6 +1,4 @@
-<script setup lang="ts">
-import { computed } from "vue";
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <v-app-bar class="px-4">

@@ -95,8 +95,8 @@ window.onmessage = (ev) => {
 };
 
 contextBridge.exposeInMainWorld("healthExamsParser", {
-  parseHealthExams: (filesPaths: string[]) =>
-    ipcRenderer.send("parse-new-health-exams", filesPaths),
+  parseHealthExams: (filesMetadata: { filePath: string; filename: string }[]) =>
+    ipcRenderer.send("parse-new-health-exams", filesMetadata),
 
   // event triggered from main , callback is provided from renderer
   receiveAggregatedHealtData: (
