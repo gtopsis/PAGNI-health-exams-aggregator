@@ -1,9 +1,7 @@
-import { Results } from "../../common/interfaces";
+import { Results, UploadedFileMetadata } from "../../common/interfaces";
 
 export interface IElectronAPI {
-  parseHealthExams: (
-    filesMetadata: { filePath: string; filename: string }[]
-  ) => Promise<void>;
+  parseHealthExams: (filesMetadata: UploadedFileMetadata[]) => Promise<void>;
   receiveAggregatedHealtData: (
     callback: (event: Event, data: Results) => void
   ) => Promise<void>;

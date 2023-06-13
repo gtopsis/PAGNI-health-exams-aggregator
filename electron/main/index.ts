@@ -6,7 +6,11 @@ import {
   stringifyDataWithComplexStructure,
 } from "./util";
 import Store from "electron-store";
-import { HealthTermValueInFile, Results } from "../../common/interfaces";
+import {
+  HealthTermValueInFile,
+  Results,
+  UploadedFileMetadata,
+} from "../../common/interfaces";
 import { parseNewHealthExam, removeHealthExam } from "./ipcEventsHandlers";
 
 const initTotalHealthData = (): Results => ({
@@ -177,7 +181,7 @@ const handleRemoveHealthExamRequest = (
 
 const handleParseNewHealthExamsRequest = async (
   e: Electron.IpcMainEvent,
-  filesMetadata: { filePath: string; filename: string }[]
+  filesMetadata: UploadedFileMetadata[]
 ) => {
   totalHealthData = await parseNewHealthExam(totalHealthData, filesMetadata);
 

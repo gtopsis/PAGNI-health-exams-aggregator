@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { UploadedFileMetadata } from "../../common/interfaces";
+
 interface FileWithPath extends File {
   path: string;
 }
@@ -49,9 +51,10 @@ const handleFilesChange = (e: Event) => {
     }
   }
 
-  const filesMetadata: { filePath: string; filename: string }[] = Array.from(
-    files
-  ).map((f) => ({ filePath: (f as FileWithPath).path, filename: f.name }));
+  const filesMetadata: UploadedFileMetadata[] = Array.from(files).map((f) => ({
+    path: (f as FileWithPath).path,
+    name: f.name,
+  }));
   window.healthExamsParser.parseHealthExams(filesMetadata);
 
   // reset html element

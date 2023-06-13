@@ -4,17 +4,18 @@ import {
   HealthTermsValues,
   HealthTermValueInFile,
   Results,
+  UploadedFileMetadata,
 } from "../../common/interfaces";
 
 export const parseNewHealthExam = async (
   totalHealthData: Results,
-  filesMetadata: { filePath: string; filename: string }[]
+  filesMetadata: UploadedFileMetadata[]
 ) => {
   // check if some files have already been processed
   const newFiles = filesMetadata.filter(
-    ({ filePath }: { filePath: string }) =>
+    ({ path }: { path: string }) =>
       !totalHealthData.filesMetadata.find(
-        (existingFile: FileDetails) => existingFile.filePath === filePath
+        (existingFile: FileDetails) => existingFile.filePath === path
       )
   );
   if (newFiles.length != filesMetadata.length) {

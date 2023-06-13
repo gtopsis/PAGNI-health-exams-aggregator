@@ -1,5 +1,5 @@
 import { ipcRenderer, contextBridge } from "electron";
-import { Results } from "../../common/interfaces";
+import { Results, UploadedFileMetadata } from "../../common/interfaces";
 
 function domReady(
   condition: DocumentReadyState[] = ["complete", "interactive"]
@@ -95,7 +95,7 @@ window.onmessage = (ev) => {
 };
 
 contextBridge.exposeInMainWorld("healthExamsParser", {
-  parseHealthExams: (filesMetadata: { filePath: string; filename: string }[]) =>
+  parseHealthExams: (filesMetadata: UploadedFileMetadata[]) =>
     ipcRenderer.send("parse-new-health-exams", filesMetadata),
 
   // event triggered from main , callback is provided from renderer

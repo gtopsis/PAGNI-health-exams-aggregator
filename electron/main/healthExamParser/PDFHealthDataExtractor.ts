@@ -4,7 +4,11 @@ import {
   getHealthExamDateFromText,
   getHealthTermsDataFromText,
 } from "./textSearcher";
-import { FileDetails, Results } from "../../../common/interfaces";
+import {
+  FileDetails,
+  Results,
+  UploadedFileMetadata,
+} from "../../../common/interfaces";
 
 export const healthTerms = [
   "WBC  Λευκά αιμοσφ.",
@@ -46,9 +50,9 @@ export async function extractHealthDataFromPDF(filePath: string): Promise<{
 
 export async function addHealthDataFromNewHealthExams(
   existingHealthData: Results,
-  filesMetadata: { filePath: string; filename: string }[]
+  filesMetadata: UploadedFileMetadata[]
 ) {
-  for (const { filePath, filename } of filesMetadata) {
+  for (const { path: filePath, name: filename } of filesMetadata) {
     const { date, result: healthTermsFromFile } =
       await extractHealthDataFromPDF(filePath);
 

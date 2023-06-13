@@ -1,3 +1,8 @@
+export interface UploadedFileMetadata {
+  path: string;
+  name: string;
+}
+
 export interface FileDetails {
   fileId: number;
   filePath: string;
