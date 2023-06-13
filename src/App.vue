@@ -13,7 +13,7 @@ import FilesList from "./components/FilesList.vue";
 
 let manuallyOpenedUploadArea = ref(true);
 let healthData = ref<Results>({
-  filesMetadata: new Array<FileDetails>(),
+  filesDetails: new Array<FileDetails>(),
   healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
 });
 
@@ -39,7 +39,7 @@ window.healthExamsParser.receiveAggregatedHealtData(
 );
 
 const lineGraphdata = computed(() => {
-  const filesData = <Results["filesMetadata"]>healthData.value.filesMetadata;
+  const filesData = <Results["filesDetails"]>healthData.value.filesDetails;
   const healthTermValueInFile = <HealthTermValueInFile[]>(
     healthData.value.healthTermsValues?.get(selectedHealthTerm.value)
   );
@@ -59,11 +59,10 @@ const lineGraphdata = computed(() => {
 
 const isUploadAreaVisible = computed(
   () =>
-    manuallyOpenedUploadArea.value ||
-    healthData.value.filesMetadata.length === 0
+    manuallyOpenedUploadArea.value || healthData.value.filesDetails.length === 0
 );
 
-const filesList = computed(() => healthData.value.filesMetadata);
+const filesList = computed(() => healthData.value.filesDetails);
 const isFileListEmpty = computed(() => filesList.value.length === 0);
 const isHealthTermsListEmpty = computed(() => healthTerms.value.length > 0);
 const toggleUploadAreaIconClass = computed(() =>
@@ -99,7 +98,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
             md="9"
             sm="12"
             v-if="
-              lineGraphdata.length > 0 && healthData.filesMetadata.length > 0
+              lineGraphdata.length > 0 && healthData.filesDetails.length > 0
             "
           >
             <v-sheet min-height="50vh" rounded="lg" class="pa-2">
@@ -162,8 +161,8 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
               </Transition>
 
               <FilesList
-                v-if="healthData.filesMetadata.length > 0"
-                :files="healthData.filesMetadata"
+                v-if="healthData.filesDetails.length > 0"
+                :files="healthData.filesDetails"
                 @clear-results="clearResults"
                 @toggle-upload-area-vissibility="toggleUploadAreaVissibility"
               ></FilesList>

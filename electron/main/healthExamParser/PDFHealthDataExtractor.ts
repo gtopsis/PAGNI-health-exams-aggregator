@@ -56,8 +56,8 @@ export async function addHealthDataFromNewHealthExams(
     const { date, result: healthTermsFromFile } =
       await extractHealthDataFromPDF(filePath);
 
-    const fileId = existingHealthData.filesMetadata?.length || 0;
-    existingHealthData.filesMetadata.push({
+    const fileId = existingHealthData.filesDetails?.length || 0;
+    existingHealthData.filesDetails.push({
       fileId,
       filePath,
       filename,

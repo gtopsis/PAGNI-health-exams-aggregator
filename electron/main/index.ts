@@ -14,7 +14,7 @@ import {
 import { parseNewHealthExam, removeHealthExam } from "./ipcEventsHandlers";
 
 const initTotalHealthData = (): Results => ({
-  filesMetadata: [],
+  filesDetails: [],
   healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
 });
 const store = new Store();

@@ -93,14 +93,12 @@ describe("Extract health data of multiple files", () => {
     `,
     });
     const totalHealthData: Results = {
-      filesMetadata: [],
+      filesDetails: [],
       healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
     };
 
-    const {
-      filesMetadata: filesData,
-      healthTermsValues: healthDataOfAllFiles,
-    } = await addHealthDataFromNewHealthExams(totalHealthData, files);
+    const { filesDetails: filesData, healthTermsValues: healthDataOfAllFiles } =
+      await addHealthDataFromNewHealthExams(totalHealthData, files);
 
     expect(filesData).not.toEqual(undefined);
     expect(filesData).toEqual([
@@ -134,14 +132,12 @@ describe("Extract health data of multiple files", () => {
     `,
     });
     const totalHealthData: Results = {
-      filesMetadata: [],
+      filesDetails: [],
       healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
     };
 
-    const {
-      filesMetadata: filesData,
-      healthTermsValues: healthDataOfAllFiles,
-    } = await addHealthDataFromNewHealthExams(totalHealthData, files);
+    const { filesDetails: filesData, healthTermsValues: healthDataOfAllFiles } =
+      await addHealthDataFromNewHealthExams(totalHealthData, files);
 
     expect(filesData).not.toEqual(undefined);
     expect(filesData).toEqual([

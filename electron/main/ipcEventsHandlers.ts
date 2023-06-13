@@ -14,7 +14,7 @@ export const parseNewHealthExam = async (
   // check if some files have already been processed
   const newFiles = filesMetadata.filter(
     ({ path }: { path: string }) =>
-      !totalHealthData.filesMetadata.find(
+      !totalHealthData.filesDetails.find(
         (existingFile: FileDetails) => existingFile.filePath === path
       )
   );
@@ -50,7 +50,7 @@ export const removeHealthExam = (
   totalHealthData: Results,
   filePath: string
 ) => {
-  const fileToBeRemovedIndex = totalHealthData.filesMetadata.findIndex(
+  const fileToBeRemovedIndex = totalHealthData.filesDetails.findIndex(
     (file) => file.filePath === filePath
   );
   if (fileToBeRemovedIndex === -1) {
@@ -58,7 +58,7 @@ export const removeHealthExam = (
   }
 
   const fileToBeRemovedId =
-    totalHealthData.filesMetadata[fileToBeRemovedIndex]?.fileId;
+    totalHealthData.filesDetails[fileToBeRemovedIndex]?.fileId;
   if (!fileToBeRemovedId) {
     return;
   }
@@ -69,10 +69,10 @@ export const removeHealthExam = (
   );
 
   // remove the file from the list
-  totalHealthData.filesMetadata.splice(fileToBeRemovedIndex, 1);
+  totalHealthData.filesDetails.splice(fileToBeRemovedIndex, 1);
 
   // if no processed files exist then remove all health terms
-  if (totalHealthData.filesMetadata.length === 0) {
+  if (totalHealthData.filesDetails.length === 0) {
     totalHealthData.healthTermsValues = new Map<
       string,
       HealthTermValueInFile[]

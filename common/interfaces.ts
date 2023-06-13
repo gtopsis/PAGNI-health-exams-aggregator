@@ -19,6 +19,6 @@ export interface HealthTermValueInFile {
 export type HealthTermsValues = Map<string, HealthTermValueInFile[]>;
 
 export interface Results {
-  filesMetadata: FileDetails[];
+  filesDetails: FileDetails[];
   healthTermsValues: HealthTermsValues;
 }
