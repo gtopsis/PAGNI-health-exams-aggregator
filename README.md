@@ -4,6 +4,13 @@ Aggregate health data of a patient from multiple health examinations from the ho
 
 This dektop app aims to visualize (charts etc.) agreegated health data of a patient so that (s)he could monitor his/her health progress instead of manually compaire the data from multiple PDFs.
 
+| PDFs               | Health agreegator app's UI               |
+| ---------------------- | ---------------------- |
+| ![pdfs](README-images/pdfs.png) | ![app](README-images/app.png) |
+
+
+## Technologies
+
 <p float="left">
     <img src="./src/assets/vue.svg"  width="80px" height="80px" alt="Vue">
     <img src="./src/assets/vite.svg"  width="80px" height="80px" alt="Vite">
