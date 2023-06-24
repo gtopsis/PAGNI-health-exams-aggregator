@@ -11,9 +11,9 @@ This desktop app aims to support doctors to track the progress of a patient's bl
 ## Technologies
 
 <p float="left">
-    <img src="./src/assets/vue.svg"  width="80px" height="80px" alt="Vue">
-    <img src="./src/assets/vite.svg"  width="80px" height="80px" alt="Vite">
-    <img src="./src/assets/electron.svg"  width="80px" height="80px" alt="Electron framework">
+    <img src="./README-images/vue.svg"  width="80px" height="80px" alt="Vue">
+    <img src="./README-images/vite.svg"  width="80px" height="80px" alt="Vite">
+    <img src="./README-images/electron.svg"  width="80px" height="80px" alt="Electron framework">
 </p>
 
 With the help of [_electron-vite-vue_](https://github.com/electron-vite/electron-vite-vue) project (simple `Electron` + `Vue` + `Vite` boilerplate)
