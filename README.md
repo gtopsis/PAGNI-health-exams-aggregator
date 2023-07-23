@@ -1,6 +1,6 @@
 # PAGNI-health-exams-aggregator
 
-After a lot of visits in the hospital PAGNI, I had the pleasure to conduct many blood tests. On each one of these visits, the doctor had to examine the huge load of those blood tests in order to track the history of my health condition. The more the tests, the more difficult for the new doctor to accurately understand that the health history is. Sometimes, I even had difficulty to evaluate my potential progress and have the full picture of my blood tests. 
+In a shprt period of time I had the "pleasure" to visit many and **different** doctors in the hospital PAGNI. Each visit consisted of a new blood test. So, each doctor had to examine the huge load of those blood tests in order to track the history of my health condition. The more the tests, the more difficult for the new doctor (but also I) to accurately grasp a clear picture of my health 
 
 This desktop app aims to support doctors to track the progress of a patient's blood tests across time, in an intuitive and usable way. Using this app, even a patient could have a better understanding of his health condition.
 
