@@ -6,7 +6,10 @@ This desktop app aims to support doctors to track the progress of a patient's bl
 
 ![pagni-health-exams-aggregator-showcase](https://github.com/gtopsis/PAGNI-health-exams-aggregator/assets/11655698/8f059725-b06c-402d-bf28-34dafb15f98a)
 
-`PAGNI-health-exams-aggregator` app 1. parses multiple blood tests files (PDF format) with a specified format defined from the hospital PAGNI, 2. groups extracted health data by specified health terms (i.e. HCT, HCMC) and 3. visualizes using usable charts the progress of each health term across time.
+`PAGNI-health-exams-aggregator` app: 
+1. parses multiple blood tests files (PDF format) with a specified format defined from the hospital PAGNI
+2. groups extracted health data by specified health terms (i.e. HCT, HCMC)
+3. visualizes using usable charts the progress of each health term across time
 
 ## Technologies
 
