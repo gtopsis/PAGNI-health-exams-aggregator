@@ -1,18 +1,18 @@
 import { medicalTests } from "./PDFHealthDataExtractor";
 import {
-  getHealthExamDateFromText,
+  getMedicalReportDateFromText,
   getHealthTermsDataFromText,
 } from "./textSearcher";
 
 describe("Search date of exam in text", () => {
   it("will not return a date when the text is empty", () => {
-    const date = getHealthExamDateFromText("");
+    const date = getMedicalReportDateFromText("");
 
     expect(date).toEqual(undefined);
   });
 
   it("will not return info of the medical report's date when the text contains invalid date", () => {
-    const date = getHealthExamDateFromText(
+    const date = getMedicalReportDateFromText(
       `
       Ημ/νία παραλαβής:05/04/
       40,6HCT Αιματοκρίτης 40-52%

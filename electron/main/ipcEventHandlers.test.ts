@@ -1,5 +1,5 @@
 import { MedicalTestResultFromFile, Results } from "../../common/interfaces";
-import { parseNewHealthExam } from "./ipcEventsHandlers";
+import { parseNewMedicalReport } from "./ipcEventsHandlers";
 
 describe("Parse new medical report", () => {
   it("will try to process a new medical report when this one has already been processed", async () => {
@@ -24,16 +24,16 @@ describe("Parse new medical report", () => {
       { fileId: 1, medicalTestResult: 0.1 },
     ]);
 
-    const newTotalHealthData = await parseNewHealthExam(
+    const newTotalHealthData = await parseNewMedicalReport(
       existingTotalHealthData,
       [newFileMetadata]
     );
 
     expect(newTotalHealthData.filesDetails).toHaveLength(1);
     expect(newTotalHealthData.filesDetails[0]).toEqual({
-      filePath: "dir/myfilename.pdf",
-      fileId: 1,
-      filename: "myfilename.pdf",
+      path: "dir/myfilename.pdf",
+      id: 1,
+      name: "myfilename.pdf",
     });
     expect(
       Array.from(
