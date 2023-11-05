@@ -64,7 +64,7 @@ export const removeMedicalReport = (
   const fileToBeRemovedId =
     totalHealthData.filesDetails[fileToBeRemovedIndex]?.id;
 
-  if (!fileToBeRemovedId) {
+  if (fileToBeRemovedId === undefined || fileToBeRemovedId === null) {
     return;
   }
 
