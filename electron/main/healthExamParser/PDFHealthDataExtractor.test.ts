@@ -1,9 +1,9 @@
 import pdfParser from "pdf-parse";
 import {
-  addHealthDataFromNewHealthExams,
+  addHealthDataFromNewMedicalReports,
   extractHealthDataFromPDF,
 } from "./PDFHealthDataExtractor";
-import { HealthTermValueInFile, Results } from "../../../common/interfaces";
+import { MedicalTestResultFromFile, Results } from "../../../common/interfaces";
 
 jest.mock("fs", () => ({
   readFileSync: jest.fn(),
@@ -23,7 +23,7 @@ describe("Extract health data of a single file", () => {
     expect(result.size).toEqual(0);
   });
 
-  it("will return no data when the file content has no health terms", async () => {
+  it("will return no data when the file content has no medical tests", async () => {
     (pdfParser as jest.Mock).mockResolvedValueOnce({
       text: `
         78,7BBB test
@@ -39,7 +39,7 @@ describe("Extract health data of a single file", () => {
     expect(result.size).toEqual(0);
   });
 
-  it("will return last occurence of HCT when the file content has multiple occurences of the health term HCT", async () => {
+  it("will return last occurence of HCT when the file content has multiple occurences of the medical test HCT", async () => {
     (pdfParser as jest.Mock).mockResolvedValueOnce({
       text: `
         78,7BBB test
@@ -97,34 +97,41 @@ describe("Extract health data of multiple files", () => {
     });
     const totalHealthData: Results = {
       filesDetails: [],
-      healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
+      resultsForAllMedicalTestsFromAllFiles: new Map<
+        string,
+        MedicalTestResultFromFile[]
+      >(),
     };
 
-    const { filesDetails, healthTermsValues } =
-      await addHealthDataFromNewHealthExams(totalHealthData, files);
+    const { filesDetails, resultsForAllMedicalTestsFromAllFiles } =
+      await addHealthDataFromNewMedicalReports(totalHealthData, files);
 
     expect(filesDetails).not.toEqual(undefined);
     expect(filesDetails).toEqual([
       {
-        fileId: 0,
-        filePath: "path/to/file1.pdf",
-        filename: "file1.pdf",
+        id: 0,
+        path: "path/to/file1.pdf",
+        name: "file1.pdf",
         date: undefined,
       },
       {
-        fileId: 1,
-        filePath: "path/to/file2.pdf",
-        filename: "file2.pdf",
+        id: 1,
+        path: "path/to/file2.pdf",
+        name: "file2.pdf",
         date: "04/05/2023",
       },
     ]);
-    expect(healthTermsValues).not.toEqual(undefined);
-    expect(healthTermsValues instanceof Map).toBeTruthy();
-    expect(healthTermsValues.size).toEqual(1);
-    expect(healthTermsValues.get("HCT Αιματοκρίτης")).toHaveLength(1);
-    expect(healthTermsValues.get("HCT Αιματοκρίτης")?.[0]).toEqual({
+    expect(resultsForAllMedicalTestsFromAllFiles).not.toEqual(undefined);
+    expect(resultsForAllMedicalTestsFromAllFiles instanceof Map).toBeTruthy();
+    expect(resultsForAllMedicalTestsFromAllFiles.size).toEqual(1);
+    expect(
+      resultsForAllMedicalTestsFromAllFiles.get("HCT Αιματοκρίτης")
+    ).toHaveLength(1);
+    expect(
+      resultsForAllMedicalTestsFromAllFiles.get("HCT Αιματοκρίτης")?.[0]
+    ).toEqual({
       fileId: 1,
-      healthTermValue: 40.6,
+      medicalTestResult: 40.6,
     });
   });
 
@@ -146,11 +153,14 @@ describe("Extract health data of multiple files", () => {
     });
     const totalHealthData: Results = {
       filesDetails: [],
-      healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
+      resultsForAllMedicalTestsFromAllFiles: new Map<
+        string,
+        MedicalTestResultFromFile[]
+      >(),
     };
 
-    const { filesDetails, healthTermsValues } =
-      await addHealthDataFromNewHealthExams(totalHealthData, files);
+    const { filesDetails, resultsForAllMedicalTestsFromAllFiles } =
+      await addHealthDataFromNewMedicalReports(totalHealthData, files);
 
     expect(filesDetails).not.toEqual(undefined);
     expect(filesDetails).toEqual([
@@ -167,28 +177,36 @@ describe("Extract health data of multiple files", () => {
         date: "04/05/2023",
       },
     ]);
-    expect(healthTermsValues).not.toEqual(undefined);
-    expect(healthTermsValues instanceof Map).toBeTruthy();
-    expect(healthTermsValues.size).toEqual(2);
-    expect(healthTermsValues.get("HCT Αιματοκρίτης")).toHaveLength(2);
-    expect(healthTermsValues.get("HCT Αιματοκρίτης")).toEqual([
+    expect(resultsForAllMedicalTestsFromAllFiles).not.toEqual(undefined);
+    expect(resultsForAllMedicalTestsFromAllFiles instanceof Map).toBeTruthy();
+    expect(resultsForAllMedicalTestsFromAllFiles.size).toEqual(2);
+    expect(
+      resultsForAllMedicalTestsFromAllFiles.get("HCT Αιματοκρίτης")
+    ).toHaveLength(2);
+    expect(
+      resultsForAllMedicalTestsFromAllFiles.get("HCT Αιματοκρίτης")
+    ).toEqual([
       {
         fileId: 0,
-        healthTermValue: 49.1,
+        medicalTestResult: 49.1,
       },
       {
         fileId: 1,
-        healthTermValue: 40.6,
+        medicalTestResult: 40.6,
       },
     ]);
     expect(
-      totalHealthData.healthTermsValues.get("MCHC Μέση πυκνότητα")
+      totalHealthData.resultsForAllMedicalTestsFromAllFiles.get(
+        "MCHC Μέση πυκνότητα"
+      )
     ).toHaveLength(1);
     expect(
-      totalHealthData.healthTermsValues.get("MCHC Μέση πυκνότητα")?.[0]
+      totalHealthData.resultsForAllMedicalTestsFromAllFiles.get(
+        "MCHC Μέση πυκνότητα"
+      )?.[0]
     ).toEqual({
       fileId: 0,
-      healthTermValue: 25.9,
+      medicalTestResult: 25.9,
     });
   });
 });

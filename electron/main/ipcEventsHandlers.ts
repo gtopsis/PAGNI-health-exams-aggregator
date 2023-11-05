@@ -1,8 +1,8 @@
-import { addHealthDataFromNewHealthExams } from "./healthExamParser/PDFHealthDataExtractor";
+import { addHealthDataFromNewMedicalReports } from "./healthExamParser/PDFHealthDataExtractor";
 import {
   FileDetails,
-  HealthTermsValues,
-  HealthTermValueInFile,
+  ResultsForAllMedicalTestsFromAllFiles,
+  MedicalTestResultFromFile,
   Results,
   UploadedFileMetadata,
 } from "../../common/interfaces";
@@ -15,7 +15,7 @@ export const parseNewHealthExam = async (
   const newFiles = filesMetadata.filter(
     ({ path }: { path: string }) =>
       !totalHealthData.filesDetails.find(
-        (existingFile: FileDetails) => existingFile.filePath === path
+        (existingFile: FileDetails) => existingFile.path === path
       )
   );
   if (newFiles.length != filesMetadata.length) {
@@ -26,29 +26,31 @@ export const parseNewHealthExam = async (
     return totalHealthData;
   }
 
-  return addHealthDataFromNewHealthExams(totalHealthData, newFiles);
+  return addHealthDataFromNewMedicalReports(totalHealthData, newFiles);
 };
 
-export const removeAllHealthTermsResultsForFile = (
-  healthDataOfAllFiles: HealthTermsValues,
+export const removeAllHealthTermsResultsOfFile = (
+  healthDataOfAllFiles: ResultsForAllMedicalTestsFromAllFiles,
   fileId: number
 ) => {
-  healthDataOfAllFiles.forEach((value: HealthTermValueInFile[]) => {
-    const index = value.findIndex(
-      (healthTermValueInFile) => healthTermValueInFile.fileId === fileId
-    );
+  healthDataOfAllFiles.forEach(
+    (healthTermValues: MedicalTestResultFromFile[]) => {
+      const index = healthTermValues.findIndex(
+        (healthTermValueInFile) => healthTermValueInFile.fileId === fileId
+      );
 
-    if (index !== -1) {
-      value.splice(index, 1);
+      if (index !== -1) {
+        healthTermValues.splice(index, 1);
+      }
     }
-  });
+  );
 
   return healthDataOfAllFiles;
 };
 
 export const removeHealthExam = (totalHealthData: Results, fileId: number) => {
   const fileToBeRemovedIndex = totalHealthData.filesDetails.findIndex(
-    (file) => file.fileId === fileId
+    (file) => file.id === fileId
   );
   if (fileToBeRemovedIndex === -1) {
     return;
@@ -59,19 +61,20 @@ export const removeHealthExam = (totalHealthData: Results, fileId: number) => {
   if (!fileToBeRemovedId) {
     return;
   }
-  totalHealthData.healthTermsValues = removeAllHealthTermsResultsForFile(
-    totalHealthData.healthTermsValues,
-    fileToBeRemovedId
-  );
+  totalHealthData.resultsForAllMedicalTestsFromAllFiles =
+    removeAllHealthTermsResultsOfFile(
+      totalHealthData.resultsForAllMedicalTestsFromAllFiles,
+      fileToBeRemovedId
+    );
 
   // remove the file from the list
   totalHealthData.filesDetails.splice(fileToBeRemovedIndex, 1);
 
-  // if no processed files exist then remove all health terms
+  // if no processed files exist then remove all medical tests
   if (totalHealthData.filesDetails.length === 0) {
-    totalHealthData.healthTermsValues = new Map<
+    totalHealthData.resultsForAllMedicalTestsFromAllFiles = new Map<
       string,
-      HealthTermValueInFile[]
+      MedicalTestResultFromFile[]
     >();
   }
 };

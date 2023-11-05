@@ -2,10 +2,10 @@
 import { ComputedRef, computed, ref } from "vue";
 import {
   Results,
-  HealthTermValueInFile,
+  MedicalTestResultFromFile,
   FileDetails,
 } from "../common/interfaces";
-import HealthTermsList from "./components/HealthTermsList.vue";
+import MedicalTestsList from "./components/MedicalTestsList.vue";
 
 import FilesUpload from "./components/FilesUpload.vue";
 import LineGraph from "./components/LineGraph.vue";
@@ -14,43 +14,49 @@ import FilesList from "./components/FilesList.vue";
 let manuallyOpenedUploadArea = ref(true);
 let healthData = ref<Results>({
   filesDetails: new Array<FileDetails>(),
-  healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
+  resultsForAllMedicalTestsFromAllFiles: new Map<
+    string,
+    MedicalTestResultFromFile[]
+  >(),
 });
 
-const healthTerms: ComputedRef<string[]> = computed(() =>
-  Array.from(healthData.value.healthTermsValues.keys()).sort()
+const medicalTests: ComputedRef<string[]> = computed(() =>
+  Array.from(
+    healthData.value.resultsForAllMedicalTestsFromAllFiles.keys()
+  ).sort()
 );
-const selectedHealthTerm = ref(healthTerms.value?.[0]);
+const selectedHealthTerm = ref(medicalTests.value?.[0]);
 
 // Called when new health data calculated
-window.healthExamsParser.loadStoredHealtData(
+window.medicalReportsParser.loadStoredHealtData(
   (event: unknown, data: Results) => {
     healthData.value = data;
-    selectedHealthTerm.value = healthTerms.value?.[0];
+    selectedHealthTerm.value = medicalTests.value?.[0];
   }
 );
 
 // Called when new health data calculated
-window.healthExamsParser.receiveAggregatedHealtData(
+window.medicalReportsParser.receiveAggregatedHealtData(
   (event: unknown, data: Results) => {
     healthData.value = data;
-    selectedHealthTerm.value = healthTerms.value?.[0];
+    selectedHealthTerm.value = medicalTests.value?.[0];
   }
 );
 
 const lineGraphdata = computed(() => {
   const filesData = <Results["filesDetails"]>healthData.value.filesDetails;
-  const healthTermValueInFile = <HealthTermValueInFile[]>(
-    healthData.value.healthTermsValues?.get(selectedHealthTerm.value)
+  const healthTermValueInFile = <MedicalTestResultFromFile[]>(
+    healthData.value.resultsForAllMedicalTestsFromAllFiles?.get(
+      selectedHealthTerm.value
+    )
   );
 
   const result =
     healthTermValueInFile?.map(
-      ({ fileId, healthTermValue }: HealthTermValueInFile) => ({
-        date: filesData.find(
-          (fileData: FileDetails) => fileData.fileId === fileId
-        )?.date,
-        value: healthTermValue,
+      ({ fileId, medicalTestResult }: MedicalTestResultFromFile) => ({
+        date: filesData.find((fileData: FileDetails) => fileData.id === fileId)
+          ?.date,
+        value: medicalTestResult,
       })
     ) || [];
 
@@ -64,7 +70,7 @@ const isUploadAreaVisible = computed(
 
 const filesList = computed(() => healthData.value.filesDetails);
 const isFileListEmpty = computed(() => filesList.value.length === 0);
-const isHealthTermsListEmpty = computed(() => healthTerms.value.length > 0);
+const isHealthTermsListEmpty = computed(() => medicalTests.value.length > 0);
 const toggleUploadAreaIconClass = computed(() =>
   manuallyOpenedUploadArea.value ? "fas fa-chevron-up" : "fas fa-file-arrow-up"
 );
@@ -72,7 +78,7 @@ const isLneGraphCardVisible = computed(
   () =>
     lineGraphdata.value.length > 0 && healthData.value.filesDetails.length > 0
 );
-const clearResults = () => window.healthExamsParser.clearHealthData();
+const clearResults = () => window.medicalReportsParser.clearHealthData();
 
 const toggleUploadAreaVissibility = () =>
   (manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value);
@@ -89,10 +95,10 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
         <v-row class="pa-2">
           <v-col md="3" sm="12" v-if="isHealthTermsListEmpty">
             <v-sheet height="50vh" max-height="350px" rounded="lg" class="pa-2">
-              <HealthTermsList
+              <MedicalTestsList
                 :active="selectedHealthTerm"
-                :health-terms="healthTerms"
-                @active-health-term-updated="changeActiveHealthTerm"
+                :medical-tests="medicalTests"
+                @active-medical-test-updated="changeActiveHealthTerm"
               />
             </v-sheet>
           </v-col>
@@ -136,7 +142,10 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
                   </v-col>
 
                   <v-col class="px-0" cols="auto">
-                    <v-tooltip text="Upload new health exam" location="start">
+                    <v-tooltip
+                      text="Upload new medical report"
+                      location="start"
+                    >
                       <template v-slot:activator="{ props }">
                         <v-btn
                           class="mr-0"

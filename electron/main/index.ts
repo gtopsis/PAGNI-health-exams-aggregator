@@ -7,7 +7,7 @@ import {
 } from "./util";
 import Store from "electron-store";
 import {
-  HealthTermValueInFile,
+  MedicalTestResultFromFile,
   Results,
   UploadedFileMetadata,
 } from "../../common/interfaces";
@@ -15,7 +15,10 @@ import { parseNewHealthExam, removeHealthExam } from "./ipcEventsHandlers";
 
 const initTotalHealthData = (): Results => ({
   filesDetails: [],
-  healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
+  resultsForAllMedicalTestsFromAllFiles: new Map<
+    string,
+    MedicalTestResultFromFile[]
+  >(),
 });
 const store = new Store();
 let totalHealthData: Results = initTotalHealthData();
@@ -179,7 +182,7 @@ const handleRemoveHealthExamRequest = (
   win?.webContents.send("receive-agreegated-health-data", totalHealthData);
 };
 
-const handleParseNewHealthExamsRequest = async (
+const handleParseNewMedicalReportsRequest = async (
   e: Electron.IpcMainEvent,
   filesMetadata: UploadedFileMetadata[]
 ) => {
@@ -192,9 +195,9 @@ const handleParseNewHealthExamsRequest = async (
   win?.webContents.send("receive-agreegated-health-data", totalHealthData);
 };
 
-ipcMain.on("parse-new-health-exams", handleParseNewHealthExamsRequest);
+ipcMain.on("parse-new-medical-reports", handleParseNewMedicalReportsRequest);
 ipcMain.on(
   "remove-all-agreegated-health-results",
   handleRemoveAllAgreegatedResultsRequest
 );
-ipcMain.on("remove-health-exam", handleRemoveHealthExamRequest);
+ipcMain.on("remove-medical-report", handleRemoveHealthExamRequest);

@@ -16,7 +16,7 @@ const filesList = computed(() => props.files.reverse());
 const isFileaListEmpty = computed(() => props.files.length === 0);
 
 const removeFile = (candidateFileIdToBeRemoved: number) => {
-  window.healthExamsParser.removeFile(candidateFileIdToBeRemoved);
+  window.medicalReportsParser.removeFile(candidateFileIdToBeRemoved);
 };
 </script>
 
@@ -31,8 +31,8 @@ const removeFile = (candidateFileIdToBeRemoved: number) => {
     <section v-else>
       <FilesListItem
         v-for="file in filesList"
-        :key="file.fileId"
-        :file="{ id: file.fileId, name: file.filename }"
+        :key="file.id"
+        :file="{ id: file.id, name: file.name }"
         @file-remove="removeFile"
       />
     </section>

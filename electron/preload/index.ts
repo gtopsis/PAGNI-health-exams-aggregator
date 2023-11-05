@@ -94,9 +94,9 @@ window.onmessage = (ev) => {
   ev.data.payload === "removeLoading" && removeLoading();
 };
 
-contextBridge.exposeInMainWorld("healthExamsParser", {
-  parseHealthExams: (filesMetadata: UploadedFileMetadata[]) =>
-    ipcRenderer.send("parse-new-health-exams", filesMetadata),
+contextBridge.exposeInMainWorld("medicalReportsParser", {
+  parseNewMedicalReports: (filesMetadata: UploadedFileMetadata[]) =>
+    ipcRenderer.send("parse-new-medical-reports", filesMetadata),
 
   // event triggered from main , callback is provided from renderer
   receiveAggregatedHealtData: (
@@ -114,7 +114,7 @@ contextBridge.exposeInMainWorld("healthExamsParser", {
   clearHealthData: () =>
     ipcRenderer.send("remove-all-agreegated-health-results"),
   removeFile: (fileId: number) =>
-    ipcRenderer.send("remove-health-exam", fileId),
+    ipcRenderer.send("remove-medical-report", fileId),
 });
 
 setTimeout(removeLoading, 4999);

@@ -33,13 +33,15 @@ export const getHealthTermsDataFromText = (
   const matches = text.match(regex);
 
   matches?.forEach((match) => {
-    const healthTerm = match.match(new RegExp(unionOfMetrics, "g"))?.[0].trim();
-    if (!healthTerm) {
+    const medicalTest = match
+      .match(new RegExp(unionOfMetrics, "g"))?.[0]
+      .trim();
+    if (!medicalTest) {
       return;
     }
     let formatedMinValue: number | undefined,
       formatedMaxValue: number | undefined = undefined;
-    let rest = match.replace(healthTerm, " ");
+    let rest = match.replace(medicalTest, " ");
     const valueRange = rest.match(healthTermCanonicalValuesRegex)?.[0];
     if (valueRange) {
       const [minValue, maxValue] = valueRange.split("-");
@@ -57,7 +59,7 @@ export const getHealthTermsDataFromText = (
 
     const formattedValue = Number(value.replace(",", "."));
     console.log(
-      healthTerm,
+      medicalTest,
       formattedValue,
       formatedMinValue,
       formatedMaxValue,
@@ -65,7 +67,7 @@ export const getHealthTermsDataFromText = (
     );
 
     // safe typecast case regex match ensures
-    result.set(healthTerm, formattedValue);
+    result.set(medicalTest, formattedValue);
   });
 
   return result;

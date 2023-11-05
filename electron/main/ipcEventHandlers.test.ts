@@ -1,8 +1,8 @@
-import { HealthTermValueInFile, Results } from "../../common/interfaces";
+import { MedicalTestResultFromFile, Results } from "../../common/interfaces";
 import { parseNewHealthExam } from "./ipcEventsHandlers";
 
-describe("Parse new health exam", () => {
-  it("will try to process an new health exam when this health exam has already been processed", async () => {
+describe("Parse new medical report", () => {
+  it("will try to process a new medical report when this one has already been processed", async () => {
     const newFileMetadata = {
       path: "dir/myfilename.pdf",
       name: "myfilename.pdf",
@@ -10,15 +10,18 @@ describe("Parse new health exam", () => {
     const existingTotalHealthData: Results = {
       filesDetails: [
         {
-          filePath: "dir/myfilename.pdf",
-          fileId: 1,
-          filename: "myfilename.pdf",
+          id: 1,
+          path: "dir/myfilename.pdf",
+          name: "myfilename.pdf",
         },
       ],
-      healthTermsValues: new Map<string, HealthTermValueInFile[]>(),
+      resultsForAllMedicalTestsFromAllFiles: new Map<
+        string,
+        MedicalTestResultFromFile[]
+      >(),
     };
-    existingTotalHealthData.healthTermsValues.set("term", [
-      { fileId: 1, healthTermValue: 0.1 },
+    existingTotalHealthData.resultsForAllMedicalTestsFromAllFiles.set("term", [
+      { fileId: 1, medicalTestResult: 0.1 },
     ]);
 
     const newTotalHealthData = await parseNewHealthExam(
@@ -32,11 +35,13 @@ describe("Parse new health exam", () => {
       fileId: 1,
       filename: "myfilename.pdf",
     });
-    expect(Array.from(newTotalHealthData.healthTermsValues.keys())).toEqual([
-      "term",
-    ]);
-    expect(newTotalHealthData.healthTermsValues.get("term")).toEqual([
-      { fileId: 1, healthTermValue: 0.1 },
-    ]);
+    expect(
+      Array.from(
+        newTotalHealthData.resultsForAllMedicalTestsFromAllFiles.keys()
+      )
+    ).toEqual(["term"]);
+    expect(
+      newTotalHealthData.resultsForAllMedicalTestsFromAllFiles.get("term")
+    ).toEqual([{ fileId: 1, medicalTestResult: 0.1 }]);
   });
 });

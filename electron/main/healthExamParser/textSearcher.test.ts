@@ -1,4 +1,4 @@
-import { healthTerms } from "./PDFHealthDataExtractor";
+import { medicalTests } from "./PDFHealthDataExtractor";
 import {
   getHealthExamDateFromText,
   getHealthTermsDataFromText,
@@ -11,7 +11,7 @@ describe("Search date of exam in text", () => {
     expect(date).toEqual(undefined);
   });
 
-  it("will not return info of the health exam's date when the text contains invalid date", () => {
+  it("will not return info of the medical report's date when the text contains invalid date", () => {
     const date = getHealthExamDateFromText(
       `
       Ημ/νία παραλαβής:05/04/
@@ -25,13 +25,13 @@ describe("Search date of exam in text", () => {
 
 describe("Search health data inside text", () => {
   it("will return no finding when the text is empty", () => {
-    const result = getHealthTermsDataFromText("", healthTerms);
+    const result = getHealthTermsDataFromText("", medicalTests);
 
     expect(result instanceof Map).toBeTruthy();
     expect(result.size).toEqual(0);
   });
 
-  it("will not return info for the health term HCT when the text contains an incomplete data for this term", () => {
+  it("will not return info for the medical test HCT when the text contains an incomplete data for this term", () => {
     const result = getHealthTermsDataFromText(
       `
       Ημ/νία παραλαβής:05/04/2023
@@ -39,7 +39,7 @@ describe("Search health data inside text", () => {
       40,6HCT ΑιματοΧΧΧΧ 52%
       25,1MCHC Μέση πυκνότητα
     `,
-      healthTerms
+      medicalTests
     );
 
     expect(result instanceof Map).toBeTruthy();
@@ -47,7 +47,7 @@ describe("Search health data inside text", () => {
     expect(result.get("HCT Αιματοκρίτης")).toEqual(undefined);
   });
 
-  it("will return info for the health term HCT when the text contains both valid term and value for the HCT", () => {
+  it("will return info for the medical test HCT when the text contains both valid term and value for the HCT", () => {
     const result = getHealthTermsDataFromText(
       `
       Ημ/νία παραλαβής:05/04/2023
@@ -56,7 +56,7 @@ describe("Search health data inside text", () => {
       78,7BBB Μέσος όγκος
       25,1CCC Μέση περ.Hb
 `,
-      healthTerms
+      medicalTests
     );
 
     expect(result instanceof Map).toBeTruthy();
@@ -64,7 +64,7 @@ describe("Search health data inside text", () => {
     expect(result.get("HCT Αιματοκρίτης")).toEqual(40.6);
   });
 
-  it("will return info for multiple health terms and ignore non desired details", () => {
+  it("will return info for multiple medical tests and ignore non desired details", () => {
     const result = getHealthTermsDataFromText(
       `
       Ημ/νία παραλαβής:05/04/2023
@@ -73,7 +73,7 @@ describe("Search health data inside text", () => {
       78,7BBB Μέσος όγκος
       25,1MCHC Μέση πυκνότητα
 `,
-      healthTerms
+      medicalTests
     );
 
     expect(result instanceof Map).toBeTruthy();

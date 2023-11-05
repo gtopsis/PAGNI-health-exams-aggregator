@@ -1,7 +1,9 @@
 import { Results, UploadedFileMetadata } from "../../common/interfaces";
 
 export interface IElectronAPI {
-  parseHealthExams: (filesMetadata: UploadedFileMetadata[]) => Promise<void>;
+  parseNewMedicalReports: (
+    filesMetadata: UploadedFileMetadata[]
+  ) => Promise<void>;
   receiveAggregatedHealtData: (
     callback: (event: Event, data: Results) => void
   ) => Promise<void>;
@@ -14,6 +16,6 @@ export interface IElectronAPI {
 
 declare global {
   interface Window {
-    healthExamsParser: IElectronAPI;
+    medicalReportsParser: IElectronAPI;
   }
 }

@@ -55,7 +55,7 @@ const handleFilesChange = (e: Event) => {
     path: (f as FileWithPath).path,
     name: f.name,
   }));
-  window.healthExamsParser.parseHealthExams(filesMetadata);
+  window.medicalReportsParser.parseNewMedicalReports(filesMetadata);
 
   // reset html element
   const fileHTMLEl = <HTMLInputElement>document.getElementById("fileUploadBtn");

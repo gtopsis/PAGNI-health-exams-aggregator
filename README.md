@@ -9,8 +9,14 @@ This desktop app aims to support doctors to track the progress multiple blood te
 `PAGNI-medical-tests-aggregator` app:
 
 1. parses multiple blood tests files (PDF format) with a specified format defined from the hospital PAGNI
-2. groups extracted health data by specified health terms (i.e. HCT, HCMC)
-3. visualizes using usable charts the progress of each health term across time
+2. groups extracted health data by specified medical tests (i.e. HCT, HCMC)
+3. visualizes using usable charts the progress of each medical test across time
+
+## Terminology
+
+- Medical report: A file which contains many medical tests and their corresponding results.
+- Medical test: an example is C-reactive protein (CRP) test.
+- Medical Test result: an example is the result 0.75 mg/L for test CRP.
 
 ## Technologies
 

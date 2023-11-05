@@ -9,6 +9,7 @@ import {
   LinearScale,
   LineElement,
   PointElement,
+  ChartData,
 } from "chart.js";
 import { Line } from "vue-chartjs";
 import { compareDates, convertUStoStartDateFormat } from "../util";
@@ -23,16 +24,15 @@ ChartJS.register(
   PointElement
 );
 
-interface GraphData {
+interface LinePoint {
   date: string | undefined;
   value: number;
 }
 
 const props = defineProps({
-  graphData: { type: Array as PropType<GraphData[]>, required: true },
+  graphData: { type: Array as PropType<LinePoint[]>, required: true },
   label: { type: String, required: true },
 });
-
 const { graphData, label } = toRefs(props);
 
 const sortedGraphDataByDate = computed(() => {
@@ -45,7 +45,7 @@ const sortedGraphDataByDate = computed(() => {
 });
 const groupedData = computed(() =>
   sortedGraphDataByDate.value.reduce(
-    (acc: [(string | null)[], number[]], next: GraphData) => {
+    (acc: [(string | null)[], number[]], next: LinePoint) => {
       const dateInStandartFormat = next.date
         ? convertUStoStartDateFormat(next.date)
         : "";
@@ -59,7 +59,8 @@ const groupedData = computed(() =>
     [[], []]
   )
 );
-const data = computed(() => {
+
+const data = computed((): ChartData<"line"> => {
   const [xAxisData, yAxisData] = groupedData.value;
   return {
     labels: xAxisData,

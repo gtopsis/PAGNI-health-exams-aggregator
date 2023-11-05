@@ -10,7 +10,7 @@ import {
   UploadedFileMetadata,
 } from "../../../common/interfaces";
 
-export const healthTerms = [
+export const medicalTests = [
   "WBC  Λευκά αιμοσφ.",
   "Ne Ουδετερόφιλα",
   "Ly Λεμφοκύτταρα",
@@ -38,7 +38,7 @@ export async function extractHealthDataFromPDF(filePath: string): Promise<{
     const dataBuffer = fs.readFileSync(filePath);
     const { text } = await pdfParser(dataBuffer);
     const date = getHealthExamDateFromText(text);
-    const result = getHealthTermsDataFromText(text, healthTerms);
+    const result = getHealthTermsDataFromText(text, medicalTests);
 
     return { date, result };
   } catch (error) {
@@ -48,7 +48,7 @@ export async function extractHealthDataFromPDF(filePath: string): Promise<{
   }
 }
 
-export async function addHealthDataFromNewHealthExams(
+export async function addHealthDataFromNewMedicalReports(
   existingHealthData: Results,
   filesMetadata: UploadedFileMetadata[]
 ) {
@@ -58,20 +58,22 @@ export async function addHealthDataFromNewHealthExams(
 
     const fileId = existingHealthData.filesDetails?.length || 0;
     existingHealthData.filesDetails.push({
-      fileId,
-      filePath,
-      filename,
+      id: fileId,
+      path: filePath,
+      name: filename,
       date,
     });
 
-    healthTermsFromFile.forEach((healthTermValue, healthTerm) => {
+    healthTermsFromFile.forEach((medicalTestResult, medicalTest) => {
       const existingValuesOfHealthTerm =
-        existingHealthData.healthTermsValues.get(healthTerm) || [];
+        existingHealthData.resultsForAllMedicalTestsFromAllFiles.get(
+          medicalTest
+        ) || [];
 
-      existingValuesOfHealthTerm.push({ fileId, healthTermValue });
+      existingValuesOfHealthTerm.push({ fileId, medicalTestResult });
 
-      existingHealthData.healthTermsValues.set(
-        healthTerm,
+      existingHealthData.resultsForAllMedicalTestsFromAllFiles.set(
+        medicalTest,
         existingValuesOfHealthTerm
       );
     });

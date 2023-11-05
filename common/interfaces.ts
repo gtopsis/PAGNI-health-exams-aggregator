@@ -4,21 +4,24 @@ export interface UploadedFileMetadata {
 }
 
 export interface FileDetails {
-  fileId: number;
-  filePath: string;
-  filename: string;
+  id: number;
+  path: string;
+  name: string;
   // we have define undefined cause exactOptionalPropertyTypes = ✅true
   date?: string | undefined;
 }
 
-export interface HealthTermValueInFile {
+export interface MedicalTestResultFromFile {
   fileId: number;
-  healthTermValue: number;
+  medicalTestResult: number;
 }
 
-export type HealthTermsValues = Map<string, HealthTermValueInFile[]>;
+export type ResultsForAllMedicalTestsFromAllFiles = Map<
+  string,
+  MedicalTestResultFromFile[]
+>;
 
 export interface Results {
   filesDetails: FileDetails[];
-  healthTermsValues: HealthTermsValues;
+  resultsForAllMedicalTestsFromAllFiles: ResultsForAllMedicalTestsFromAllFiles;
 }

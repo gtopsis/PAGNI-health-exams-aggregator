@@ -1,5 +1,5 @@
 {
-  "name": "pagni-health",
+  "name": "pagni-medical-tests-aggregator",
   "version": "1.0.0",
   "main": "dist-electron/main/index.js",
   "description": "",

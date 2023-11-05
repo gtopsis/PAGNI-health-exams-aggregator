@@ -3,43 +3,43 @@ import { ref } from "vue";
 
 const props = defineProps<{
   active: string;
-  healthTerms: string[];
+  medicalTests: string[];
 }>();
 const emit = defineEmits<{
-  (e: "active-health-term-updated", newValue: string): void;
+  (e: "active-medical-test-updated", newValue: string): void;
 }>();
 
 const activeHealthTerm = ref(props.active);
 
 const updateActiveHealthTerm = () => {
-  emit("active-health-term-updated", activeHealthTerm.value);
+  emit("active-medical-test-updated", activeHealthTerm.value);
 };
 </script>
 
 <template>
-  <v-container class="health-terms-list pa-0">
+  <v-container class="medical-tests-list pa-0">
     <v-row
-      v-for="healthTerm in healthTerms"
-      :key="healthTerm"
+      v-for="medicalTest in medicalTests"
+      :key="medicalTest"
       class="py-1"
       no-gutters
       align="center"
     >
       <v-col md="auto" sm="1">
         <input
-          class="health-term-list-item__radio-btn"
+          class="medical-test-list-item__radio-btn"
           type="radio"
           name="healthTermsRadioBtnGroup"
-          :id="healthTerm"
+          :id="medicalTest"
           v-model="activeHealthTerm"
-          :value="healthTerm"
+          :value="medicalTest"
           @change="updateActiveHealthTerm"
         />
       </v-col>
 
       <v-col class="pl-2 text-left">
-        <label class="health-term-list-item__label" :for="healthTerm">
-          <small> {{ healthTerm }} </small>
+        <label class="medical-test-list-item__label" :for="medicalTest">
+          <small> {{ medicalTest }} </small>
         </label>
       </v-col>
     </v-row>
@@ -47,15 +47,15 @@ const updateActiveHealthTerm = () => {
 </template>
 
 <style scoped>
-.health-terms-list {
+.medical-tests-list {
   height: 100%;
   max-height: 100%;
   /* max-height: 350px; */
   overflow-y: auto;
 }
 
-.health-term-list-item__label:hover,
-.health-term-list-item__radio-btn:hover {
+.medical-test-list-item__label:hover,
+.medical-test-list-item__radio-btn:hover {
   cursor: pointer;
 }
 </style>

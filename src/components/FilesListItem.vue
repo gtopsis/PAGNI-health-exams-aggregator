@@ -31,7 +31,7 @@ const removeFile = () => {
       </v-col>
       <v-spacer></v-spacer>
       <v-col class="files-list-item_action" cols="auto">
-        <v-tooltip text="Remove health exam" location="start">
+        <v-tooltip text="Remove medical report" location="start">
           <template v-slot:activator="{ props }">
             <v-btn
               size="x-small"
