@@ -113,8 +113,8 @@ contextBridge.exposeInMainWorld("healthExamsParser", {
     ),
   clearHealthData: () =>
     ipcRenderer.send("remove-all-agreegated-health-results"),
-  removeFile: (filePath: string) =>
-    ipcRenderer.send("remove-health-exam", filePath),
+  removeFile: (fileId: number) =>
+    ipcRenderer.send("remove-health-exam", fileId),
 });
 
 setTimeout(removeLoading, 4999);

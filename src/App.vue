@@ -7,7 +7,7 @@ import {
 } from "../common/interfaces";
 import HealthTermsList from "./components/HealthTermsList.vue";
 
-import FileUpload from "./components/FileUpload.vue";
+import FilesUpload from "./components/FilesUpload.vue";
 import LineGraph from "./components/LineGraph.vue";
 import FilesList from "./components/FilesList.vue";
 
@@ -157,7 +157,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
 
               <main>
                 <Transition>
-                  <FileUpload
+                  <FilesUpload
                     class="upload-file-area pa-2"
                     :maxSize="5"
                     accept="pdf"

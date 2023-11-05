@@ -168,9 +168,9 @@ const handleRemoveAllAgreegatedResultsRequest = () => {
 
 const handleRemoveHealthExamRequest = (
   e: Electron.IpcMainEvent,
-  filePath: string
+  fileId: string
 ) => {
-  removeHealthExam(totalHealthData, filePath);
+  removeHealthExam(totalHealthData, fileId);
 
   // store data to disk
   storeHealthDataToFile(totalHealthData);

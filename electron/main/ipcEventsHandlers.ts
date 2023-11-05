@@ -46,12 +46,9 @@ export const removeAllHealthTermsResultsForFile = (
   return healthDataOfAllFiles;
 };
 
-export const removeHealthExam = (
-  totalHealthData: Results,
-  filePath: string
-) => {
+export const removeHealthExam = (totalHealthData: Results, fileId: number) => {
   const fileToBeRemovedIndex = totalHealthData.filesDetails.findIndex(
-    (file) => file.filePath === filePath
+    (file) => file.fileId === fileId
   );
   if (fileToBeRemovedIndex === -1) {
     return;
@@ -62,7 +59,6 @@ export const removeHealthExam = (
   if (!fileToBeRemovedId) {
     return;
   }
-
   totalHealthData.healthTermsValues = removeAllHealthTermsResultsForFile(
     totalHealthData.healthTermsValues,
     fileToBeRemovedId
