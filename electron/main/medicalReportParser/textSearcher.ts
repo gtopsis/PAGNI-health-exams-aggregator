@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-export function getHealthExamDateFromText(text: string) {
+export function getMedicalReportDateFromText(text: string) {
   const dateRegex = /Ημ\/νία παραλαβής:[0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4}/;
   const regex = new RegExp(dateRegex, "g");
 
@@ -14,7 +14,7 @@ export function getHealthExamDateFromText(text: string) {
   return dayjs(formattedDate).isValid() ? formattedDate : undefined;
 }
 
-export const getHealthTermsDataFromText = (
+export const getMedicaTestsResultsFromText = (
   text: string,
   queryTerms: string[]
 ): Map<string, number> => {

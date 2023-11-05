@@ -1,4 +1,4 @@
-import { addHealthDataFromNewMedicalReports } from "./healthExamParser/PDFHealthDataExtractor";
+import { addHealthDataFromNewMedicalReports } from "./medicalReportParser/PDFHealthDataExtractor";
 import {
   FileDetails,
   ResultsForAllMedicalTestsFromAllFiles,
@@ -7,7 +7,7 @@ import {
   UploadedFileMetadata,
 } from "../../common/interfaces";
 
-export const parseNewHealthExam = async (
+export const parseNewMedicalReport = async (
   totalHealthData: Results,
   filesMetadata: UploadedFileMetadata[]
 ) => {
@@ -39,28 +39,35 @@ export const removeAllHealthTermsResultsOfFile = (
         (healthTermValueInFile) => healthTermValueInFile.fileId === fileId
       );
 
-      if (index !== -1) {
-        healthTermValues.splice(index, 1);
+      if (index == -1) {
+        return;
       }
+      healthTermValues.splice(index, 1);
     }
   );
 
   return healthDataOfAllFiles;
 };
 
-export const removeHealthExam = (totalHealthData: Results, fileId: number) => {
+export const removeMedicalReport = (
+  totalHealthData: Results,
+  fileId: number
+) => {
   const fileToBeRemovedIndex = totalHealthData.filesDetails.findIndex(
     (file) => file.id === fileId
   );
+
   if (fileToBeRemovedIndex === -1) {
     return;
   }
 
   const fileToBeRemovedId =
-    totalHealthData.filesDetails[fileToBeRemovedIndex]?.fileId;
+    totalHealthData.filesDetails[fileToBeRemovedIndex]?.id;
+
   if (!fileToBeRemovedId) {
     return;
   }
+
   totalHealthData.resultsForAllMedicalTestsFromAllFiles =
     removeAllHealthTermsResultsOfFile(
       totalHealthData.resultsForAllMedicalTestsFromAllFiles,

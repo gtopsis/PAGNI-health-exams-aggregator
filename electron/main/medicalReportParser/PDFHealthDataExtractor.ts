@@ -1,8 +1,8 @@
 import fs from "fs";
 import pdfParser from "pdf-parse";
 import {
-  getHealthExamDateFromText,
-  getHealthTermsDataFromText,
+  getMedicalReportDateFromText,
+  getMedicaTestsResultsFromText,
 } from "./textSearcher";
 import {
   FileDetails,
@@ -37,8 +37,8 @@ export async function extractHealthDataFromPDF(filePath: string): Promise<{
   try {
     const dataBuffer = fs.readFileSync(filePath);
     const { text } = await pdfParser(dataBuffer);
-    const date = getHealthExamDateFromText(text);
-    const result = getHealthTermsDataFromText(text, medicalTests);
+    const date = getMedicalReportDateFromText(text);
+    const result = getMedicaTestsResultsFromText(text, medicalTests);
 
     return { date, result };
   } catch (error) {

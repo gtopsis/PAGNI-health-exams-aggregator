@@ -11,7 +11,10 @@ import {
   Results,
   UploadedFileMetadata,
 } from "../../common/interfaces";
-import { parseNewHealthExam, removeHealthExam } from "./ipcEventsHandlers";
+import {
+  parseNewMedicalReport,
+  removeMedicalReport,
+} from "./ipcEventsHandlers";
 
 const initTotalHealthData = (): Results => ({
   filesDetails: [],
@@ -169,11 +172,11 @@ const handleRemoveAllAgreegatedResultsRequest = () => {
   win?.webContents.send("receive-agreegated-health-data", totalHealthData);
 };
 
-const handleRemoveHealthExamRequest = (
+const handleRemoveMedicalReportRequest = (
   e: Electron.IpcMainEvent,
-  fileId: string
+  fileId: number
 ) => {
-  removeHealthExam(totalHealthData, fileId);
+  removeMedicalReport(totalHealthData, fileId);
 
   // store data to disk
   storeHealthDataToFile(totalHealthData);
@@ -186,7 +189,7 @@ const handleParseNewMedicalReportsRequest = async (
   e: Electron.IpcMainEvent,
   filesMetadata: UploadedFileMetadata[]
 ) => {
-  totalHealthData = await parseNewHealthExam(totalHealthData, filesMetadata);
+  totalHealthData = await parseNewMedicalReport(totalHealthData, filesMetadata);
 
   // store data to disk
   storeHealthDataToFile(totalHealthData);
@@ -200,4 +203,4 @@ ipcMain.on(
   "remove-all-agreegated-health-results",
   handleRemoveAllAgreegatedResultsRequest
 );
-ipcMain.on("remove-medical-report", handleRemoveHealthExamRequest);
+ipcMain.on("remove-medical-report", handleRemoveMedicalReportRequest);

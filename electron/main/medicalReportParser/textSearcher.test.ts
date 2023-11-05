@@ -1,7 +1,7 @@
 import { medicalTests } from "./PDFHealthDataExtractor";
 import {
   getMedicalReportDateFromText,
-  getHealthTermsDataFromText,
+  getMedicaTestsResultsFromText,
 } from "./textSearcher";
 
 describe("Search date of exam in text", () => {
@@ -25,14 +25,14 @@ describe("Search date of exam in text", () => {
 
 describe("Search health data inside text", () => {
   it("will return no finding when the text is empty", () => {
-    const result = getHealthTermsDataFromText("", medicalTests);
+    const result = getMedicaTestsResultsFromText("", medicalTests);
 
     expect(result instanceof Map).toBeTruthy();
     expect(result.size).toEqual(0);
   });
 
   it("will not return info for the medical test HCT when the text contains an incomplete data for this term", () => {
-    const result = getHealthTermsDataFromText(
+    const result = getMedicaTestsResultsFromText(
       `
       Ημ/νία παραλαβής:05/04/2023
       12,9AAA Αιμοσφαιρίνη  14-18g/dl
@@ -48,7 +48,7 @@ describe("Search health data inside text", () => {
   });
 
   it("will return info for the medical test HCT when the text contains both valid term and value for the HCT", () => {
-    const result = getHealthTermsDataFromText(
+    const result = getMedicaTestsResultsFromText(
       `
       Ημ/νία παραλαβής:05/04/2023
       12,9AAA Αιμοσφαιρίνη  14-18g/dl
@@ -65,7 +65,7 @@ describe("Search health data inside text", () => {
   });
 
   it("will return info for multiple medical tests and ignore non desired details", () => {
-    const result = getHealthTermsDataFromText(
+    const result = getMedicaTestsResultsFromText(
       `
       Ημ/νία παραλαβής:05/04/2023
       12,9AAA Αιμοσφαιρίνη  14-18g/dl
