@@ -68,7 +68,10 @@ const isHealthTermsListEmpty = computed(() => healthTerms.value.length > 0);
 const toggleUploadAreaIconClass = computed(() =>
   manuallyOpenedUploadArea.value ? "fas fa-chevron-up" : "fas fa-file-arrow-up"
 );
-
+const isLneGraphCardVisible = computed(
+  () =>
+    lineGraphdata.value.length > 0 && healthData.value.filesDetails.length > 0
+);
 const clearResults = () => window.healthExamsParser.clearHealthData();
 
 const toggleUploadAreaVissibility = () =>
@@ -82,7 +85,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
 <template>
   <v-app id="app" class="py-0">
     <v-main class="bg-grey-lighten-3">
-      <v-container>
+      <v-container class="rounded">
         <v-row class="pa-2">
           <v-col md="3" sm="12" v-if="isHealthTermsListEmpty">
             <v-sheet height="50vh" max-height="350px" rounded="lg" class="pa-2">
@@ -90,17 +93,11 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
                 :active="selectedHealthTerm"
                 :health-terms="healthTerms"
                 @active-health-term-updated="changeActiveHealthTerm"
-              ></HealthTermsList>
+              />
             </v-sheet>
           </v-col>
 
-          <v-col
-            md="9"
-            sm="12"
-            v-if="
-              lineGraphdata.length > 0 && healthData.filesDetails.length > 0
-            "
-          >
+          <v-col md="9" sm="12" v-if="isLneGraphCardVisible">
             <v-sheet min-height="50vh" rounded="lg" class="pa-2">
               <LineGraph
                 :graph-data="lineGraphdata"
@@ -108,64 +105,73 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
               ></LineGraph>
             </v-sheet>
           </v-col>
+        </v-row>
 
+        <v-row class="pa-2">
           <v-col sm="12">
             <v-sheet min-height="30vh" rounded="lg" class="pa-2">
-              <v-row>
-                <v-col cols="auto">
-                  <h2>Files</h2>
-                </v-col>
-                <v-spacer></v-spacer>
-                <v-col class="px-0" cols="auto">
-                  <v-tooltip text="Clear all" location="start">
-                    <template v-slot:activator="{ props }">
-                      <v-btn
-                        size="small"
-                        icon="fas fa-broom"
-                        color="error"
-                        variant="text"
-                        v-bind="props"
-                        :disabled="isFileListEmpty"
-                        @click="clearResults"
-                      >
-                      </v-btn>
-                    </template>
-                  </v-tooltip>
-                </v-col>
-                <v-col class="px-0" cols="auto">
-                  <v-tooltip text="Upload new health exam" location="start">
-                    <template v-slot:activator="{ props }">
-                      <v-btn
-                        class="mr-0"
-                        size="small"
-                        :icon="toggleUploadAreaIconClass"
-                        color="primary"
-                        variant="text"
-                        v-bind="props"
-                        :disabled="isFileListEmpty"
-                        @click="toggleUploadAreaVissibility"
-                      >
-                      </v-btn>
-                    </template>
-                  </v-tooltip>
-                </v-col>
-              </v-row>
+              <header>
+                <v-row>
+                  <v-col cols="auto">
+                    <h2>Files</h2>
+                  </v-col>
 
-              <Transition>
-                <FileUpload
-                  class="upload-file-area pa-2"
-                  :maxSize="5"
-                  accept="pdf"
-                  v-if="isUploadAreaVisible"
+                  <v-spacer></v-spacer>
+
+                  <v-col class="px-0" cols="auto">
+                    <v-tooltip text="Clear all" location="start">
+                      <template v-slot:activator="{ props }">
+                        <v-btn
+                          size="small"
+                          icon="fas fa-broom"
+                          color="error"
+                          variant="text"
+                          v-bind="props"
+                          :disabled="isFileListEmpty"
+                          @click="clearResults"
+                        >
+                        </v-btn>
+                      </template>
+                    </v-tooltip>
+                  </v-col>
+
+                  <v-col class="px-0" cols="auto">
+                    <v-tooltip text="Upload new health exam" location="start">
+                      <template v-slot:activator="{ props }">
+                        <v-btn
+                          class="mr-0"
+                          size="small"
+                          :icon="toggleUploadAreaIconClass"
+                          color="primary"
+                          variant="text"
+                          v-bind="props"
+                          :disabled="isFileListEmpty"
+                          @click="toggleUploadAreaVissibility"
+                        >
+                        </v-btn>
+                      </template>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+              </header>
+
+              <main>
+                <Transition>
+                  <FileUpload
+                    class="upload-file-area pa-2"
+                    :maxSize="5"
+                    accept="pdf"
+                    v-if="isUploadAreaVisible"
+                  />
+                </Transition>
+
+                <FilesList
+                  v-if="healthData.filesDetails.length > 0"
+                  :files="healthData.filesDetails"
+                  @clear-results="clearResults"
+                  @toggle-upload-area-vissibility="toggleUploadAreaVissibility"
                 />
-              </Transition>
-
-              <FilesList
-                v-if="healthData.filesDetails.length > 0"
-                :files="healthData.filesDetails"
-                @clear-results="clearResults"
-                @toggle-upload-area-vissibility="toggleUploadAreaVissibility"
-              ></FilesList>
+              </main>
             </v-sheet>
           </v-col>
         </v-row>
