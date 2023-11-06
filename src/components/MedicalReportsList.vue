@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { FileDetails } from "../../common/interfaces";
-import FilesListItem from "./FilesListItem.vue";
+import MedicalReportsListItem from "./MedicalReportsListItem.vue";
 
 const props = defineProps<{
   files: FileDetails[];
@@ -24,7 +24,7 @@ const removeFile = (candidateFileIdToBeRemoved: number) => {
     </v-row>
 
     <section v-else>
-      <FilesListItem
+      <MedicalReportsListItem
         v-for="file in filesList"
         :key="file.id"
         :file="{ id: file.id, name: file.name }"
@@ -34,13 +34,4 @@ const removeFile = (candidateFileIdToBeRemoved: number) => {
   </v-container>
 </template>
 
-<style scoped>
-.files-list-item {
-}
-
-.files-list-item_description {
-}
-
-.files-list-item_action {
-}
-</style>
+<style scoped></style>

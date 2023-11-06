@@ -7,9 +7,9 @@ import {
 } from "../common/interfaces";
 import MedicalTestsList from "./components/MedicalTestsList.vue";
 
-import FilesUpload from "./components/FilesUpload.vue";
+import FilesUploadArea from "./components/FilesUploadArea.vue";
 import LineGraph from "./components/LineGraph.vue";
-import FilesList from "./components/FilesList.vue";
+import MedicalReportsList from "./components/MedicalReportsList.vue";
 import MedicalReportsCardHeader from "./components/MedicalReportsCardHeader.vue";
 
 let manuallyOpenedUploadArea = ref(true);
@@ -124,7 +124,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
 
               <main>
                 <Transition>
-                  <FilesUpload
+                  <FilesUploadArea
                     class="upload-file-area pa-2"
                     :maxSize="5"
                     accept="pdf"
@@ -132,7 +132,7 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
                   />
                 </Transition>
 
-                <FilesList
+                <MedicalReportsList
                   v-if="healthData.filesDetails.length > 0"
                   :files="healthData.filesDetails"
                 />
