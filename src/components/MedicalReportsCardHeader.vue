@@ -2,8 +2,8 @@
 import { ref } from "vue";
 import { computed } from "vue";
 
-const props = defineProps<{
-  isMedicalTestsListEmpty: boolean;
+defineProps<{
+  isMedicalReportsListEmpty: boolean;
 }>();
 const emit = defineEmits<{
   (e: "all-medical-reports-removed"): void;
@@ -41,7 +41,7 @@ const toggleUploadAreaVissibility = () => {
               color="error"
               variant="text"
               v-bind="props"
-              :disabled="isMedicalTestsListEmpty"
+              :disabled="isMedicalReportsListEmpty"
               @click="removeAllMedicalReports"
             >
             </v-btn>
@@ -59,7 +59,7 @@ const toggleUploadAreaVissibility = () => {
               color="primary"
               variant="text"
               v-bind="props"
-              :disabled="isMedicalTestsListEmpty"
+              :disabled="isMedicalReportsListEmpty"
               @click="toggleUploadAreaVissibility"
             >
             </v-btn>

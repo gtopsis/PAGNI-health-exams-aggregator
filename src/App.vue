@@ -76,11 +76,12 @@ const removeAllMedicalReports = () =>
   window.medicalReportsParser.clearHealthData();
 
 let manuallyOpenedUploadArea = ref(true);
+const toggleUploadAreaVissibility = () => {
+  manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value;
+};
 const isUploadAreaVisible = computed(
   () => manuallyOpenedUploadArea.value || filesDetailsList.value.length === 0
 );
-const toggleUploadAreaVissibility = () =>
-  (manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value);
 </script>
 
 <template>
@@ -112,7 +113,7 @@ const toggleUploadAreaVissibility = () =>
           <v-col sm="12">
             <v-sheet min-height="30vh" rounded="lg" class="pa-2">
               <MedicalReportsCardHeader
-                :isMedicalTestsListEmpty="isMedicalTestsListEmpty"
+                :isMedicalReportsListEmpty="filesDetailsList.length === 0"
                 @all-medical-reports-removed="removeAllMedicalReports"
                 @upload-area-vissibility-updated="toggleUploadAreaVissibility"
               />
@@ -128,8 +129,8 @@ const toggleUploadAreaVissibility = () =>
                 </Transition>
 
                 <MedicalReportsList
-                  v-if="healthData.filesDetails.length > 0"
-                  :files="healthData.filesDetails"
+                  v-if="!isUploadAreaVisible"
+                  :medical-reports="filesDetailsList"
                 />
               </main>
             </v-sheet>
