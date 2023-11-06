@@ -3,15 +3,15 @@ import { ref } from "vue";
 import { computed } from "vue";
 
 const props = defineProps<{
-  isFileListEmpty: boolean;
+  isMedicalTestsListEmpty: boolean;
 }>();
 const emit = defineEmits<{
-  (e: "remove-all-medical-reports"): void;
-  (e: "toggle-upload-area-vissibility", isUploadAreaVisible: boolean): void;
+  (e: "all-medical-reports-removed"): void;
+  (e: "upload-area-vissibility-updated", isUploadAreaVisible: boolean): void;
 }>();
 
 let manuallyOpenedUploadArea = ref(true);
-const removeAllMedicalReports = () => emit("remove-all-medical-reports");
+const removeAllMedicalReports = () => emit("all-medical-reports-removed");
 
 const toggleUploadAreaIconClass = computed(() =>
   manuallyOpenedUploadArea.value ? "fas fa-chevron-up" : "fas fa-file-arrow-up"
@@ -19,7 +19,7 @@ const toggleUploadAreaIconClass = computed(() =>
 
 const toggleUploadAreaVissibility = () => {
   manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value;
-  emit("toggle-upload-area-vissibility", manuallyOpenedUploadArea.value);
+  emit("upload-area-vissibility-updated", manuallyOpenedUploadArea.value);
 };
 </script>
 
@@ -41,7 +41,7 @@ const toggleUploadAreaVissibility = () => {
               color="error"
               variant="text"
               v-bind="props"
-              :disabled="isFileListEmpty"
+              :disabled="isMedicalTestsListEmpty"
               @click="removeAllMedicalReports"
             >
             </v-btn>
@@ -59,7 +59,7 @@ const toggleUploadAreaVissibility = () => {
               color="primary"
               variant="text"
               v-bind="props"
-              :disabled="isFileListEmpty"
+              :disabled="isMedicalTestsListEmpty"
               @click="toggleUploadAreaVissibility"
             >
             </v-btn>

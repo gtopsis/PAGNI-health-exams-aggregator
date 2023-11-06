@@ -7,7 +7,7 @@ interface File {
 }
 const props = defineProps<{ file: File }>();
 const emit = defineEmits<{
-  (event: "file-remove", fileId: number): void;
+  (event: "medical-report-removed", fileId: number): void;
 }>();
 
 const isConfirmationdialogForFileRemovalOpen = ref(false);
@@ -17,7 +17,7 @@ const openConfirmationDialogForFileRemoval = (filename: string) => {
 };
 
 const removeFile = () => {
-  emit("file-remove", props.file.id);
+  emit("medical-report-removed", props.file.id);
 
   isConfirmationdialogForFileRemovalOpen.value = false;
 };

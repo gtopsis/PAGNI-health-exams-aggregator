@@ -112,18 +112,18 @@ const toggleUploadAreaVissibility = () =>
           <v-col sm="12">
             <v-sheet min-height="30vh" rounded="lg" class="pa-2">
               <MedicalReportsCardHeader
-                :isFileListEmpty="filesList.length === 0"
-                @remove-all-medical-reports="removeAllMedicalReports"
-                @toggle-upload-area-vissibility="toggleUploadAreaVissibility"
+                :isMedicalTestsListEmpty="isMedicalTestsListEmpty"
+                @all-medical-reports-removed="removeAllMedicalReports"
+                @upload-area-vissibility-updated="toggleUploadAreaVissibility"
               />
 
               <main>
                 <Transition>
                   <FilesUploadArea
+                    v-if="isUploadAreaVisible"
                     class="upload-file-area pa-2"
                     :maxSize="5"
                     accept="pdf"
-                    v-if="isUploadAreaVisible"
                   />
                 </Transition>
 
