@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ComputedRef, computed, ref } from "vue";
+import { computed, ref } from "vue";
 import {
   Results,
   MedicalTestResultFromFile,
@@ -12,7 +12,6 @@ import LineGraph from "./components/LineGraph.vue";
 import MedicalReportsList from "./components/MedicalReportsList.vue";
 import MedicalReportsCardHeader from "./components/MedicalReportsCardHeader.vue";
 
-let manuallyOpenedUploadArea = ref(true);
 let healthData = ref<Results>({
   filesDetails: new Array<FileDetails>(),
   resultsForAllMedicalTestsFromAllFiles: new Map<
@@ -21,71 +20,67 @@ let healthData = ref<Results>({
   >(),
 });
 
-const medicalTests: ComputedRef<string[]> = computed(() =>
+const medicalTests = computed<string[]>(() =>
   Array.from(
     healthData.value.resultsForAllMedicalTestsFromAllFiles.keys()
   ).sort()
 );
-const selectedHealthTerm = ref<string>(medicalTests.value?.[0]);
+const selectedMedicalTest = ref<string>(medicalTests.value?.[0]);
 
 // Called when new health data calculated
 window.medicalReportsParser.loadStoredHealtData(
   (event: unknown, data: Results) => {
     healthData.value = data;
-    selectedHealthTerm.value = medicalTests.value?.[0];
+    selectedMedicalTest.value = medicalTests.value?.[0];
   }
 );
 
-// Called when new health data calculated
+// Callback called when new health data calculated in the ipcRenderer
 window.medicalReportsParser.receiveAggregatedHealtData(
   (event: unknown, data: Results) => {
     healthData.value = data;
-    selectedHealthTerm.value = medicalTests.value?.[0];
+    selectedMedicalTest.value = medicalTests.value?.[0];
   }
 );
 
-const lineGraphdata = computed(() => {
-  const filesData = <Results["filesDetails"]>healthData.value.filesDetails;
-  const healthTermValueInFile = <MedicalTestResultFromFile[]>(
+const filesDetailsList = computed<Results["filesDetails"]>(
+  () => healthData.value.filesDetails
+);
+const lineGraphData = computed(() => {
+  const medicalTestResultFromFile = <MedicalTestResultFromFile[]>(
     healthData.value.resultsForAllMedicalTestsFromAllFiles?.get(
-      selectedHealthTerm.value
+      selectedMedicalTest.value
     )
   );
 
-  const result =
-    healthTermValueInFile?.map(
-      ({ fileId, medicalTestResult }: MedicalTestResultFromFile) => ({
-        date: filesData.find((fileData: FileDetails) => fileData.id === fileId)
-          ?.date,
-        value: medicalTestResult,
-      })
-    ) || [];
+  const result = medicalTestResultFromFile?.map(
+    ({ fileId, medicalTestResult }: MedicalTestResultFromFile) => ({
+      date: filesDetailsList.value.find(({ id }: FileDetails) => id === fileId)
+        ?.date,
+      value: medicalTestResult,
+    })
+  );
 
-  return result;
+  return result || [];
 });
-
-const isUploadAreaVisible = computed(
-  () =>
-    manuallyOpenedUploadArea.value || healthData.value.filesDetails.length === 0
+const isLineGraphCardVisible = computed(
+  () => lineGraphData.value.length > 0 && filesDetailsList.value.length > 0
 );
 
-const filesList = computed(() => healthData.value.filesDetails);
-const isHealthTermsListEmpty = computed(() => medicalTests.value.length > 0);
-
-const isLneGraphCardVisible = computed(
-  () =>
-    lineGraphdata.value.length > 0 && healthData.value.filesDetails.length > 0
-);
+const isMedicalTestsListEmpty = computed(() => medicalTests.value.length > 0);
+const selectActiveMedicalTest = (newActiveHealthTerm: string) => {
+  selectedMedicalTest.value = newActiveHealthTerm;
+};
 
 const removeAllMedicalReports = () =>
   window.medicalReportsParser.clearHealthData();
 
+let manuallyOpenedUploadArea = ref(true);
+const isUploadAreaVisible = computed(
+  () => manuallyOpenedUploadArea.value || filesDetailsList.value.length === 0
+);
 const toggleUploadAreaVissibility = () =>
   (manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value);
-
-const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
-  selectedHealthTerm.value = newActiveHealthTerm;
-};
 </script>
 
 <template>
@@ -93,21 +88,21 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
     <v-main class="bg-grey-lighten-3">
       <v-container class="rounded">
         <v-row class="pa-2">
-          <v-col md="3" sm="12" v-if="isHealthTermsListEmpty">
+          <v-col md="3" sm="12" v-if="isMedicalTestsListEmpty">
             <v-sheet height="50vh" max-height="350px" rounded="lg" class="pa-2">
               <MedicalTestsList
-                :active="selectedHealthTerm"
+                :active="selectedMedicalTest"
                 :medical-tests="medicalTests"
-                @active-medical-test-updated="changeActiveHealthTerm"
+                @medical-test-selected="selectActiveMedicalTest"
               />
             </v-sheet>
           </v-col>
 
-          <v-col md="9" sm="12" v-if="isLneGraphCardVisible">
+          <v-col md="9" sm="12" v-if="isLineGraphCardVisible">
             <v-sheet min-height="50vh" rounded="lg" class="pa-2">
               <LineGraph
-                :graph-data="lineGraphdata"
-                :label="selectedHealthTerm"
+                :graph-data="lineGraphData"
+                :label="selectedMedicalTest"
               ></LineGraph>
             </v-sheet>
           </v-col>

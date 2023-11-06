@@ -6,13 +6,13 @@ const props = defineProps<{
   medicalTests: string[];
 }>();
 const emit = defineEmits<{
-  (e: "active-medical-test-updated", newValue: string): void;
+  (e: "medical-test-selected", newValue: string): void;
 }>();
 
 const activeHealthTerm = ref(props.active);
 
 const updateActiveHealthTerm = () => {
-  emit("active-medical-test-updated", activeHealthTerm.value);
+  emit("medical-test-selected", activeHealthTerm.value);
 };
 </script>
 

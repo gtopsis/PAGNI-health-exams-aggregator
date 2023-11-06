@@ -29,7 +29,7 @@ export const parseNewMedicalReport = async (
   return addHealthDataFromNewMedicalReports(totalHealthData, newFiles);
 };
 
-export const removeAllHealthTermsResultsOfFile = (
+export const removeAllMedicalTestsResultsOfFile = (
   healthDataOfAllFiles: ResultsForAllMedicalTestsFromAllFiles,
   fileId: number
 ) => {
@@ -69,7 +69,7 @@ export const removeMedicalReport = (
   }
 
   totalHealthData.resultsForAllMedicalTestsFromAllFiles =
-    removeAllHealthTermsResultsOfFile(
+    removeAllMedicalTestsResultsOfFile(
       totalHealthData.resultsForAllMedicalTestsFromAllFiles,
       fileToBeRemovedId
     );
