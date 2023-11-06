@@ -109,16 +109,16 @@ describe("Extract health data of multiple files", () => {
     expect(filesDetails).not.toEqual(undefined);
     expect(filesDetails).toEqual([
       {
-        id: 0,
-        path: "path/to/file1.pdf",
-        name: "file1.pdf",
-        date: undefined,
-      },
-      {
         id: 1,
         path: "path/to/file2.pdf",
         name: "file2.pdf",
         date: "04/05/2023",
+      },
+      {
+        id: 0,
+        path: "path/to/file1.pdf",
+        name: "file1.pdf",
+        date: undefined,
       },
     ]);
     expect(resultsForAllMedicalTestsFromAllFiles).not.toEqual(undefined);
@@ -165,16 +165,16 @@ describe("Extract health data of multiple files", () => {
     expect(filesDetails).not.toEqual(undefined);
     expect(filesDetails).toEqual([
       {
-        id: 0,
-        path: "path/to/file1.pdf",
-        name: "file1.pdf",
-        date: "05/11/2023",
-      },
-      {
         id: 1,
         path: "path/to/file2.pdf",
         name: "file2.pdf",
         date: "04/05/2023",
+      },
+      {
+        id: 0,
+        path: "path/to/file1.pdf",
+        name: "file1.pdf",
+        date: "05/11/2023",
       },
     ]);
     expect(resultsForAllMedicalTestsFromAllFiles).not.toEqual(undefined);
