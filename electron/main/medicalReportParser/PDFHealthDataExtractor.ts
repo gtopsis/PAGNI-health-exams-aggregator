@@ -57,7 +57,7 @@ export async function addHealthDataFromNewMedicalReports(
       await extractHealthDataFromPDF(filePath);
 
     const fileId = existingHealthData.filesDetails?.length || 0;
-    existingHealthData.filesDetails.push({
+    existingHealthData.filesDetails.unshift({
       id: fileId,
       path: filePath,
       name: filename,

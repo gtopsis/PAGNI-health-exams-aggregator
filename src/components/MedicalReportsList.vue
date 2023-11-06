@@ -7,9 +7,8 @@ const props = defineProps<{
   medicalReports: FileDetails[];
 }>();
 
-const medicalReportsList = computed(() => props.medicalReports.reverse());
 const isMedicalReportsListEmpty = computed(
-  () => medicalReportsList.value.length === 0
+  () => props.medicalReports.length === 0
 );
 
 const removeMedicalReport = (medicalReportIdToBeRemoved: number) => {
@@ -27,9 +26,9 @@ const removeMedicalReport = (medicalReportIdToBeRemoved: number) => {
 
     <section v-else>
       <MedicalReportsListItem
-        v-for="medicalReports in medicalReportsList"
-        :key="medicalReports.id"
-        :file="{ id: medicalReports.id, name: medicalReports.name }"
+        v-for="medicalReport in medicalReports"
+        :key="medicalReport.id"
+        :file="{ id: medicalReport.id, name: medicalReport.name }"
         @medical-report-removed="removeMedicalReport"
       />
     </section>
