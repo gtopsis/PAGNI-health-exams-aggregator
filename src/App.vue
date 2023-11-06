@@ -46,6 +46,9 @@ window.medicalReportsParser.receiveAggregatedHealtData(
 const filesDetailsList = computed<Results["filesDetails"]>(
   () => healthData.value.filesDetails
 );
+const isFilesDetailsListEmpty = computed(
+  () => filesDetailsList.value.length === 0
+);
 const lineGraphData = computed(() => {
   const medicalTestResultFromFile = <MedicalTestResultFromFile[]>(
     healthData.value.resultsForAllMedicalTestsFromAllFiles?.get(
@@ -64,7 +67,7 @@ const lineGraphData = computed(() => {
   return result || [];
 });
 const isLineGraphCardVisible = computed(
-  () => lineGraphData.value.length > 0 && filesDetailsList.value.length > 0
+  () => lineGraphData.value.length > 0 && !isFilesDetailsListEmpty.value
 );
 
 const isMedicalTestsListEmpty = computed(() => medicalTests.value.length > 0);
@@ -80,7 +83,7 @@ const toggleUploadAreaVissibility = () => {
   manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value;
 };
 const isUploadAreaVisible = computed(
-  () => manuallyOpenedUploadArea.value || filesDetailsList.value.length === 0
+  () => manuallyOpenedUploadArea.value || isFilesDetailsListEmpty.value
 );
 </script>
 
@@ -113,7 +116,7 @@ const isUploadAreaVisible = computed(
           <v-col sm="12">
             <v-sheet min-height="30vh" rounded="lg" class="pa-2">
               <MedicalReportsCardHeader
-                :isMedicalReportsListEmpty="filesDetailsList.length === 0"
+                :isMedicalReportsListEmpty="isFilesDetailsListEmpty"
                 @all-medical-reports-removed="removeAllMedicalReports"
                 @upload-area-vissibility-updated="toggleUploadAreaVissibility"
               />
@@ -128,10 +131,7 @@ const isUploadAreaVisible = computed(
                   />
                 </Transition>
 
-                <MedicalReportsList
-                  v-if="!isUploadAreaVisible"
-                  :medical-reports="filesDetailsList"
-                />
+                <MedicalReportsList :medical-reports="filesDetailsList" />
               </main>
             </v-sheet>
           </v-col>
