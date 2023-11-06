@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UploadedFileMetadata } from "../../common/interfaces";
+import type { UploadedFileMetadata } from "../../common/interfaces";
 
 interface FileWithPath extends File {
   path: string;

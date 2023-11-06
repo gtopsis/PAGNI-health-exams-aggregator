@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { FileDetails } from "../../common/interfaces";
+import type { FileDetails } from "../../common/interfaces";
 import MedicalReportsListItem from "./MedicalReportsListItem.vue";
 
 const props = defineProps<{

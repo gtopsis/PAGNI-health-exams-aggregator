@@ -6,7 +6,7 @@ import {
   stringifyDataWithComplexStructure,
 } from "./util";
 import Store from "electron-store";
-import {
+import type {
   MedicalTestResultFromFile,
   Results,
   UploadedFileMetadata,

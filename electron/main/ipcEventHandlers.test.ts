@@ -1,4 +1,7 @@
-import { MedicalTestResultFromFile, Results } from "../../common/interfaces";
+import type {
+  MedicalTestResultFromFile,
+  Results,
+} from "../../common/interfaces";
 import { parseNewMedicalReport } from "./ipcEventsHandlers";
 
 describe("Parse new medical report", () => {

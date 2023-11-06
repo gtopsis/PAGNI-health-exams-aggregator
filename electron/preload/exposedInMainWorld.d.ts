@@ -1,4 +1,4 @@
-import { Results, UploadedFileMetadata } from "../../common/interfaces";
+import type { Results, UploadedFileMetadata } from "../../common/interfaces";
 
 export interface IElectronAPI {
   parseNewMedicalReports: (

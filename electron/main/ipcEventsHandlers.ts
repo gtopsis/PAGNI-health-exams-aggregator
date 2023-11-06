@@ -1,5 +1,5 @@
 import { addHealthDataFromNewMedicalReports } from "./medicalReportParser/PDFHealthDataExtractor";
-import {
+import type {
   FileDetails,
   ResultsForAllMedicalTestsFromAllFiles,
   MedicalTestResultFromFile,
