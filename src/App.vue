@@ -10,6 +10,7 @@ import MedicalTestsList from "./components/MedicalTestsList.vue";
 import FilesUpload from "./components/FilesUpload.vue";
 import LineGraph from "./components/LineGraph.vue";
 import FilesList from "./components/FilesList.vue";
+import MedicalReportsCardHeader from "./components/MedicalReportsCardHeader.vue";
 
 let manuallyOpenedUploadArea = ref(true);
 let healthData = ref<Results>({
@@ -25,7 +26,7 @@ const medicalTests: ComputedRef<string[]> = computed(() =>
     healthData.value.resultsForAllMedicalTestsFromAllFiles.keys()
   ).sort()
 );
-const selectedHealthTerm = ref(medicalTests.value?.[0]);
+const selectedHealthTerm = ref<string>(medicalTests.value?.[0]);
 
 // Called when new health data calculated
 window.medicalReportsParser.loadStoredHealtData(
@@ -69,16 +70,15 @@ const isUploadAreaVisible = computed(
 );
 
 const filesList = computed(() => healthData.value.filesDetails);
-const isFileListEmpty = computed(() => filesList.value.length === 0);
 const isHealthTermsListEmpty = computed(() => medicalTests.value.length > 0);
-const toggleUploadAreaIconClass = computed(() =>
-  manuallyOpenedUploadArea.value ? "fas fa-chevron-up" : "fas fa-file-arrow-up"
-);
+
 const isLneGraphCardVisible = computed(
   () =>
     lineGraphdata.value.length > 0 && healthData.value.filesDetails.length > 0
 );
-const clearResults = () => window.medicalReportsParser.clearHealthData();
+
+const removeAllMedicalReports = () =>
+  window.medicalReportsParser.clearHealthData();
 
 const toggleUploadAreaVissibility = () =>
   (manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value);
@@ -116,53 +116,11 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
         <v-row class="pa-2">
           <v-col sm="12">
             <v-sheet min-height="30vh" rounded="lg" class="pa-2">
-              <header>
-                <v-row>
-                  <v-col cols="auto">
-                    <h2>Files</h2>
-                  </v-col>
-
-                  <v-spacer></v-spacer>
-
-                  <v-col class="px-0" cols="auto">
-                    <v-tooltip text="Clear all" location="start">
-                      <template v-slot:activator="{ props }">
-                        <v-btn
-                          size="small"
-                          icon="fas fa-broom"
-                          color="error"
-                          variant="text"
-                          v-bind="props"
-                          :disabled="isFileListEmpty"
-                          @click="clearResults"
-                        >
-                        </v-btn>
-                      </template>
-                    </v-tooltip>
-                  </v-col>
-
-                  <v-col class="px-0" cols="auto">
-                    <v-tooltip
-                      text="Upload new medical report"
-                      location="start"
-                    >
-                      <template v-slot:activator="{ props }">
-                        <v-btn
-                          class="mr-0"
-                          size="small"
-                          :icon="toggleUploadAreaIconClass"
-                          color="primary"
-                          variant="text"
-                          v-bind="props"
-                          :disabled="isFileListEmpty"
-                          @click="toggleUploadAreaVissibility"
-                        >
-                        </v-btn>
-                      </template>
-                    </v-tooltip>
-                  </v-col>
-                </v-row>
-              </header>
+              <MedicalReportsCardHeader
+                :isFileListEmpty="filesList.length === 0"
+                @remove-all-medical-reports="removeAllMedicalReports"
+                @toggle-upload-area-vissibility="toggleUploadAreaVissibility"
+              />
 
               <main>
                 <Transition>
@@ -177,8 +135,6 @@ const changeActiveHealthTerm = (newActiveHealthTerm: string) => {
                 <FilesList
                   v-if="healthData.filesDetails.length > 0"
                   :files="healthData.filesDetails"
-                  @clear-results="clearResults"
-                  @toggle-upload-area-vissibility="toggleUploadAreaVissibility"
                 />
               </main>
             </v-sheet>

@@ -7,11 +7,6 @@ const props = defineProps<{
   files: FileDetails[];
 }>();
 
-const emit = defineEmits<{
-  (e: "clear-results"): void;
-  (e: "toggle-upload-area-vissibility"): void;
-}>();
-
 const filesList = computed(() => props.files.reverse());
 const isFileaListEmpty = computed(() => props.files.length === 0);
 
