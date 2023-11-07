@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import type { FileDetails } from "../../common/interfaces";
+import type { MedicalReport } from "../../common/interfaces";
 import MedicalReportsListItem from "./MedicalReportsListItem.vue";
 
 const props = defineProps<{
-  medicalReports: FileDetails[];
+  medicalReports: MedicalReport[];
 }>();
 
 const isMedicalReportsListEmpty = computed(

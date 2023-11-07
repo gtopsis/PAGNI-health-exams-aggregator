@@ -4,9 +4,12 @@ export interface UploadedFileMetadata {
 }
 
 export interface FileDetails {
-  id: number;
   path: string;
   name: string;
+}
+
+export interface MedicalReport extends FileDetails {
+  id: number;
   // we have define undefined cause exactOptionalPropertyTypes = ✅true
   date?: string | undefined;
 }
@@ -22,7 +25,7 @@ export type ResultsForAllMedicalTestsFromAllFiles = Map<
 >;
 
 export interface Results {
-  filesDetails: FileDetails[];
+  medicalReports: MedicalReport[];
   resultsForAllMedicalTestsFromAllFiles: ResultsForAllMedicalTestsFromAllFiles;
 }
 

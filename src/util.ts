@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import type {
   FileDetails,
   LineGraphPoint,
+  MedicalReport,
   MedicalTestResultFromMedicalReport,
 } from "../common/interfaces";
 
@@ -23,16 +24,17 @@ export const compareDates = (
 };
 
 export const getDateOfMedicalReportWithId = (
-  filesDetailsList: FileDetails[],
+  filesDetailsList: MedicalReport[],
   medicalReportId: number
 ) => {
-  return filesDetailsList.find(({ id }: FileDetails) => id === medicalReportId)
-    ?.date;
+  return filesDetailsList.find(
+    ({ id }: MedicalReport) => id === medicalReportId
+  )?.date;
 };
 
 export const getLineGraphPointFromMedicalTestResult = (
   medicalTestResults: MedicalTestResultFromMedicalReport[],
-  filesDetailsList: FileDetails[]
+  filesDetailsList: MedicalReport[]
 ): LineGraphPoint[] => {
   return medicalTestResults?.map(
     ({

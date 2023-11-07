@@ -3,7 +3,7 @@ import { computed, ref } from "vue";
 import type {
   Results,
   MedicalTestResultFromMedicalReport,
-  FileDetails,
+  MedicalReport,
 } from "../common/interfaces";
 import MedicalTestsList from "./components/MedicalTestsList.vue";
 
@@ -14,15 +14,15 @@ import MedicalReportsCardHeader from "./components/MedicalReportsCardHeader.vue"
 import { getLineGraphPointFromMedicalTestResult as getLineGraphPointsFromMedicalTestResults } from "./util";
 
 let healthData = ref<Results>({
-  filesDetails: new Array<FileDetails>(),
+  medicalReports: new Array<MedicalReport>(),
   resultsForAllMedicalTestsFromAllFiles: new Map<
     string,
     MedicalTestResultFromMedicalReport[]
   >(),
 });
 
-const medicalReportsList = computed<Results["filesDetails"]>(
-  () => healthData.value.filesDetails
+const medicalReportsList = computed<Results["medicalReports"]>(
+  () => healthData.value.medicalReports
 );
 const resultsForAllMedicalTestsFromAllFiles = computed<
   Results["resultsForAllMedicalTestsFromAllFiles"]

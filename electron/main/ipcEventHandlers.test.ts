@@ -11,7 +11,7 @@ describe("Parse new medical report", () => {
       name: "myfilename.pdf",
     };
     const existingTotalHealthData: Results = {
-      filesDetails: [
+      medicalReports: [
         {
           id: 1,
           path: "dir/myfilename.pdf",
@@ -32,8 +32,8 @@ describe("Parse new medical report", () => {
       [newFileMetadata]
     );
 
-    expect(newTotalHealthData.filesDetails).toHaveLength(1);
-    expect(newTotalHealthData.filesDetails[0]).toEqual({
+    expect(newTotalHealthData.medicalReports).toHaveLength(1);
+    expect(newTotalHealthData.medicalReports[0]).toEqual({
       path: "dir/myfilename.pdf",
       id: 1,
       name: "myfilename.pdf",

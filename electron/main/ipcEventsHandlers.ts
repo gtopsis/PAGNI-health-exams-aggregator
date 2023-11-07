@@ -14,7 +14,7 @@ export const parseNewMedicalReport = async (
   // check if some files have already been processed
   const newFiles = filesMetadata.filter(
     ({ path }: { path: string }) =>
-      !totalHealthData.filesDetails.find(
+      !totalHealthData.medicalReports.find(
         (existingFile: FileDetails) => existingFile.path === path
       )
   );
@@ -54,7 +54,7 @@ export const removeMedicalReport = (
   totalHealthData: Results,
   medicalReportId: number
 ) => {
-  const fileToBeRemovedIndex = totalHealthData.filesDetails.findIndex(
+  const fileToBeRemovedIndex = totalHealthData.medicalReports.findIndex(
     (file) => file.id === medicalReportId
   );
 
@@ -63,7 +63,7 @@ export const removeMedicalReport = (
   }
 
   const fileToBeRemovedId =
-    totalHealthData.filesDetails[fileToBeRemovedIndex]?.id;
+    totalHealthData.medicalReports[fileToBeRemovedIndex]?.id;
 
   if (fileToBeRemovedId === undefined || fileToBeRemovedId === null) {
     return;
@@ -76,10 +76,10 @@ export const removeMedicalReport = (
     );
 
   // remove the file from the list
-  totalHealthData.filesDetails.splice(fileToBeRemovedIndex, 1);
+  totalHealthData.medicalReports.splice(fileToBeRemovedIndex, 1);
 
   // if no processed files exist then remove all medical tests
-  if (totalHealthData.filesDetails.length === 0) {
+  if (totalHealthData.medicalReports.length === 0) {
     totalHealthData.resultsForAllMedicalTestsFromAllFiles = new Map<
       string,
       MedicalTestResultFromMedicalReport[]

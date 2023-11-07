@@ -17,7 +17,7 @@ import {
 } from "./ipcEventsHandlers";
 
 const initTotalHealthData = (): Results => ({
-  filesDetails: [],
+  medicalReports: [],
   resultsForAllMedicalTestsFromAllFiles: new Map<
     string,
     MedicalTestResultFromMedicalReport[]

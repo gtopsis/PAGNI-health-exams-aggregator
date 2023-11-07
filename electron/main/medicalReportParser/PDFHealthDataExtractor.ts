@@ -4,8 +4,8 @@ import {
   getMedicalReportDateFromText,
   getMedicaTestsResultsFromText,
 } from "./textSearcher";
-import {
-  FileDetails,
+import type {
+  MedicalReport,
   Results,
   UploadedFileMetadata,
 } from "../../../common/interfaces";
@@ -31,7 +31,7 @@ export const medicalTests = [
 ];
 
 export async function extractHealthDataFromPDF(filePath: string): Promise<{
-  date: FileDetails["date"];
+  date: MedicalReport["date"];
   result: Map<string, number>;
 }> {
   try {
@@ -56,8 +56,8 @@ export async function addHealthDataFromNewMedicalReports(
     const { date, result: healthTermsFromFile } =
       await extractHealthDataFromPDF(filePath);
 
-    const medicalReportId = existingHealthData.filesDetails?.length || 0;
-    existingHealthData.filesDetails.unshift({
+    const medicalReportId = existingHealthData.medicalReports?.length || 0;
+    existingHealthData.medicalReports.unshift({
       id: medicalReportId,
       path: filePath,
       name: filename,
