@@ -2,9 +2,8 @@
 import { computed, ref } from "vue";
 import type {
   Results,
-  MedicalTestResultFromFile,
+  MedicalTestResultFromMedicalReport,
   FileDetails,
-  LineGraphPoint,
 } from "../common/interfaces";
 import MedicalTestsList from "./components/MedicalTestsList.vue";
 
@@ -18,11 +17,11 @@ let healthData = ref<Results>({
   filesDetails: new Array<FileDetails>(),
   resultsForAllMedicalTestsFromAllFiles: new Map<
     string,
-    MedicalTestResultFromFile[]
+    MedicalTestResultFromMedicalReport[]
   >(),
 });
 
-const filesDetailsList = computed<Results["filesDetails"]>(
+const medicalReportsList = computed<Results["filesDetails"]>(
   () => healthData.value.filesDetails
 );
 const resultsForAllMedicalTestsFromAllFiles = computed<
@@ -50,24 +49,24 @@ window.medicalReportsParser.receiveAggregatedHealtData(
   }
 );
 
-const isFilesDetailsListEmpty = computed(
-  () => filesDetailsList.value.length === 0
+const isMedicalReportsListEmpty = computed(
+  () => medicalReportsList.value.length === 0
 );
 const lineGraphData = computed(() => {
-  const testResultsForSelectedMedicalTest = <MedicalTestResultFromFile[]>(
-    resultsForAllMedicalTestsFromAllFiles.value?.get(selectedMedicalTest.value)
-  );
+  const testResultsForSelectedMedicalTest = <
+    MedicalTestResultFromMedicalReport[]
+  >resultsForAllMedicalTestsFromAllFiles.value?.get(selectedMedicalTest.value);
 
   const allLineGraphPointsForSelectedMedicalTest =
     getLineGraphPointsFromMedicalTestResults(
       testResultsForSelectedMedicalTest,
-      filesDetailsList.value
+      medicalReportsList.value
     );
 
   return allLineGraphPointsForSelectedMedicalTest || [];
 });
 const isLineGraphCardVisible = computed(
-  () => lineGraphData.value.length > 0 && !isFilesDetailsListEmpty.value
+  () => lineGraphData.value.length > 0 && !isMedicalReportsListEmpty.value
 );
 
 const isMedicalTestsListEmpty = computed(() => medicalTests.value.length > 0);
@@ -83,7 +82,7 @@ const toggleUploadAreaVissibility = () => {
   manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value;
 };
 const isUploadAreaVisible = computed(
-  () => manuallyOpenedUploadArea.value || isFilesDetailsListEmpty.value
+  () => manuallyOpenedUploadArea.value || isMedicalReportsListEmpty.value
 );
 </script>
 
@@ -116,7 +115,7 @@ const isUploadAreaVisible = computed(
           <v-col sm="12">
             <v-sheet min-height="30vh" rounded="lg" class="pa-2">
               <MedicalReportsCardHeader
-                :isMedicalReportsListEmpty="isFilesDetailsListEmpty"
+                :isMedicalReportsListEmpty="isMedicalReportsListEmpty"
                 @all-medical-reports-removed="removeAllMedicalReports"
                 @upload-area-vissibility-updated="toggleUploadAreaVissibility"
               />
@@ -131,7 +130,7 @@ const isUploadAreaVisible = computed(
                   />
                 </Transition>
 
-                <MedicalReportsList :medical-reports="filesDetailsList" />
+                <MedicalReportsList :medical-reports="medicalReportsList" />
               </main>
             </v-sheet>
           </v-col>

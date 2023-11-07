@@ -3,7 +3,10 @@ import {
   addHealthDataFromNewMedicalReports,
   extractHealthDataFromPDF,
 } from "./PDFHealthDataExtractor";
-import { MedicalTestResultFromFile, Results } from "../../../common/interfaces";
+import {
+  MedicalTestResultFromMedicalReport,
+  Results,
+} from "../../../common/interfaces";
 
 jest.mock("fs", () => ({
   readFileSync: jest.fn(),
@@ -99,7 +102,7 @@ describe("Extract health data of multiple files", () => {
       filesDetails: [],
       resultsForAllMedicalTestsFromAllFiles: new Map<
         string,
-        MedicalTestResultFromFile[]
+        MedicalTestResultFromMedicalReport[]
       >(),
     };
 
@@ -130,7 +133,7 @@ describe("Extract health data of multiple files", () => {
     expect(
       resultsForAllMedicalTestsFromAllFiles.get("HCT Αιματοκρίτης")?.[0]
     ).toEqual({
-      fileId: 1,
+      medicalReportId: 1,
       medicalTestResult: 40.6,
     });
   });
@@ -155,7 +158,7 @@ describe("Extract health data of multiple files", () => {
       filesDetails: [],
       resultsForAllMedicalTestsFromAllFiles: new Map<
         string,
-        MedicalTestResultFromFile[]
+        MedicalTestResultFromMedicalReport[]
       >(),
     };
 
@@ -187,11 +190,11 @@ describe("Extract health data of multiple files", () => {
       resultsForAllMedicalTestsFromAllFiles.get("HCT Αιματοκρίτης")
     ).toEqual([
       {
-        fileId: 0,
+        medicalReportId: 0,
         medicalTestResult: 49.1,
       },
       {
-        fileId: 1,
+        medicalReportId: 1,
         medicalTestResult: 40.6,
       },
     ]);
@@ -205,7 +208,7 @@ describe("Extract health data of multiple files", () => {
         "MCHC Μέση πυκνότητα"
       )?.[0]
     ).toEqual({
-      fileId: 0,
+      medicalReportId: 0,
       medicalTestResult: 25.9,
     });
   });

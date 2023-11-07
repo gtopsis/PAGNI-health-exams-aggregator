@@ -7,7 +7,7 @@ import {
 } from "./util";
 import Store from "electron-store";
 import type {
-  MedicalTestResultFromFile,
+  MedicalTestResultFromMedicalReport,
   Results,
   UploadedFileMetadata,
 } from "../../common/interfaces";
@@ -20,7 +20,7 @@ const initTotalHealthData = (): Results => ({
   filesDetails: [],
   resultsForAllMedicalTestsFromAllFiles: new Map<
     string,
-    MedicalTestResultFromFile[]
+    MedicalTestResultFromMedicalReport[]
   >(),
 });
 const store = new Store();
@@ -174,9 +174,9 @@ const handleRemoveAllAgreegatedResultsRequest = () => {
 
 const handleRemoveMedicalReportRequest = (
   e: Electron.IpcMainEvent,
-  fileId: number
+  medicalReportId: number
 ) => {
-  removeMedicalReport(totalHealthData, fileId);
+  removeMedicalReport(totalHealthData, medicalReportId);
 
   // store data to disk
   storeHealthDataToFile(totalHealthData);

@@ -1,5 +1,5 @@
 import type {
-  MedicalTestResultFromFile,
+  MedicalTestResultFromMedicalReport,
   Results,
 } from "../../common/interfaces";
 import { parseNewMedicalReport } from "./ipcEventsHandlers";
@@ -20,11 +20,11 @@ describe("Parse new medical report", () => {
       ],
       resultsForAllMedicalTestsFromAllFiles: new Map<
         string,
-        MedicalTestResultFromFile[]
+        MedicalTestResultFromMedicalReport[]
       >(),
     };
     existingTotalHealthData.resultsForAllMedicalTestsFromAllFiles.set("term", [
-      { fileId: 1, medicalTestResult: 0.1 },
+      { medicalReportId: 1, medicalTestResult: 0.1 },
     ]);
 
     const newTotalHealthData = await parseNewMedicalReport(
@@ -45,6 +45,6 @@ describe("Parse new medical report", () => {
     ).toEqual(["term"]);
     expect(
       newTotalHealthData.resultsForAllMedicalTestsFromAllFiles.get("term")
-    ).toEqual([{ fileId: 1, medicalTestResult: 0.1 }]);
+    ).toEqual([{ medicalReportId: 1, medicalTestResult: 0.1 }]);
   });
 });

@@ -113,8 +113,8 @@ contextBridge.exposeInMainWorld("medicalReportsParser", {
     ),
   clearHealthData: () =>
     ipcRenderer.send("remove-all-agreegated-health-results"),
-  removeFile: (fileId: number) =>
-    ipcRenderer.send("remove-medical-report", fileId),
+  removeFile: (medicalReportId: number) =>
+    ipcRenderer.send("remove-medical-report", medicalReportId),
 });
 
 setTimeout(removeLoading, 4999);

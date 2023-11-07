@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import type {
   FileDetails,
   LineGraphPoint,
-  MedicalTestResultFromFile,
+  MedicalTestResultFromMedicalReport,
 } from "../common/interfaces";
 
 export const convertUStoStartDateFormat = (dateInUSFormat: string) => {
@@ -31,15 +31,15 @@ export const getDateOfMedicalReportWithId = (
 };
 
 export const getLineGraphPointFromMedicalTestResult = (
-  medicalTestResults: MedicalTestResultFromFile[],
+  medicalTestResults: MedicalTestResultFromMedicalReport[],
   filesDetailsList: FileDetails[]
 ): LineGraphPoint[] => {
   return medicalTestResults?.map(
     ({
-      fileId,
+      medicalReportId,
       medicalTestResult,
-    }: MedicalTestResultFromFile): LineGraphPoint => ({
-      date: getDateOfMedicalReportWithId(filesDetailsList, fileId),
+    }: MedicalTestResultFromMedicalReport): LineGraphPoint => ({
+      date: getDateOfMedicalReportWithId(filesDetailsList, medicalReportId),
       value: medicalTestResult,
     })
   );

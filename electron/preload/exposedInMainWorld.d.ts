@@ -11,7 +11,7 @@ export interface IElectronAPI {
     callback: (event: Event, data: Results) => void
   ) => Promise<void>;
   clearHealthData: () => void;
-  removeFile: (fileId: number) => boolean;
+  removeFile: (medicalReportId: number) => boolean;
 }
 
 declare global {

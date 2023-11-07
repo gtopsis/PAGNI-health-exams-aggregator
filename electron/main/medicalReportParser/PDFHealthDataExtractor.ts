@@ -56,9 +56,9 @@ export async function addHealthDataFromNewMedicalReports(
     const { date, result: healthTermsFromFile } =
       await extractHealthDataFromPDF(filePath);
 
-    const fileId = existingHealthData.filesDetails?.length || 0;
+    const medicalReportId = existingHealthData.filesDetails?.length || 0;
     existingHealthData.filesDetails.unshift({
-      id: fileId,
+      id: medicalReportId,
       path: filePath,
       name: filename,
       date,
@@ -70,7 +70,7 @@ export async function addHealthDataFromNewMedicalReports(
           medicalTest
         ) || [];
 
-      existingValuesOfHealthTerm.push({ fileId, medicalTestResult });
+      existingValuesOfHealthTerm.push({ medicalReportId, medicalTestResult });
 
       existingHealthData.resultsForAllMedicalTestsFromAllFiles.set(
         medicalTest,

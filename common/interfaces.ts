@@ -11,14 +11,14 @@ export interface FileDetails {
   date?: string | undefined;
 }
 
-export interface MedicalTestResultFromFile {
-  fileId: number;
+export interface MedicalTestResultFromMedicalReport {
+  medicalReportId: number;
   medicalTestResult: number;
 }
 
 export type ResultsForAllMedicalTestsFromAllFiles = Map<
   string,
-  MedicalTestResultFromFile[]
+  MedicalTestResultFromMedicalReport[]
 >;
 
 export interface Results {

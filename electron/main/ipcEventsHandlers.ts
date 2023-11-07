@@ -2,7 +2,7 @@ import { addHealthDataFromNewMedicalReports } from "./medicalReportParser/PDFHea
 import type {
   FileDetails,
   ResultsForAllMedicalTestsFromAllFiles,
-  MedicalTestResultFromFile,
+  MedicalTestResultFromMedicalReport,
   Results,
   UploadedFileMetadata,
 } from "../../common/interfaces";
@@ -31,12 +31,13 @@ export const parseNewMedicalReport = async (
 
 export const removeAllMedicalTestsResultsOfFile = (
   healthDataOfAllFiles: ResultsForAllMedicalTestsFromAllFiles,
-  fileId: number
+  medicalReportId: number
 ) => {
   healthDataOfAllFiles.forEach(
-    (healthTermValues: MedicalTestResultFromFile[]) => {
+    (healthTermValues: MedicalTestResultFromMedicalReport[]) => {
       const index = healthTermValues.findIndex(
-        (healthTermValueInFile) => healthTermValueInFile.fileId === fileId
+        (healthTermValueInFile) =>
+          healthTermValueInFile.medicalReportId === medicalReportId
       );
 
       if (index == -1) {
@@ -51,10 +52,10 @@ export const removeAllMedicalTestsResultsOfFile = (
 
 export const removeMedicalReport = (
   totalHealthData: Results,
-  fileId: number
+  medicalReportId: number
 ) => {
   const fileToBeRemovedIndex = totalHealthData.filesDetails.findIndex(
-    (file) => file.id === fileId
+    (file) => file.id === medicalReportId
   );
 
   if (fileToBeRemovedIndex === -1) {
@@ -81,7 +82,7 @@ export const removeMedicalReport = (
   if (totalHealthData.filesDetails.length === 0) {
     totalHealthData.resultsForAllMedicalTestsFromAllFiles = new Map<
       string,
-      MedicalTestResultFromFile[]
+      MedicalTestResultFromMedicalReport[]
     >();
   }
 };
