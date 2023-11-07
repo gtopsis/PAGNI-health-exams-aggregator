@@ -1,4 +1,9 @@
 import dayjs from "dayjs";
+import type {
+  FileDetails,
+  LineGraphPoint,
+  MedicalTestResultFromFile,
+} from "../common/interfaces";
 
 export const convertUStoStartDateFormat = (dateInUSFormat: string) => {
   const dateParts = dateInUSFormat.split("/");
@@ -15,4 +20,27 @@ export const compareDates = (
   return date1 && date2 && dayjs(date1).isValid() && dayjs(date2).isValid()
     ? new Date(date1).getTime() - new Date(date2).getTime()
     : null;
+};
+
+export const getDateOfMedicalReportWithId = (
+  filesDetailsList: FileDetails[],
+  medicalReportId: number
+) => {
+  return filesDetailsList.find(({ id }: FileDetails) => id === medicalReportId)
+    ?.date;
+};
+
+export const getLineGraphPointFromMedicalTestResult = (
+  medicalTestResults: MedicalTestResultFromFile[],
+  filesDetailsList: FileDetails[]
+): LineGraphPoint[] => {
+  return medicalTestResults?.map(
+    ({
+      fileId,
+      medicalTestResult,
+    }: MedicalTestResultFromFile): LineGraphPoint => ({
+      date: getDateOfMedicalReportWithId(filesDetailsList, fileId),
+      value: medicalTestResult,
+    })
+  );
 };

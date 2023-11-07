@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import {
+import type {
   Results,
   MedicalTestResultFromFile,
   FileDetails,
+  LineGraphPoint,
 } from "../common/interfaces";
 import MedicalTestsList from "./components/MedicalTestsList.vue";
 
@@ -11,6 +12,7 @@ import FilesUploadArea from "./components/FilesUploadArea.vue";
 import LineGraph from "./components/LineGraph.vue";
 import MedicalReportsList from "./components/MedicalReportsList.vue";
 import MedicalReportsCardHeader from "./components/MedicalReportsCardHeader.vue";
+import { getLineGraphPointFromMedicalTestResult as getLineGraphPointsFromMedicalTestResults } from "./util";
 
 let healthData = ref<Results>({
   filesDetails: new Array<FileDetails>(),
@@ -20,10 +22,15 @@ let healthData = ref<Results>({
   >(),
 });
 
+const filesDetailsList = computed<Results["filesDetails"]>(
+  () => healthData.value.filesDetails
+);
+const resultsForAllMedicalTestsFromAllFiles = computed<
+  Results["resultsForAllMedicalTestsFromAllFiles"]
+>(() => healthData.value.resultsForAllMedicalTestsFromAllFiles);
+
 const medicalTests = computed<string[]>(() =>
-  Array.from(
-    healthData.value.resultsForAllMedicalTestsFromAllFiles.keys()
-  ).sort()
+  Array.from(resultsForAllMedicalTestsFromAllFiles.value.keys()).sort()
 );
 const selectedMedicalTest = ref<string>(medicalTests.value?.[0]);
 
@@ -43,28 +50,21 @@ window.medicalReportsParser.receiveAggregatedHealtData(
   }
 );
 
-const filesDetailsList = computed<Results["filesDetails"]>(
-  () => healthData.value.filesDetails
-);
 const isFilesDetailsListEmpty = computed(
   () => filesDetailsList.value.length === 0
 );
 const lineGraphData = computed(() => {
-  const medicalTestResultFromFile = <MedicalTestResultFromFile[]>(
-    healthData.value.resultsForAllMedicalTestsFromAllFiles?.get(
-      selectedMedicalTest.value
-    )
+  const testResultsForSelectedMedicalTest = <MedicalTestResultFromFile[]>(
+    resultsForAllMedicalTestsFromAllFiles.value?.get(selectedMedicalTest.value)
   );
 
-  const result = medicalTestResultFromFile?.map(
-    ({ fileId, medicalTestResult }: MedicalTestResultFromFile) => ({
-      date: filesDetailsList.value.find(({ id }: FileDetails) => id === fileId)
-        ?.date,
-      value: medicalTestResult,
-    })
-  );
+  const allLineGraphPointsForSelectedMedicalTest =
+    getLineGraphPointsFromMedicalTestResults(
+      testResultsForSelectedMedicalTest,
+      filesDetailsList.value
+    );
 
-  return result || [];
+  return allLineGraphPointsForSelectedMedicalTest || [];
 });
 const isLineGraphCardVisible = computed(
   () => lineGraphData.value.length > 0 && !isFilesDetailsListEmpty.value
