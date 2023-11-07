@@ -13,6 +13,7 @@ import {
 } from "chart.js";
 import { Line } from "vue-chartjs";
 import { compareDates, convertUStoStartDateFormat } from "../util";
+import type { LineGraphPoint } from "../../common/interfaces";
 
 ChartJS.register(
   CategoryScale,
@@ -24,13 +25,8 @@ ChartJS.register(
   PointElement
 );
 
-interface LinePoint {
-  date: string | undefined;
-  value: number;
-}
-
 const props = defineProps({
-  graphData: { type: Array as PropType<LinePoint[]>, required: true },
+  graphData: { type: Array as PropType<LineGraphPoint[]>, required: true },
   label: { type: String, required: true },
 });
 const { graphData, label } = toRefs(props);
@@ -38,14 +34,14 @@ const { graphData, label } = toRefs(props);
 const sortedGraphDataByDate = computed(() => {
   return graphData.value.sort(
     (
-      { date: date1 }: { date: string | undefined },
-      { date: date2 }: { date: string | undefined }
+      { date: date1 }: { date: LineGraphPoint["date"] },
+      { date: date2 }: { date: LineGraphPoint["date"] }
     ) => compareDates(date1, date2) ?? -1
   );
 });
 const groupedData = computed(() =>
   sortedGraphDataByDate.value.reduce(
-    (acc: [(string | null)[], number[]], next: LinePoint) => {
+    (acc: [(string | null)[], number[]], next: LineGraphPoint) => {
       const dateInStandartFormat = next.date
         ? convertUStoStartDateFormat(next.date)
         : "";

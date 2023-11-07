@@ -25,3 +25,8 @@ export interface Results {
   filesDetails: FileDetails[];
   resultsForAllMedicalTestsFromAllFiles: ResultsForAllMedicalTestsFromAllFiles;
 }
+
+export interface LineGraphPoint {
+  date: string | undefined;
+  value: number;
+}
