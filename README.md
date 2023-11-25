@@ -1,6 +1,6 @@
 # PAGNI-medical-tests-aggregator
 
-In a shprt period of time I had the "pleasure" to visit many and **different** doctors in the hospital PAGNI. Each visit consisted of a new blood test. So, each doctor had to examine the huge load of those blood tests in order to track the history of my health condition. The more the tests, the more difficult for the new doctor (but also me) to accurately grasp a clear picture of my health.
+In a short period of time I had the "pleasure" to visit many and **different** doctors in the hospital PAGNI. Each visit consisted of a new blood test. So, each doctor had to examine the huge load of those blood tests in order to track the history of my health condition. The more the tests, the more difficult for the new doctor (but also me) to accurately grasp a clear picture of my health.
 
 This desktop app aims to support doctors to track the progress multiple blood tests' results across time, in an intuitive and usable way. Using this app, even the patients themselves could have a better understanding of their health condition.
 
