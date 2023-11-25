@@ -4,7 +4,7 @@ In a short period of time I had the "pleasure" to visit many and **different** d
 
 This desktop app aims to support doctors to track the progress multiple blood tests' results across time, in an intuitive and usable way. Using this app, even the patients themselves could have a better understanding of their health condition.
 
-![pagni-medical-tests-aggregator-showcase](https://github.com/gtopsis/PAGNI-medical-tests-aggregator/assets/11655698/8f059725-b06c-402d-bf28-34dafb15f98a)
+![pagni-medical-tests-aggregator-showcase](https://github.com/gtopsis/PAGNI-health-exams-aggregator/blob/main/README-images/app.png)
 
 `PAGNI-medical-tests-aggregator` app:
 
