@@ -9,7 +9,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 9
+          run_install: false
+          
       # Speed up subsequent runs with caching
       - name: Cache node modules
         uses: actions/cache@v3
