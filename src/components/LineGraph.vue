@@ -32,7 +32,7 @@ const props = defineProps({
 const { graphData, label } = toRefs(props);
 
 const sortedGraphDataByDate = computed(() => {
-  return graphData.value.sort(
+  return [...graphData.value].sort(
     (
       { date: date1 }: { date: LineGraphPoint["date"] },
       { date: date2 }: { date: LineGraphPoint["date"] }
