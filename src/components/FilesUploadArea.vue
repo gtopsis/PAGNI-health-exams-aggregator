@@ -24,7 +24,7 @@ const file = {
   name: "",
   size: 0,
   type: "",
-  fileExtention: "",
+  fileExtension: "",
   url: "",
   isPdf: false,
   isUploaded: false,
@@ -66,8 +66,8 @@ const handleFilesChange = (e: Event) => {
 
 const isFileSizeValid = (fileSize: number) => fileSize <= props.maxSize;
 
-const isFileTypeValid = (fileExtention: string | undefined) =>
-  fileExtention && props.accept.split(",").includes(fileExtention);
+const isFileTypeValid = (fileExtension: string | undefined) =>
+  fileExtension && props.accept.split(",").includes(fileExtension);
 
 const getFileErrors = (file: File) => {
   const errors: string[] = [];

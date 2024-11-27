@@ -42,12 +42,12 @@ const sortedGraphDataByDate = computed(() => {
 const groupedData = computed(() =>
   sortedGraphDataByDate.value.reduce(
     (acc: [(string | null)[], number[]], next: LineGraphPoint) => {
-      const dateInStandartFormat = next.date
+      const dateInStandardFormat = next.date
         ? convertUStoStartDateFormat(next.date)
         : "";
 
       const [xAxisData, yAxisData] = acc;
-      xAxisData.push(dateInStandartFormat);
+      xAxisData.push(dateInStandardFormat);
       yAxisData.push(next.value);
 
       return acc;

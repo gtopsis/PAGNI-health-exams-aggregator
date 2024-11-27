@@ -7,7 +7,7 @@ defineProps<{
 }>();
 const emit = defineEmits<{
   (e: "all-medical-reports-removed"): void;
-  (e: "upload-area-vissibility-updated", isUploadAreaVisible: boolean): void;
+  (e: "upload-area-visibility-updated", isUploadAreaVisible: boolean): void;
 }>();
 
 let manuallyOpenedUploadArea = ref(true);
@@ -17,9 +17,9 @@ const toggleUploadAreaIconClass = computed(() =>
   manuallyOpenedUploadArea.value ? "fas fa-chevron-up" : "fas fa-file-arrow-up"
 );
 
-const toggleUploadAreaVissibility = () => {
+const toggleUploadAreaVisibility = () => {
   manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value;
-  emit("upload-area-vissibility-updated", manuallyOpenedUploadArea.value);
+  emit("upload-area-visibility-updated", manuallyOpenedUploadArea.value);
 };
 </script>
 
@@ -60,7 +60,7 @@ const toggleUploadAreaVissibility = () => {
               variant="text"
               v-bind="props"
               :disabled="isMedicalReportsListEmpty"
-              @click="toggleUploadAreaVissibility"
+              @click="toggleUploadAreaVisibility"
             >
             </v-btn>
           </template>
