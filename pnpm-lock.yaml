@@ -33,6 +33,9 @@ importers:
         specifier: ^4.3.5
         version: 4.5.4
     devDependencies:
+      '@eslint/js':
+        specifier: ^9.39.4
+        version: 9.39.5
       '@fortawesome/fontawesome-free':
         specifier: ^7.2.0
         version: 7.3.1
