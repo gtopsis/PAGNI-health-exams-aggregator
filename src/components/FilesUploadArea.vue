@@ -1,137 +1,98 @@
 <script setup lang="ts">
-import type { UploadedFileMetadata } from "../../common/interfaces";
+import { ref } from "vue";
+import { open } from "@tauri-apps/plugin-dialog";
+import { validatePdfFiles } from "../domain/file-validation";
 
-interface FileWithPath extends File {
-  path: string;
+const props = withDefaults(
+  defineProps<{
+    maxSizeMb?: number;
+  }>(),
+  { maxSizeMb: 5 }
+);
+
+const emit = defineEmits<{
+  filesSelected: [paths: string[]];
+}>();
+
+const errors = ref<string[]>([]);
+const isDragging = ref(false);
+const fileInput = ref<HTMLInputElement | null>(null);
+
+// Native file dialog (Tauri) — returns real filesystem paths.
+async function pickFiles() {
+  const selected = await open({
+    multiple: true,
+    filters: [{ name: "PDF reports", extensions: ["pdf"] }],
+  });
+  if (!selected) return;
+  const paths = Array.isArray(selected) ? selected : [selected];
+  emitPaths(paths);
 }
 
-const props = defineProps({
-  maxSize: {
-    type: Number,
-    default: 5,
-    required: true,
-  },
-  accept: {
-    type: String,
-    default: "pdf",
-  },
-});
-
-const name = "FileUpload";
-const isLoading = false;
-const uploadReady = true;
-const file = {
-  name: "",
-  size: 0,
-  type: "",
-  fileExtension: "",
-  url: "",
-  isPdf: false,
-  isUploaded: false,
-};
-
-let fileErrors: string[] = [];
-const handleFilesChange = (e: Event) => {
-  const files = (e.target as HTMLInputElement)?.files;
-
-  // Check if file is selected
-  if (!files) {
-    console.error("No file uploaded correctly");
-
-    return;
+function emitPaths(paths: string[]) {
+  if (paths.length > 0) {
+    errors.value = [];
+    emit("filesSelected", paths);
   }
+}
 
-  for (const file of files) {
-    // Check if file is valid
-    fileErrors = getFileErrors(file);
-    if (fileErrors.length > 0) {
-      console.error(`Invalid file.\n Errors:\n ${fileErrors.join("\n")}`);
+// Drag & drop fallback (works with web File objects in the WebView).
+function onDrop(event: DragEvent) {
+  isDragging.value = false;
+  const files = Array.from(event.dataTransfer?.files ?? []);
+  if (files.length === 0) return;
 
-      return;
-    }
-  }
-
-  const filesMetadata: UploadedFileMetadata[] = Array.from(files).map((f) => ({
-    path: (f as FileWithPath).path,
+  const candidates = files.map((f) => ({
     name: f.name,
+    sizeMb: f.size / 1024 / 1024,
   }));
-  window.medicalReportsParser.parseNewMedicalReports(filesMetadata);
+  const result = validatePdfFiles(candidates, props.maxSizeMb);
+  errors.value = result.errors;
 
-  // reset html element
-  const fileHTMLEl = <HTMLInputElement>document.getElementById("fileUploadBtn");
-  if (fileHTMLEl) {
-    fileHTMLEl.value = "";
-  }
-};
-
-const isFileSizeValid = (fileSize: number) => fileSize <= props.maxSize;
-
-const isFileTypeValid = (fileExtension: string | undefined) =>
-  fileExtension && props.accept.split(",").includes(fileExtension);
-
-const getFileErrors = (file: File) => {
-  const errors: string[] = [];
-
-  const fileSize = Math.round((file.size / 1024 / 1024) * 100) / 100;
-
-  if (!isFileSizeValid(fileSize)) {
-    errors.push(`File size should be less than ${props.maxSize} MB`);
-  }
-
-  const filenameExtension = file.name?.split(".").pop();
-  if (!filenameExtension) {
-    errors.push(`File name is not correct`);
-  }
-
-  if (!isFileTypeValid(filenameExtension)) {
-    errors.push(`File type should be ${props.accept}`);
-  }
-
-  return errors;
-};
+  const accepted = files.filter((f) => result.valid.includes(f.name));
+  // In the WebView, dropped File objects expose a filesystem path.
+  const paths = accepted
+    .map((f) => (f as File & { path?: string }).path)
+    .filter((p): p is string => typeof p === "string" && p.length > 0);
+  emitPaths(paths);
+}
 </script>
 
 <template>
-  <v-container class="file-upload pa-2 align-center justify-center">
-    <v-row
-      no-gutters
-      class="file-upload__area d-flex align-center justify-center"
+  <div
+    class="flex h-full min-h-[200px] w-full flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-4 transition-colors"
+    :class="
+      isDragging ? 'border-teal-500 bg-teal-50' : 'border-gray-300 bg-gray-50'
+    "
+    @dragover.prevent="isDragging = true"
+    @dragleave.prevent="isDragging = false"
+    @drop.prevent="onDrop"
+  >
+    <p class="text-sm text-gray-600">
+      Drag &amp; drop PDF blood-test reports here, or
+    </p>
+
+    <button
+      type="button"
+      data-testid="pick-files"
+      class="rounded bg-teal-600 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700"
+      @click="pickFiles"
     >
-      <input
-        type="file"
-        name=""
-        id="fileUploadBtn"
-        @change="handleFilesChange($event)"
-        accept="application/pdf,application/vnd.ms-excel"
-        multiple
-      />
+      Browse files…
+    </button>
 
-      <div v-if="fileErrors.length > 0">
-        <div
-          class="file-upload__error"
-          v-for="(error, index) in fileErrors"
-          :key="index"
-        >
-          <span>{{ error }}</span>
-        </div>
-      </div>
-    </v-row>
-  </v-container>
+    <!-- Hidden input kept for environments without the native dialog. -->
+    <input ref="fileInput" type="file" accept="application/pdf" multiple hidden />
+
+    <ul v-if="errors.length > 0" class="w-full">
+      <li
+        v-for="(error, i) in errors"
+        :key="i"
+        data-testid="upload-error"
+        class="text-sm text-red-600"
+      >
+        {{ error }}
+      </li>
+    </ul>
+  </div>
 </template>
-
-<style scoped>
-.file-upload {
-  height: 300px;
-  width: 100%;
-}
-
-.file-upload .file-upload__area {
-  width: 100%;
-  min-height: 100%;
-  border: 2px dashed #ccc;
-}
-
-.file-upload .file-upload__error {
-  color: red;
-}
-</style>

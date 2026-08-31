@@ -8,14 +8,13 @@ export default [
     {
         // https://eslint.org/docs/latest/use/configure/ignore
         ignores: [
-            // only ignore node_modules in the same directory
-            // as the configuration file
-            "node_modules",
-            // so you have to add `**/` pattern to include nested directories
-            // for example, if you use pnpm workspace
             "**/node_modules",
-            // also you can add a new rule to revert a ignore
-            "!./packages/manual-add-lib/node_modules/local-lib.js"
+            "**/dist",
+            "**/dist-electron",
+            "**/coverage",
+            "src-tauri/target",
+            "src-tauri/gen",
+            "public",
         ]
     },
     // config parsers
@@ -40,5 +39,12 @@ export default [
     // syntax rules
     jsLint.configs.recommended,
     ...tsLint.configs.recommended,
-    ...vueLint.configs["flat/essential"]
+    ...vueLint.configs["flat/essential"],
+    // test files may use looser typing for mocks
+    {
+        files: ["**/*.test.ts", "**/*.spec.ts"],
+        rules: {
+            "@typescript-eslint/no-explicit-any": "off"
+        }
+    }
 ]
