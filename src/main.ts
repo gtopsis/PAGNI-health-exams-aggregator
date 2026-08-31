@@ -1,11 +1,8 @@
 import { createApp } from "vue";
-import "./style.css";
+import { createPinia } from "pinia";
 import App from "./App.vue";
-import vuetify from "./plugins/vuetify";
+import "./style.css";
 
-createApp(App)
-  .use(vuetify)
-  .mount("#app")
-  .$nextTick(() => {
-    postMessage({ payload: "removeLoading" }, "*");
-  });
+const app = createApp(App);
+app.use(createPinia());
+app.mount("#app");

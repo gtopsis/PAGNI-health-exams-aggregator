@@ -1,8 +1,13 @@
 node_modules
 build
+dist
 dist-electron
 pdfs
-# probably you want to stop ignoring the dir release and dist
-# it depends on how to release the project
 release
-dist
+
+# Rust / Tauri
+src-tauri/target
+src-tauri/gen
+
+# Test coverage
+coverage
