@@ -1,73 +1,74 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { computed } from "vue";
 
 defineProps<{
-  isMedicalReportsListEmpty: boolean;
+  isEmpty: boolean;
 }>();
+
 const emit = defineEmits<{
-  (e: "all-medical-reports-removed"): void;
-  (e: "upload-area-visibility-updated", isUploadAreaVisible: boolean): void;
+  "toggle-upload": [];
+  "clear-all": [];
 }>();
 
-let manuallyOpenedUploadArea = ref(true);
-const removeAllMedicalReports = () => emit("all-medical-reports-removed");
+const confirmingClear = ref(false);
 
-const toggleUploadAreaIconClass = computed(() =>
-  manuallyOpenedUploadArea.value ? "fas fa-chevron-up" : "fas fa-file-arrow-up"
-);
-
-const toggleUploadAreaVisibility = () => {
-  manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value;
-  emit("upload-area-visibility-updated", manuallyOpenedUploadArea.value);
-};
+function requestClear() {
+  confirmingClear.value = true;
+}
+function confirmClear() {
+  confirmingClear.value = false;
+  emit("clear-all");
+}
+function cancelClear() {
+  confirmingClear.value = false;
+}
 </script>
 
 <template>
-  <header>
-    <v-row>
-      <v-col cols="auto">
-        <h2>Medical Reports</h2>
-      </v-col>
+  <header class="flex items-center justify-between gap-4 px-2 py-1">
+    <h2 class="text-base font-semibold text-gray-800">Medical reports</h2>
 
-      <v-spacer></v-spacer>
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        data-testid="toggle-upload"
+        class="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100"
+        @click="emit('toggle-upload')"
+      >
+        Toggle upload
+      </button>
 
-      <v-col class="px-0" cols="auto">
-        <v-tooltip text="Clear all" location="start">
-          <template v-slot:activator="{ props }">
-            <v-btn
-              size="small"
-              icon="fas fa-broom"
-              color="error"
-              variant="text"
-              v-bind="props"
-              :disabled="isMedicalReportsListEmpty"
-              @click="removeAllMedicalReports"
-            >
-            </v-btn>
-          </template>
-        </v-tooltip>
-      </v-col>
+      <template v-if="!isEmpty">
+        <button
+          v-if="!confirmingClear"
+          type="button"
+          data-testid="clear-all"
+          class="rounded border border-red-300 px-3 py-1 text-sm text-red-600 hover:bg-red-50"
+          @click="requestClear"
+        >
+          Clear all
+        </button>
 
-      <v-col class="px-0" cols="auto">
-        <v-tooltip text="Upload new medical report" location="start">
-          <template v-slot:activator="{ props }">
-            <v-btn
-              class="mr-0"
-              size="small"
-              :icon="toggleUploadAreaIconClass"
-              color="primary"
-              variant="text"
-              v-bind="props"
-              :disabled="isMedicalReportsListEmpty"
-              @click="toggleUploadAreaVisibility"
-            >
-            </v-btn>
-          </template>
-        </v-tooltip>
-      </v-col>
-    </v-row>
+        <div v-else class="flex items-center gap-2">
+          <span class="text-sm text-gray-600">Delete all reports?</span>
+          <button
+            type="button"
+            data-testid="confirm-clear"
+            class="rounded bg-red-600 px-3 py-1 text-sm font-semibold text-white hover:bg-red-700"
+            @click="confirmClear"
+          >
+            Confirm
+          </button>
+          <button
+            type="button"
+            data-testid="cancel-clear"
+            class="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100"
+            @click="cancelClear"
+          >
+            Cancel
+          </button>
+        </div>
+      </template>
+    </div>
   </header>
 </template>
-
-<style scoped></style>

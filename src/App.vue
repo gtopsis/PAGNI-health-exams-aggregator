@@ -1,165 +1,86 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import type {
-  Results,
-  MedicalTestResultFromMedicalReport,
-  MedicalReport,
-} from "../common/interfaces";
+import { onMounted } from "vue";
+import { storeToRefs } from "pinia";
+import { useHealthDataStore } from "./stores/health-data";
+import { labelForCode } from "./domain/medical-test";
 import MedicalTestsList from "./components/MedicalTestsList.vue";
-
-import FilesUploadArea from "./components/FilesUploadArea.vue";
-import LineGraph from "./components/LineGraph.vue";
 import MedicalReportsList from "./components/MedicalReportsList.vue";
 import MedicalReportsCardHeader from "./components/MedicalReportsCardHeader.vue";
-import { getLineGraphPointFromMedicalTestResult as getLineGraphPointsFromMedicalTestResults } from "./util";
+import FilesUploadArea from "./components/FilesUploadArea.vue";
+import LineGraph from "./components/LineGraph.vue";
 
-let healthData = ref<Results>({
-  medicalReports: new Array<MedicalReport>(),
-  resultsForAllMedicalTestsFromAllFiles: new Map<
-    string,
-    MedicalTestResultFromMedicalReport[]
-  >(),
+const store = useHealthDataStore();
+const {
+  reports,
+  availableTestCodes,
+  selectedTestCode,
+  lineGraphPoints,
+  isLineGraphVisible,
+  isUploadAreaVisible,
+} = storeToRefs(store);
+
+onMounted(() => {
+  void store.loadInitial();
 });
 
-const medicalReportsList = computed<Results["medicalReports"]>(
-  () => healthData.value.medicalReports
-);
-const resultsForAllMedicalTestsFromAllFiles = computed<
-  Results["resultsForAllMedicalTestsFromAllFiles"]
->(() => healthData.value.resultsForAllMedicalTestsFromAllFiles);
-
-const medicalTests = computed<string[]>(() =>
-  Array.from(resultsForAllMedicalTestsFromAllFiles.value.keys()).sort()
-);
-const selectedMedicalTest = ref<string>(medicalTests.value?.[0]);
-
-// Called when new health data calculated
-window.medicalReportsParser.loadStoredHealtData(
-  (event: unknown, data: Results) => {
-    healthData.value = data;
-    selectedMedicalTest.value = medicalTests.value?.[0];
-  }
-);
-
-// Callback called when new health data calculated in the ipcRenderer
-window.medicalReportsParser.receiveAggregatedHealtData(
-  (event: unknown, data: Results) => {
-    healthData.value = data;
-    selectedMedicalTest.value = medicalTests.value?.[0];
-  }
-);
-
-const isMedicalReportsListEmpty = computed(
-  () => medicalReportsList.value.length === 0
-);
-const lineGraphData = computed(() => {
-  const testResultsForSelectedMedicalTest = <
-    MedicalTestResultFromMedicalReport[]
-  >resultsForAllMedicalTestsFromAllFiles.value?.get(selectedMedicalTest.value);
-
-  const allLineGraphPointsForSelectedMedicalTest =
-    getLineGraphPointsFromMedicalTestResults(
-      testResultsForSelectedMedicalTest,
-      medicalReportsList.value
-    );
-
-  return allLineGraphPointsForSelectedMedicalTest || [];
-});
-const isLineGraphCardVisible = computed(
-  () => lineGraphData.value.length > 0 && !isMedicalReportsListEmpty.value
-);
-
-const isMedicalTestsListEmpty = computed(() => medicalTests.value.length > 0);
-const selectActiveMedicalTest = (newActiveHealthTerm: string) => {
-  selectedMedicalTest.value = newActiveHealthTerm;
-};
-
-const removeAllMedicalReports = () =>
-  window.medicalReportsParser.clearHealthData();
-
-let manuallyOpenedUploadArea = ref(true);
-const toggleUploadAreaVissibility = () => {
-  manuallyOpenedUploadArea.value = !manuallyOpenedUploadArea.value;
-};
-const isUploadAreaVisible = computed(
-  () => manuallyOpenedUploadArea.value || isMedicalReportsListEmpty.value
-);
+const testOptions = () =>
+  availableTestCodes.value.map((code) => ({ code, label: labelForCode(code) }));
 </script>
 
 <template>
-  <v-app id="app" class="py-0">
-    <v-main class="bg-grey-lighten-3">
-      <v-container class="rounded">
-        <v-row class="pa-2">
-          <v-col md="3" sm="12" v-if="isMedicalTestsListEmpty">
-            <v-sheet height="50vh" max-height="350px" rounded="lg" class="pa-2">
-              <MedicalTestsList
-                :active="selectedMedicalTest"
-                :medical-tests="medicalTests"
-                @medical-test-selected="selectActiveMedicalTest"
-              />
-            </v-sheet>
-          </v-col>
+  <div class="min-h-screen bg-gray-100 text-gray-900">
+    <header class="border-b border-gray-200 bg-white px-4 py-3">
+      <h1 class="text-lg font-bold">Health Data Aggregator</h1>
+    </header>
 
-          <v-col md="9" sm="12" v-if="isLineGraphCardVisible">
-            <v-sheet min-height="50vh" rounded="lg" class="pa-2">
-              <LineGraph
-                :graph-data="lineGraphData"
-                :label="selectedMedicalTest"
-              ></LineGraph>
-            </v-sheet>
-          </v-col>
-        </v-row>
+    <main class="mx-auto max-w-6xl space-y-4 p-4">
+      <section class="grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div class="rounded-lg bg-white p-3 shadow-sm md:col-span-1">
+          <h2 class="mb-2 text-sm font-semibold text-gray-600">Medical tests</h2>
+          <MedicalTestsList
+            :tests="testOptions()"
+            :selected="selectedTestCode"
+            @select="store.selectTest"
+          />
+        </div>
 
-        <v-row class="pa-2">
-          <v-col sm="12">
-            <v-sheet min-height="30vh" rounded="lg" class="pa-2">
-              <MedicalReportsCardHeader
-                :isMedicalReportsListEmpty="isMedicalReportsListEmpty"
-                @all-medical-reports-removed="removeAllMedicalReports"
-                @upload-area-vissibility-updated="toggleUploadAreaVissibility"
-              />
+        <div
+          v-if="isLineGraphVisible"
+          class="rounded-lg bg-white p-3 shadow-sm md:col-span-3"
+        >
+          <LineGraph
+            :points="lineGraphPoints"
+            :label="selectedTestCode ? labelForCode(selectedTestCode) : ''"
+          />
+        </div>
+      </section>
 
-              <main>
-                <Transition>
-                  <FilesUploadArea
-                    v-if="isUploadAreaVisible"
-                    class="upload-file-area pa-2"
-                    :maxSize="5"
-                    accept="pdf"
-                  />
-                </Transition>
+      <section class="rounded-lg bg-white p-3 shadow-sm">
+        <MedicalReportsCardHeader
+          :is-empty="store.isEmpty"
+          @toggle-upload="store.toggleUploadArea"
+          @clear-all="store.clearAll"
+        />
 
-                <MedicalReportsList :medical-reports="medicalReportsList" />
-              </main>
-            </v-sheet>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-main>
-  </v-app>
+        <Transition name="fade">
+          <div v-if="isUploadAreaVisible" class="my-3">
+            <FilesUploadArea :max-size-mb="5" @files-selected="store.parseReports" />
+          </div>
+        </Transition>
+
+        <MedicalReportsList :reports="reports" @remove="store.removeReport" />
+      </section>
+    </main>
+  </div>
 </template>
 
 <style>
-#app {
-  width: 100%;
-  padding-left: 0;
-  padding-right: 0;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
 }
-
-.upload-file-area {
-  width: 100%;
-  height: 350px;
-  transition: all 0.25s ease;
-}
-
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.25s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 </style>
