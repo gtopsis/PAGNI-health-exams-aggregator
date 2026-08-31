@@ -3,7 +3,7 @@
 //! Local-only storage (privacy-first): a single JSON document under the
 //! app-local data directory. No network access of any kind.
 
-use tauri::{AppHandle, Manager, Runtime};
+use tauri::{AppHandle, Runtime};
 use tauri_plugin_store::StoreExt;
 
 use crate::domain::HealthData;

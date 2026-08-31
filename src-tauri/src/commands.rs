@@ -6,7 +6,7 @@
 
 use std::sync::Mutex;
 
-use tauri::{AppHandle, Manager, State};
+use tauri::{AppHandle, State};
 
 use crate::aggregate::{self, build_report};
 use crate::domain::{HealthData, ReportId, UploadedFileMetadata};
